@@ -45,7 +45,7 @@ section.bottom .page{
 section.bottom .page .box {
     z-index: 1;
 }
-section.bottom .page .box .css-1umw9bq-MuiSvgIcon-root{
+section.bottom .page .box svg{
     display: flex;
     justify-content: center;
     margin: auto;
@@ -62,7 +62,7 @@ section.bottom .page .box p.bottom{
     color: rgba(0, 0, 0, 0.5);
 }
 
-section.bottom .page .box:hover .css-1umw9bq-MuiSvgIcon-root{
+section.bottom .page .box:hover svg{
     cursor: pointer;
     transition: .3s;
     background-color: rgba(61, 67, 207, 0.3);
