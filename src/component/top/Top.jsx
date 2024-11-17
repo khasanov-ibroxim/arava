@@ -9,7 +9,7 @@ import {USER_HOME, USER_LOCATION} from "../../utils/const.jsx";
 
 
 export default function Top({user}) {
-    const {user_id} = useParams();
+    const {user_id, language} = useParams();
     const [address, setAddress] = useState("Aniqlanmoqda...");
 
     useEffect(() => {
@@ -49,7 +49,7 @@ export default function Top({user}) {
                     <div className="col-lg-12">
                         <Link
                             className="box"
-                            to={USER_LOCATION.replace(":user_id", user_id).replace(":language", "sda")}
+                            to={USER_LOCATION.replace(":user_id", user_id).replace(":language", language)}
                         >
                             <div className="text">
                                 <p className="top">
