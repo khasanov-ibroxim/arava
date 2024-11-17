@@ -7,6 +7,8 @@ import uzbekistan from './uzbekistan.json';
 import "./location_user.css"
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NearMeIcon from '@mui/icons-material/NearMe';
+import {Link, useParams} from "react-router-dom";
+import {USER_HOME} from "../../../../utils/const.jsx";
 
 
 
@@ -25,7 +27,7 @@ const LocationUser = ({ user }) => {
     const { username, isMarket } = user;
     const [showBottomBar, setShowBottomBar] = useState(false);
     const [address, setAddress] = useState('');
-
+    const {user_id , language} = useParams();
     const [position, setPosition] = useState({
         lat: user.lat,
         long: user.long,
@@ -137,9 +139,9 @@ const LocationUser = ({ user }) => {
     return (
         <div className={"user_map_box"}>
             <div className={"user_map_top_bar"}>
-                <div className="user_map_top_back">
+                <Link className="user_map_top_back" to={USER_HOME.replace(":user_id" , user_id).replace(":language", language)}>
                     <ChevronLeftIcon/>
-                </div>
+                </Link>
                 <div className="user_map_top_input">
                     <input
                         type="text"
