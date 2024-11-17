@@ -88,13 +88,23 @@ const UserHome = () => {
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="product-four">
-                                <img src={foto2} className='logo' alt="" />
+                                <img src={foto2} className='logo' alt=""/>
+                            </div>
+                            <div className="product-three-bottom">
+                                <p className="bottom-left">
+                                    Ovear Supermarket <span className='one'>Business Bay</span><br/>
+                                    <span className='two'>oziq - ovqat do’kon</span>
+                                </p>
+                                <p className="bottom-right">
+                                    Grafik
+                                    <CalendarMonthIcon/>
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-            <Bottom />
+            <Bottom/>
         </>
     );
 };
