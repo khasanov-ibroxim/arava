@@ -4,14 +4,16 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
+import {Link, useParams} from "react-router-dom";
+import {USER_HOME, USER_LOCATION} from "../../utils/const.jsx";
 
 
 export default function Top({user}) {
-
+    const {user_id} = useParams();
     const [address, setAddress] = useState("Aniqlanmoqda...");
 
     useEffect(() => {
-        if (user.lat && user.long) {
+        if (user?.lat && user?.long) {
             // OpenStreetMap orqali geokodlash
             const fetchAddress = async () => {
                 try {
@@ -39,20 +41,23 @@ export default function Top({user}) {
             };
             fetchAddress();
         }
-    }, [user.lat, user.long]);
+    }, [user?.lat, user?.long]);
     return (
         <section className='top'>
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12">
-                        <div className="box">
+                        <Link
+                            className="box"
+                            to={USER_LOCATION.replace(":user_id", user_id).replace(":language", "sda")}
+                        >
                             <div className="text">
                                 <p className="top">
                                     Yetkazib berish:
                                 </p>
                                 <p className="bottom">{address}</p>
                             </div>
-                        </div>
+                        </Link>
                         <form action="">
                             <SearchRoundedIcon/>
                             <input type="text" placeholder="Har qanday do'kon yoki mahsulotni qidiring"/>

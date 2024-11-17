@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Routes, Route, HashRouter} from "react-router-dom";
-import {SELLER_LAYOUT, USER_LAYOUT} from "./utils/const.jsx";
+import {SELLER_LAYOUT, USER_LAYOUT, UserRouters} from "./utils/const.jsx";
 import UserLayout from "./pages/userLayout/userLayout.jsx";
 import SellerLayout from "./pages/sellerLayout/sellerLayout.jsx";
 import UserHome from "./pages/userPages/home/userHome.jsx";
@@ -25,6 +25,7 @@ const AppContent = () => {
                 },
             });
             setUser(res.data);
+            console.log(res.data);
         } catch (err) {
             setError("Foydalanuvchi ma'lumotlarini olishda xatolik yuz berdi");
             console.log(err);
@@ -66,7 +67,9 @@ const AppContent = () => {
                 }
             />
             {user.status === "client" && (
-                <Route path={USER_LAYOUT + "*"} element={<UserLayout />} />
+                UserRouters.map(({ Path, Component }, index) => (
+                        <Route key={Path} path={Path } element={<Component user={user}/>} />
+                    ))
             )}
             {user.status === "seller" && (
                 <Route path={SELLER_LAYOUT + "*"} element={<SellerLayout />} />

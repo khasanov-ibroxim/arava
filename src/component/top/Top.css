@@ -6,6 +6,7 @@ section.top{
 section.top .box{
     display: flex;
     justify-content: space-between;
+    text-decoration: none;
 }
 section.top .box .text p.top{
     font-size: 18px;
