@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {  Routes, Route, HashRouter } from "react-router-dom";
 import { SELLER_LAYOUT, USER_LAYOUT } from "./utils/const.jsx";
 import UserLayout from "./pages/userLayout/userLayout.jsx";
@@ -8,7 +8,20 @@ import SellerHome from "./pages/sellerPages/home/sellerHome.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AppContent = () => {
-    const role = "user"; // Foydalanuvchi roli "user" yoki "seller" sifatida o'rnatiladi
+    const role = "user";
+
+    const tg = window.Telegram.WebApp;
+
+    const hashParts = window.location.hash.split("/");
+    const userId = hashParts[1];
+
+    useEffect(() => {
+        tg.expand();
+        tg.headerColor = "#378805";
+        tg.bottomBarColor = "#378805";
+        tg.isVerticalSwipesEnabled = false;
+        tg.isHorizontalSwipesEnabled = false;
+    }, [tg]);
     return (
         <Routes>
             <Route
