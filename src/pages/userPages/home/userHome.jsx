@@ -13,10 +13,14 @@ import foto from '../../../assets/img/Group 2.svg'
 import star from '../../../assets/img/Vector.svg'
 import foto1 from '../../../assets/img/Group 3.svg'
 import foto2 from '../../../assets/img/Group 10.svg'
+import {useParams} from "react-router-dom";
 const UserHome = () => {
+    const {user_id} = useParams();
+
     return (
         <>
             <Top />
+            {user_id}
             <section className='user'>
                 <div className="container">
                     <div className="icon">

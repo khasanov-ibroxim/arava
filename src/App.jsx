@@ -14,7 +14,7 @@ const AppContent = () => {
 
     const hashParts = window.location.hash.split("/");
     const userId = hashParts[1];
-
+    console.log(userId)
     useEffect(() => {
         tg.expand();
         tg.headerColor = "#3D43CF";
