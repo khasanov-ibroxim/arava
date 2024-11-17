@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
+import React, {useState, useEffect, useRef} from 'react';
+import {MapContainer, TileLayer, Marker, Popup, GeoJSON} from 'react-leaflet';
 import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
@@ -9,7 +9,6 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NearMeIcon from '@mui/icons-material/NearMe';
 import {Link, useParams} from "react-router-dom";
 import {USER_HOME} from "../../../../utils/const.jsx";
-
 
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
@@ -23,11 +22,11 @@ const customMarkerIcon = new L.Icon({
     shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
 });
 
-const LocationUser = ({ user }) => {
-    const { username, isMarket } = user;
+const LocationUser = ({user}) => {
+    const {username, isMarket} = user;
     const [showBottomBar, setShowBottomBar] = useState(false);
     const [address, setAddress] = useState('');
-    const {user_id , language} = useParams();
+    const {user_id, language} = useParams();
     const [position, setPosition] = useState({
         lat: user.lat,
         long: user.long,
@@ -125,7 +124,7 @@ const LocationUser = ({ user }) => {
                 );
 
                 console.log(res.data);
-               setAddress(res.data.display_name)
+                setAddress(res.data.display_name)
             } catch (error) {
                 console.error('Error fetching address:', error);
             }
@@ -139,7 +138,8 @@ const LocationUser = ({ user }) => {
     return (
         <div className={"user_map_box"}>
             <div className={"user_map_top_bar"}>
-                <Link className="user_map_top_back" to={USER_HOME.replace(":user_id" , user_id).replace(":language", language)}>
+                <Link className="user_map_top_back"
+                      to={USER_HOME.replace(":user_id", user_id).replace(":language", language)}>
                     <ChevronLeftIcon/>
                 </Link>
                 <div className="user_map_top_input">
@@ -178,7 +178,10 @@ const LocationUser = ({ user }) => {
                 className={"user_map"}
 
             >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                <TileLayer
+                    url={'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'}
+                    subdomains={['mt0','mt1','mt2','mt3']}
+                />
 
                 {tashkentRegion && (
                     <GeoJSON
