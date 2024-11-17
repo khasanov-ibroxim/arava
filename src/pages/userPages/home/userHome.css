@@ -89,7 +89,7 @@ section.user .icon {
     grid-gap: 5px;
 }
 
-section.user .icon .css-1umw9bq-MuiSvgIcon-root {
+section.user .icon .svg {
     color: rgba(61, 67, 207, 1);
 }
 
@@ -177,7 +177,7 @@ section.user .product-three-bottom p.bottom-right {
     grid-gap: 8px;
 }
 
-section.user .product-two-bottom p.bottom-right .css-1umw9bq-MuiSvgIcon-root {
+section.user .product-two-bottom p.bottom-right svg {
     transform: rotate(-120deg);
 }
 
