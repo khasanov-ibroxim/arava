@@ -10,14 +10,14 @@ const AppContent = () => {
     const role = "user";
     return (
         <Routes>
-            <Route path="/:user_id/:language" element={role === "user" ? <UserHome/> : <SellerHome/>} />
+            <Route path="/:user_id/:language" element={<UserHome/>} />
             {role === "user" && (
                 <Route path={USER_LAYOUT + "*"} element={<UserLayout />} />
             )}
             {role === "seller" && (
                 <Route path={SELLER_LAYOUT + "*"} element={<SellerLayout />} />
             )}
-            <Route path="*" element={<div>asdsadas</div>} />
+            {/*<Route path="*" element={<div>asdsadas</div>} />*/}
         </Routes>
     );
 };
