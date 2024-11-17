@@ -17,7 +17,7 @@ const AppContent = () => {
             {role === "seller" && (
                 <Route path={SELLER_LAYOUT + "*"} element={<SellerLayout />} />
             )}
-            <Route path="*" element={<div>404 - Page Not Found</div>} />
+            <Route path="*" element={<div>asdsadas</div>} />
         </Routes>
     );
 };
