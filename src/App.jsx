@@ -11,6 +11,7 @@ const AppContent = () => {
     return (
         <Routes>
             <Route path="/:user_id/:language" element={<UserHome/>} />
+            <Route path="/" element={<UserHome/>} />
             {role === "user" && (
                 <Route path={USER_LAYOUT + "*"} element={<UserLayout />} />
             )}
