@@ -1,10 +1,11 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
+import {  Routes, Route, HashRouter } from "react-router-dom";
 import { SELLER_LAYOUT, USER_LAYOUT } from "./utils/const.jsx";
 import UserLayout from "./pages/userLayout/userLayout.jsx";
 import SellerLayout from "./pages/sellerLayout/sellerLayout.jsx";
 import UserHome from "./pages/userPages/home/userHome.jsx";
 import SellerHome from "./pages/sellerPages/home/sellerHome.jsx";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AppContent = () => {
     const role = "user"; // Foydalanuvchi roli "user" yoki "seller" sifatida o'rnatiladi
