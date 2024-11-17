@@ -17,10 +17,15 @@ const AppContent = () => {
 
     useEffect(() => {
         tg.expand();
-        tg.headerColor = "#378805";
-        tg.bottomBarColor = "#378805";
+        tg.headerColor = "#3D43CF";
+        tg.bottomBarColor = "#3D43CF";
         tg.isVerticalSwipesEnabled = false;
         tg.isHorizontalSwipesEnabled = false;
+        tg.MainButton.setText("Yetkazib berish: Toshkent - Sergeli 7 - Mahala");
+        tg.MainButton.show(); // Tugmani ko'rsatish
+        tg.MainButton.onClick(() => {
+            alert("MainButton bosildi");
+        });
     }, [tg]);
     return (
         <Routes>
