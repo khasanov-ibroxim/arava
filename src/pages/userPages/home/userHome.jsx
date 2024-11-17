@@ -14,18 +14,19 @@ import star from '../../../assets/img/Vector.svg'
 import foto1 from '../../../assets/img/Group 3.svg'
 import foto2 from '../../../assets/img/Group 10.svg'
 import {useParams} from "react-router-dom";
-const UserHome = () => {
+
+const UserHome = ({user}) => {
     const {user_id} = useParams();
 
     return (
         <>
-            <Top />
+            <Top user={user} user_id={user_id}/>
             {user_id}
             <section className='user'>
                 <div className="container">
                     <div className="icon">
-                        <ViewListRoundedIcon />
-                        <ViewCompactAltIcon />
+                        <ViewListRoundedIcon/>
+                        <ViewCompactAltIcon/>
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
@@ -41,28 +42,28 @@ const UserHome = () => {
                                 </button>
                             </div>
                             <div className="btn-button">
-                                <button><LocalGroceryStoreRoundedIcon />Supermarketlar</button>
-                                <button><LocalDiningRoundedIcon />Restoranlar</button>
-                                <button><AddRoundedIcon /> Dorixona</button>
+                                <button><LocalGroceryStoreRoundedIcon/>Supermarketlar</button>
+                                <button><LocalDiningRoundedIcon/>Restoranlar</button>
+                                <button><AddRoundedIcon/> Dorixona</button>
                             </div>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="product-two">
-                                <img src={foto} className='logo' alt="" />
+                                <img src={foto} className='logo' alt=""/>
                                 <div className="bottom">
                                     <p className="left">65% gacha chegirma</p>
-                                    <p className="right"><img src={star} className='star' alt="" /> 4.5 (500+)</p>
+                                    <p className="right"><img src={star} className='star' alt=""/> 4.5 (500+)</p>
                                 </div>
                             </div>
                             <div className="product-two-bottom">
                                 <p className="bottom-left">
-                                    VIVO  Supermarket  <span className='one'>Business Bay</span><br/>
+                                    VIVO Supermarket <span className='one'>Business Bay</span><br/>
                                     <span className='two'>oziq - ovqat do’kon</span>
                                 </p>
                                 <p className="bottom-right">
-                                60 min
+                                    60 min
                                     <AccessTimeIcon/>
                                 </p>
                             </div>
@@ -71,19 +72,19 @@ const UserHome = () => {
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="product-three">
-                                <img src={foto1} className='logo' alt="" />
+                                <img src={foto1} className='logo' alt=""/>
                                 <div className="bottom">
                                     <p className="left">65% chegirma</p>
-                                    <p className="right"><img src={star} className='star' alt="" /> 4.5 (500+)</p>
+                                    <p className="right"><img src={star} className='star' alt=""/> 4.5 (500+)</p>
                                 </div>
                             </div>
                             <div className="product-three-bottom">
                                 <p className="bottom-left">
-                                Ovear  Supermarket   <span className='one'>Business Bay</span><br/>
+                                    Ovear Supermarket <span className='one'>Business Bay</span><br/>
                                     <span className='two'>oziq - ovqat do’kon</span>
                                 </p>
                                 <p className="bottom-right">
-                                Grafik
+                                    Grafik
                                     <CalendarMonthIcon/>
                                 </p>
                             </div>

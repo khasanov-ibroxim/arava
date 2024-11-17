@@ -1,20 +1,38 @@
-import React, {useEffect} from 'react';
-import {  Routes, Route, HashRouter } from "react-router-dom";
-import { SELLER_LAYOUT, USER_LAYOUT } from "./utils/const.jsx";
+import React, {useEffect, useState} from 'react';
+import {Routes, Route, HashRouter} from "react-router-dom";
+import {SELLER_LAYOUT, USER_LAYOUT} from "./utils/const.jsx";
 import UserLayout from "./pages/userLayout/userLayout.jsx";
 import SellerLayout from "./pages/sellerLayout/sellerLayout.jsx";
 import UserHome from "./pages/userPages/home/userHome.jsx";
 import SellerHome from "./pages/sellerPages/home/sellerHome.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {$API} from "./utils/http.jsx";
 
 const AppContent = () => {
-    const role = "user";
 
     const tg = window.Telegram.WebApp;
-
     const hashParts = window.location.hash.split("/");
     const userId = hashParts[1];
-    console.log(userId)
+    const [user, setUser] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const getUser = async () => {
+        try {
+            const res = await $API.get('/users/profile', {
+                params: {
+                    user_id: userId,
+                },
+            });
+            setUser(res.data);
+        } catch (err) {
+            setError("Foydalanuvchi ma'lumotlarini olishda xatolik yuz berdi");
+            console.log(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         tg.expand();
         tg.headerColor = "#3D43CF";
@@ -22,17 +40,35 @@ const AppContent = () => {
         tg.isVerticalSwipesEnabled = false;
         tg.isHorizontalSwipesEnabled = false;
 
-    }, [tg]);
+        getUser(); // Foydalanuvchi ma'lumotlarini yuklash
+    }, []);
+
+    if (loading) {
+        return <div>Yuklanmoqda...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
     return (
         <Routes>
             <Route
                 path="/:user_id/:language"
-                element={role === "user" ? <UserHome /> : <SellerHome />}
+                element={
+                    user.status === "client" ? (
+                        <UserHome user={user} />
+                    ) : user.status === "seller" ? (
+                        <SellerHome user={user} />
+                    ) : (
+                        <div>Not Found</div>
+                    )
+                }
             />
-            {role === "user" && (
+            {user.status === "client" && (
                 <Route path={USER_LAYOUT + "*"} element={<UserLayout />} />
             )}
-            {role === "seller" && (
+            {user.status === "seller" && (
                 <Route path={SELLER_LAYOUT + "*"} element={<SellerLayout />} />
             )}
             <Route path="*" element={<div>Not Found</div>} />
@@ -40,10 +76,11 @@ const AppContent = () => {
     );
 };
 
+
 const App = () => {
     return (
         <HashRouter>
-            <AppContent />
+            <AppContent/>
         </HashRouter>
     );
 };

@@ -3,3 +3,13 @@
 *{
     font-family: "Poppins", sans-serif;
 }
+
+* {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+/* Webkit asosidagi brauzerlarda (Chrome, Safari) scroll barlarni yashirish */
+*::-webkit-scrollbar {
+    display: none; /* Webkit uchun */
+}
