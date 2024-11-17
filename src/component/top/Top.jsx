@@ -27,9 +27,10 @@ export default function Top({user}) {
                     );
                     const location = response.data.address;
                     console.log(location)
-                    const formattedAddress = `${location.city || ""} - ${
-                        location.residential
-                    } - ${location.house_number || ""}`;
+                    const formattedAddress =
+                        `${location.city || ""} - ${
+                        location.residential || location.neighbourhood || location.road
+                    } - ${location.house_number || location.neighbourhood || location.road}`;
                     setAddress(formattedAddress);
                 } catch (error) {
                     console.error("Geokodlashda xatolik:", error);
