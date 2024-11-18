@@ -56,31 +56,34 @@ section.user .product button {
 
 section.user .btn-button {
     padding: 15px 0px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-section.user .btn-button button {
-    font-size: 12px;
-    line-height: 20px;
-    font-weight: 500;
-    color: black;
-    padding: 2px 15px;
-    display: flex;
-    align-items: center;
-    grid-gap: 3px;
-    background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    border-radius: 20px;
-    width: 100%;
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*justify-content: space-between;*/
 }
 .btn-button .swiper-slide{
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
+    /*width: 110px !important;*/
+    height: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    padding: 0 10px;
+    border-radius: 15px;
+    color: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    margin-right: 20px !important;
+
 }
-section.user .btn-button button:hover {
+
+.btn-button .swiper-slide svg{
+    margin-right: 5px;
+}
+section.user .btn-button .swiper-slide:hover {
     cursor: pointer;
     transition: .3s;
     background: rgba(61, 67, 207, 1);

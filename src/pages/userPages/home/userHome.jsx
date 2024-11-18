@@ -23,7 +23,7 @@ const UserHome = ({user}) => {
     return (
         <>
             <Top user={user} user_id={user_id}/>
-            {user_id}
+            {/*{user_id}*/}
             <section className='user'>
                 <div className="container">
                     <div className="icon">
@@ -47,19 +47,20 @@ const UserHome = ({user}) => {
                                 <Swiper
                                     className="btn-button"
                                     // install Swiper modules
-                                    modules={[ A11y ]}
+                                    // modules={[ A11y ]}
                                     grabCursor={true}
-                                    spaceBetween={50}
-                                    slidesPerView={3}
+                                    spaceBetween={20}
+                                    slidesPerView={2.5}
                                     onSwiper={(swiper) => console.log(swiper)}
                                     onSlideChange={() => console.log('slide change')}
                                 >
-                                    <SwiperSlide> <button><LocalGroceryStoreRoundedIcon/>Supermarketlar</button></SwiperSlide>
-                                    <SwiperSlide><button><LocalDiningRoundedIcon/>Restoranlar</button></SwiperSlide>
-                                    <SwiperSlide><button><AddRoundedIcon/> Dorixona1</button></SwiperSlide>
-                                    <SwiperSlide><button><AddRoundedIcon/> Dorixona2</button></SwiperSlide>
-                                    <SwiperSlide><button><AddRoundedIcon/> Dorixona3</button></SwiperSlide>
-                                    <SwiperSlide><button><AddRoundedIcon/> Dorixona4</button></SwiperSlide>
+                                    <SwiperSlide> <LocalGroceryStoreRoundedIcon/>Supermarket</SwiperSlide>
+                                    <SwiperSlide><LocalDiningRoundedIcon/>Restoranlar</SwiperSlide>
+                                    <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
+                                    <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
+                                    <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
+                                    <SwiperSlide><AddRoundedIcon/> Dorixona12</SwiperSlide>
+                                    <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
                                 </Swiper>
 
 
