@@ -21,6 +21,7 @@ section.bottom .box-top {
     left: 51%; /* Aniqlik oshirildi */
     transform: translateX(-50%);
     z-index: 2;
+    text-align: center;
 }
 
 section.bottom .box-top::before {
@@ -67,8 +68,15 @@ section.bottom .box-top p.last {
     margin-bottom: 0px;
     text-align: center;
     padding-top: 10px;
+    z-index: 10;
 }
-
+.last_savat{
+    margin-bottom: 0px;
+    font-size: 10px;
+    line-height: 16px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.5);
+}
 section.bottom .page {
     display: flex;
     justify-content: space-between;

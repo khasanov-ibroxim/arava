@@ -15,6 +15,7 @@ export default function Bottom() {
                 <ShoppingBasketIcon />
               </div>
               <p className="last">83 856 UZS</p>
+              <p className="last_savat">savat</p>
             </div>
       <div className="container">
         <div className="row">
@@ -29,7 +30,7 @@ export default function Bottom() {
                 <p className="bottom">Qidiruv</p>
               </div>
               <div className="box">
-                <p className="bottom">Savat</p>
+                <p className="bottom"></p>
               </div>
               <div className="box">
                 <ArticleIcon />
