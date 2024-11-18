@@ -25,10 +25,10 @@ const AppContent = () => {
         try {
             const res = await $API.get('/users/profile', {
                 params: {
-                    user_id: userId,
+                    user_id: parseInt(userId),
                 },
             });
-            setUser(res.data);
+            setUser(res.data.user);
             console.log(res.data);
         } catch (err) {
             setError("Foydalanuvchi ma'lumotlarini olishda xatolik yuz berdi");
