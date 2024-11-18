@@ -13,3 +13,17 @@
 *::-webkit-scrollbar {
     display: none; /* Webkit uchun */
 }
+
+
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/* Disable any active/focused styling */
+*:active, *:focus {
+    outline: none;
+    /*background-color: transparent; !* Ensures no background color change *!*/
+}

@@ -14,6 +14,8 @@ import star from '../../../assets/img/Vector.svg'
 import foto1 from '../../../assets/img/Group 3.svg'
 import foto2 from '../../../assets/img/Group 10.svg'
 import {useParams} from "react-router-dom";
+import {A11y,} from "swiper/modules";
+import {SwiperSlide , Swiper} from "swiper/react";
 
 const UserHome = ({user}) => {
     const {user_id} = useParams();
@@ -41,10 +43,27 @@ const UserHome = ({user}) => {
                                     Ko’rish
                                 </button>
                             </div>
-                            <div className="btn-button">
-                                <button><LocalGroceryStoreRoundedIcon/>Supermarketlar</button>
-                                <button><LocalDiningRoundedIcon/>Restoranlar</button>
-                                <button><AddRoundedIcon/> Dorixona</button>
+                            <div >
+                                <Swiper
+                                    className="btn-button"
+                                    // install Swiper modules
+                                    modules={[ A11y ]}
+                                    grabCursor={true}
+                                    spaceBetween={50}
+                                    slidesPerView={3}
+                                    onSwiper={(swiper) => console.log(swiper)}
+                                    onSlideChange={() => console.log('slide change')}
+                                >
+                                    <SwiperSlide> <button><LocalGroceryStoreRoundedIcon/>Supermarketlar</button></SwiperSlide>
+                                    <SwiperSlide><button><LocalDiningRoundedIcon/>Restoranlar</button></SwiperSlide>
+                                    <SwiperSlide><button><AddRoundedIcon/> Dorixona1</button></SwiperSlide>
+                                    <SwiperSlide><button><AddRoundedIcon/> Dorixona2</button></SwiperSlide>
+                                    <SwiperSlide><button><AddRoundedIcon/> Dorixona3</button></SwiperSlide>
+                                    <SwiperSlide><button><AddRoundedIcon/> Dorixona4</button></SwiperSlide>
+                                </Swiper>
+
+
+
                             </div>
                         </div>
                     </div>

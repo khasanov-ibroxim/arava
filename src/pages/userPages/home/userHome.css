@@ -73,8 +73,13 @@ section.user .btn-button button {
     background: transparent;
     border: 1px solid rgba(0, 0, 0, 0.4);
     border-radius: 20px;
+    width: 100%;
 }
-
+.btn-button .swiper-slide{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 section.user .btn-button button:hover {
     cursor: pointer;
     transition: .3s;

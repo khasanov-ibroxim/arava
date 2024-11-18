@@ -7,6 +7,10 @@ import UserHome from "./pages/userPages/home/userHome.jsx";
 import SellerHome from "./pages/sellerPages/home/sellerHome.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {$API} from "./utils/http.jsx";
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
 
 const AppContent = () => {
 
