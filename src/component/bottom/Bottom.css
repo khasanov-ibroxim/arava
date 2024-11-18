@@ -43,7 +43,7 @@ section.bottom .box-top::after {
     position: absolute;
     background: white; /* Ikkilamchi orqa fon */
     border-radius: 50%; /* Doira shaklida */
-    width: 101.1%; /* Ichki halqa biroz kichik */
+    width: 100%; /* Ichki halqa biroz kichik */
     height: 100%; /* Ichki halqa biroz kichik */
     top: -5%;
     left: 0;
