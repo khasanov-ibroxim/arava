@@ -17,6 +17,11 @@ import {useParams} from "react-router-dom";
 import {A11y,} from "swiper/modules";
 import {SwiperSlide , Swiper} from "swiper/react";
 
+import Banner from "../../../assets/img/image (1).png"
+import Banner2 from "../../../assets/img/Group 18.png"
+import Banner3 from "../../../assets/img/Group 19.svg"
+
+
 const UserHome = ({user}) => {
     const {user_id} = useParams();
 
@@ -33,15 +38,21 @@ const UserHome = ({user}) => {
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="product">
-                                <p className="top">
-                                    Food city
-                                </p>
-                                <p className="title">
-                                    eng arzoni bizda
-                                </p>
-                                <button>
-                                    Ko’rish
-                                </button>
+                                <Swiper
+                                    className="product"
+                                    // install Swiper modules
+                                    // modules={[ A11y ]}
+                                    grabCursor={true}
+                                    spaceBetween={20}
+                                    slidesPerView={1.1}
+                                    onSwiper={(swiper) => console.log(swiper)}
+                                    onSlideChange={() => console.log('slide change')}
+                                >
+                                    <SwiperSlide> <img src={Banner} alt=""/></SwiperSlide>
+                                    <SwiperSlide> <img src={Banner2} alt=""/></SwiperSlide>
+                                    <SwiperSlide> <img src={Banner3} alt=""/></SwiperSlide>
+                                </Swiper>
+
                             </div>
                             <div >
                                 <Swiper
