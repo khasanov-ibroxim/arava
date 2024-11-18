@@ -18,7 +18,9 @@ section.bottom .box-top{
     top: -50px;
     left: 51%;
     transform: translateX(-50%);
+    border-top: #3D43CF 5px solid;
 }
+
 section.bottom .box-top .icon{
 position: absolute;
 top: 22px;
