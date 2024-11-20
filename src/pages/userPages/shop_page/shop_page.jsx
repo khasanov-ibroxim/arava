@@ -283,8 +283,8 @@ const ShopPage = () => {
                          onMouseMove={handleMouseMove}
                          onMouseUp={handleMouseUp}
                          style={{
-                             transform: `translateY(${modalOpen ? modalTranslateY : 100}px)`, // Start from top (50px) and slide to 0
-                             transition: modalOpen ? "transform 0.5s ease-out" : "none", // Apply transition when modal opens
+                             transform: `translateY(${modalTranslateY}px)`, // Control the slide distance
+                             transition: isSwipeActive ? "none" : "transform 0.3s ease", // No transition during swipe, smooth transition after swipe
                          }}
                     >
                         {selectedProduct && (
