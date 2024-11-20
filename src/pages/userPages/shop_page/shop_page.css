@@ -108,15 +108,16 @@ section.shop_page .btn-button {
     background: rgba(0, 0, 0, 0.5);
     z-index: 9999;
     opacity: 0; /* Initially hidden */
-    transition: opacity 1s ease;
-
+    pointer-events: none; /* Disable interactions when modal is not open */
+    transition: opacity 1s ease-in; /* Smooth fade-in transition for the background */
 }
 
 .shop_modal.open {
-    opacity: 1; /* Visible when modal is open */
+    opacity: 1; /* Make the background visible when modal is open */
+    pointer-events: all; /* Enable interactions when the modal is visible */
 }
 
-body.modal-open {
+body.shop_modal.open {
     overflow: hidden !important; /* Disable scrolling */
 }
 
@@ -124,15 +125,15 @@ body.modal-open {
     position: absolute;
     width: 100%;
     height: 90vh;
-    bottom: 0; /* Start just below the screen */
+    bottom: -100%; /* Initially below the screen */
     background: white;
     border-radius: 20px 20px 0 0; /* Rounded top corners */
     padding: 20px;
-    transition: bottom 0.5s ease-out; /* Animate the slide-up effect */
+    transition: bottom 1s ease-out; /* Smooth slide-up transition */
 }
 
-.shop_modal.open .modal_content {
-    bottom: 0; /* Slide up to its final position */
+.modal_content.open {
+    bottom: 0; /* Slide the modal up to its final position */
 }
 
 .modal_content img {
@@ -140,4 +141,150 @@ body.modal-open {
     height: 150px;
     object-fit: cover;
     margin-bottom: 20px;
+}
+
+.modal_item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal_item_img {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal_item img {
+    height: 100%;
+    width: 50%;
+
+}
+
+.modal_item_text {
+    text-align: center;
+    height: 50%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.modal_close {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+
+    background: #3D43CF;
+    filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2));
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    outline: none;
+    border: none;
+    z-index: 5;
+}
+
+.modal_save {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #3D43CF;
+    filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2));
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    outline: none;
+    border: none;
+    z-index: 5;
+}
+
+.modal_save.saved {
+    color: #f45a5a;
+}
+
+.modal_info {
+    width: 100%;
+    padding: 15px;
+    height: 13rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    text-align: left;
+}
+
+.modal_info p {
+    font-size: 0.9rem;
+}
+
+.modal_buy {
+    position: absolute;
+    bottom: 0;
+    background: #3D43CF;
+    width: 100%;
+    height: 70px;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.modal_calc {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+
+.modal_calc input {
+    width: 40%;
+    height: 40px;
+    background: #fff;
+    border: none;
+    outline: none;
+}
+
+.modal_calc button {
+    width: 30%;
+    height: 40px;
+    background: #fff;
+    border: none;
+    outline: none;
+}
+
+.modal_calc button:first-child {
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+.modal_calc button:last-child {
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.modal_buy_btn {
+    width: 45%;
+    height: 40px;
+    background: #3D43CF;
+    /*filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));*/
+    border: none;
+    outline: none;
+    color: white;
+    font-weight: bold;
+
+    border-radius: 10px;
+    background: linear-gradient(145deg, #373cba, #4148dd);
+    box-shadow: 5px 5px 11px #25297e,
+    -5px -5px 11px #555dff;
 }

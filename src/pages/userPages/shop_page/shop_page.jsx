@@ -1,48 +1,50 @@
-import React, { useState, useRef } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
+import React, {useState, useRef} from "react";
+import {Swiper, SwiperSlide} from "swiper/react";
 import "swiper/css";
 import "./shop_page.css";
 import Banner from "../../../assets/img/image (1).png";
 import Banner2 from "../../../assets/img/Group 18.png";
 import Banner3 from "../../../assets/img/Group 19.svg";
 import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreRounded";
-import { Link, useParams } from "react-router-dom";
-import { USER_HOME } from "../../../utils/const.jsx";
+import {Link, useParams} from "react-router-dom";
+import {USER_HOME} from "../../../utils/const.jsx";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import CloseIcon from '@mui/icons-material/Close';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const category = [
-    { id: 1, category_name: "Go'sht" },
-    { id: 2, category_name: "Tuxum" },
-    { id: 3, category_name: "Sabzavotlar" },
-    { id: 4, category_name: "Mevalar" },
-    { id: 5, category_name: "Dorixona" },
+    {id: 1, category_name: "Go'sht"},
+    {id: 2, category_name: "Tuxum"},
+    {id: 3, category_name: "Sabzavotlar"},
+    {id: 4, category_name: "Mevalar"},
+    {id: 5, category_name: "Dorixona"},
 ];
 
 const product = [
     {
         id: 1,
-        img_url:Banner,
+        img_url: Banner,
         name: "Mol go'shti qovirga",
-        price: "72900",
+        price: "720900",
         info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
         category_id: "1",
     }, {
         id: 1,
-        img_url:"https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
+        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Go'sht",
         price: "72900",
         info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
         category_id: "1",
     }, {
         id: 1,
-        img_url:"https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
+        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Go'sht",
         price: "72900",
         info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
         category_id: "1",
     }, {
         id: 1,
-        img_url:"https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
+        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Go'sht",
         price: "72900",
         info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
@@ -50,7 +52,7 @@ const product = [
     },
     {
         id: 2,
-        img_url:"",
+        img_url: "",
         name: "Tuxum",
         price: "25000",
         info: "Yangi va sifatli tuxumlar.",
@@ -58,7 +60,7 @@ const product = [
     },
     {
         id: 3,
-        img_url:"",
+        img_url: "",
         name: "Kartoshka",
         price: "15000",
         info: "Yangi sabzavot.",
@@ -66,7 +68,7 @@ const product = [
     },
     {
         id: 4,
-        img_url:"",
+        img_url: "",
         name: "Olma",
         price: "20000",
         info: "Mevalar orasida mashhur.",
@@ -74,7 +76,7 @@ const product = [
     },
     {
         id: 5,
-        img_url:"",
+        img_url: "",
         name: "Vitaminlar",
         price: "50000",
         info: "Dorixona mahsuloti.",
@@ -83,21 +85,17 @@ const product = [
 ];
 const ShopPage = () => {
     const [products] = useState(product);
-    const { user_id, language } = useParams();
+    const {user_id, language} = useParams();
     const categoryRefs = useRef([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const modalRef = useRef(null);
-    const [touchStart, setTouchStart] = useState(0);
-    const [touchEnd, setTouchEnd] = useState(0);
-    const [modalTranslateY, setModalTranslateY] = useState(0); // For controlling modal's slide position
-    const [isSwipeActive, setIsSwipeActive] = useState(false); // To check if the swipe action is happening
+    const [save, setSave] = useState(false)
 
-    // Scroll to category
     const scrollToCategory = (id) => {
         const targetRef = categoryRefs.current[id];
         if (targetRef) {
-            targetRef.scrollIntoView({ behavior: "smooth", block: "start" });
+            targetRef.scrollIntoView({behavior: "smooth", block: "start"});
         }
     };
 
@@ -120,92 +118,19 @@ const ShopPage = () => {
         }
     };
 
-    const handleSwipeDown = (e) => {
-        if (modalRef.current && !modalRef.current.contains(e.target)) {
-            // Only close the modal if the swipe gesture is outside the modal
-            if (e.changedTouches && e.changedTouches[0].clientY - e.touches[0].clientY > 50) {
-                closeModal();
-            }
-        }
-    };
+    function numberFormatter(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
 
-    const handleTouchStart = (e) => {
-        setTouchStart(e.touches[0].clientY); // Initial touch position
-        setIsSwipeActive(true); // Start tracking swipe
-        setModalTranslateY(0);
-    };
-
-    const handleTouchMove = (e) => {
-        if (isSwipeActive) {
-            const moveDistance = e.touches[0].clientY - touchStart;
-            const maxSwipeDistance = 200; // Limit the swipe to 30px
-            setModalTranslateY(Math.min(Math.max(moveDistance, -maxSwipeDistance), maxSwipeDistance)); // Clamp the value between -30px and 30px
-        }
-    };
-
-    const handleTouchEnd = () => {
-        if (isSwipeActive) {
-            const swipeDistance = touchStart - touchEnd;
-
-            // Check if swipe was outside the modal (this will prevent swipe inside modal from closing it)
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                // Set a small threshold like 30px for swipes to close the modal
-                if (swipeDistance > 200) { // Close modal if swipe down is more than 30px
-                    setModalOpen(false);
-                    setSelectedProduct(null);
-                    setModalTranslateY(0);
-                } else {
-                    setModalTranslateY(0); // Reset position if swipe is too small
-                }
-            }
-
-            setIsSwipeActive(false); // End swipe tracking
-        }
-    };
-
-
-    const handleMouseDown = (e) => {
-        setTouchStart(e.clientY); // Initial mouse position
-        setIsSwipeActive(true);
-        setModalTranslateY(0);
-
-    };
-
-    const handleMouseMove = (e) => {
-        if (isSwipeActive) {
-            const moveDistance = e.clientY - touchStart;
-            const maxSwipeDistance = 100; // Limit the swipe to 30px
-            setModalTranslateY(Math.min(Math.max(moveDistance, -maxSwipeDistance), maxSwipeDistance)); // Clamp the value between -30px and 30px
-        }
-    };
-
-    const handleMouseUp = () => {
-        if (isSwipeActive) {
-            const swipeDistance = touchStart - touchEnd;
-
-            // Check if mouse event happened outside the modal (this prevents closing modal on swipe inside it)
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                if (swipeDistance > 100) { // Close modal if swipe down is more than 30px
-                    setModalOpen(false);
-                    setSelectedProduct(null);
-                    setModalTranslateY(0);
-                } else {
-                    setModalTranslateY(0); // Reset position if swipe is too small
-                }
-            }
-
-            setIsSwipeActive(false); // End swipe tracking
-        }
-    };
-
+    console.log(save)
     return (
-        <section className="shop_page" onClick={handleOutsideClick} onTouchEnd={handleSwipeDown}>
+        <section className="shop_page" onClick={handleOutsideClick}>
             <div className="shop_page_header container">
                 <Link
                     className="user_map_top_back"
                     to={USER_HOME.replace(":user_id", user_id).replace(":language", language)}
                 >
-                    <ChevronLeftIcon />
+                    <ChevronLeftIcon/>
                 </Link>
                 <h1 className="shop_name">SHOP NAME</h1>
             </div>
@@ -217,13 +142,13 @@ const ShopPage = () => {
                     slidesPerView={1.1}
                 >
                     <SwiperSlide>
-                        <img src={Banner} alt="Banner 1" />
+                        <img src={Banner} alt="Banner 1"/>
                     </SwiperSlide>
                     <SwiperSlide>
-                        <img src={Banner2} alt="Banner 2" />
+                        <img src={Banner2} alt="Banner 2"/>
                     </SwiperSlide>
                     <SwiperSlide>
-                        <img src={Banner3} alt="Banner 3" />
+                        <img src={Banner3} alt="Banner 3"/>
                     </SwiperSlide>
                 </Swiper>
 
@@ -236,7 +161,7 @@ const ShopPage = () => {
                 >
                     {category.map((cat) => (
                         <SwiperSlide key={cat.id} onClick={() => scrollToCategory(cat.id - 1)}>
-                            <LocalGroceryStoreRoundedIcon />
+                            <LocalGroceryStoreRoundedIcon/>
                             {cat.category_name}
                         </SwiperSlide>
                     ))}
@@ -252,7 +177,7 @@ const ShopPage = () => {
                         ref={(el) => (categoryRefs.current[index] = el)}
                     >
                         <h2 className="category_title">
-                            <LocalGroceryStoreRoundedIcon />
+                            <LocalGroceryStoreRoundedIcon/>
                             {cat.category_name}
                         </h2>
                         <div className="product_row">
@@ -264,11 +189,11 @@ const ShopPage = () => {
                                         className="shop_product_card"
                                         onClick={() => openModal(product)}
                                     >
-                                        <img src={product?.img_url} alt="" />
+                                        <img src={product?.img_url} alt=""/>
                                         <div className="shop_product_text">
                                             <h3>{product.name}</h3>
-                                            <p className="product_count">500 gr</p>
-                                            <p className="product_price">{product.price} so'm</p>
+                                            <p className="product_count">{numberFormatter(500)} gr</p>
+                                            <p className="product_price">{numberFormatter(product.price)} so'm</p>
                                         </div>
                                     </div>
                                 ))}
@@ -279,33 +204,45 @@ const ShopPage = () => {
 
             {/* Modal */}
             {modalOpen && (
-                <div className={`shop_modal ${modalOpen ? "open" : ""}`}
+                <div className={`shop_modal ${modalOpen ? "open" : ""}`}>
+                    <div className={`modal_content ${modalOpen ? "open" : ""}`} ref={modalRef}>
+                        {selectedProduct && (<>
+                                <div className={"modal_item"}>
+                                    <div className="modal_item_img">
+                                        <img src={selectedProduct.img_url} alt={selectedProduct.name}/>
+                                    </div>
 
-                >
-                    <div className="modal_content" ref={modalRef}
-                         onTouchStart={handleTouchStart}
-                         onTouchMove={handleTouchMove}
-                         onTouchEnd={handleTouchEnd}
-                         onMouseDown={handleMouseDown}
-                         onMouseMove={handleMouseMove}
-                         onMouseUp={handleMouseUp}
-                         style={{
-                             transform: `translateY(${modalTranslateY}px)`, // Control the slide distance
-                             transition: isSwipeActive ? "none" : "transform 0.3s ease", // No transition during swipe, smooth transition after swipe
-                         }}
-                    >
-                        {selectedProduct && (
-                            <>
-                                <img src={selectedProduct.img_url} alt={selectedProduct.name} />
-                                <h3>{selectedProduct.name}</h3>
-                                <p>{selectedProduct.info}</p>
-                                <p>Price: {selectedProduct.price} so'm</p>
+                                    <div className="modal_item_text">
+                                        <h3>{selectedProduct.name}</h3>
+                                        <p>Price: {numberFormatter(selectedProduct.price)} so'm</p>
+
+                                        <div className="modal_info">
+                                            <p>{selectedProduct.info}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <button onClick={closeModal} className={"modal_close"}><CloseIcon/></button>
+                                <button onClick={() => setSave(!save)} className={`modal_save ${save ? "saved" : ""}`}>
+                                    <FavoriteIcon/>
+                                </button>
+
+                                <div className="modal_buy">
+                                    <div className="modal_calc">
+                                        <button>+</button>
+                                        <input type="text"/>
+                                        <button>-</button>
+                                    </div>
+                                    <button className="modal_buy_btn">BUY</button>
+                                </div>
                             </>
                         )}
-                        <button onClick={closeModal}>Close</button>
                     </div>
                 </div>
             )}
+
+
         </section>
     );
 };
