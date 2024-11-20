@@ -121,7 +121,7 @@ const ShopPage = () => {
     };
 
     const handleSwipeDown = (e) => {
-        if (e.changedTouches && e.changedTouches[0].clientY - e.touches[0].clientY > 50) {
+        if (e.changedTouches && e.changedTouches[0].clientY - e.touches[0].clientY > 10) {
             closeModal();
         }
     };
