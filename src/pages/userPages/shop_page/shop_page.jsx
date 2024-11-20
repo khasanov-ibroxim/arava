@@ -144,7 +144,8 @@ const ShopPage = () => {
 
             // Set a small threshold like 30px for swipes to close the modal
             if (swipeDistance > 30) { // Close modal if swipe down is more than 30px
-                closeModal(); // Close the modal
+                setModalOpen(false);
+                setSelectedProduct(null);
             } else {
                 setModalTranslateY(0); // Reset position if swipe is too small
             }
