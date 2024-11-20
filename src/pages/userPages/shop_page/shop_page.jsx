@@ -90,6 +90,8 @@ const ShopPage = () => {
     const modalRef = useRef(null);
     const [touchStart, setTouchStart] = useState(0);
     const [touchEnd, setTouchEnd] = useState(0);
+    const [modalTranslateY, setModalTranslateY] = useState(0); // For controlling modal's slide position
+    const [isSwipeActive, setIsSwipeActive] = useState(false); // To check if the swipe action is happening
 
     // Scroll to category
     const scrollToCategory = (id) => {
@@ -125,18 +127,29 @@ const ShopPage = () => {
     };
 
     const handleTouchStart = (e) => {
-        setTouchStart(e.touches[0].clientY); // Boshlang'ich Y koordinatasini olish
+        setTouchStart(e.touches[0].clientY); // Initial touch position
+        setIsSwipeActive(true); // Start tracking swipe
     };
 
     const handleTouchMove = (e) => {
-        setTouchEnd(e.touches[0].clientY); // Harakat davomida Y koordinatasini olish
+        if (isSwipeActive) {
+            const moveDistance = e.touches[0].clientY - touchStart;
+            setModalTranslateY(moveDistance); // Move the modal based on swipe distance
+        }
     };
 
     const handleTouchEnd = () => {
-        if (touchEnd - touchStart > 100) { // Agar 100px yoki undan ko'p pastga harakat bo'lsa
-            closeModal();
+        if (isSwipeActive) {
+            const swipeDistance = touchEnd - touchStart;
+            if (swipeDistance > 100) { // If swipe down is more than 100px
+                closeModal(); // Close the modal
+            } else {
+                setModalTranslateY(0); // Reset position if swipe is too small
+            }
+            setIsSwipeActive(false); // End swipe tracking
         }
     };
+
 
     return (
         <section className="shop_page" onClick={handleOutsideClick} onTouchEnd={handleSwipeDown}>
@@ -223,6 +236,10 @@ const ShopPage = () => {
                      onTouchStart={handleTouchStart}
                      onTouchMove={handleTouchMove}
                      onTouchEnd={handleTouchEnd}
+                     style={{
+                         transform: `translateY(${modalTranslateY}px)`, // Control the slide distance
+                         transition: isSwipeActive ? "none" : "transform 0.3s ease", // No transition during swipe, smooth transition after swipe
+                     }}
                 >
                     <div className="modal_content" ref={modalRef}>
                         {selectedProduct && (
