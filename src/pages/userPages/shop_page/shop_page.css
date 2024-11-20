@@ -115,8 +115,8 @@ section.shop_page .btn-button {
     opacity: 1; /* Visible when modal is open */
 }
 
-.shop_modal.open .shop_page {
-    overflow-y: hidden;
+.shop_modal.open .shop_page , body {
+    overflow: hidden;
 }
 
 .modal_content {
