@@ -281,15 +281,15 @@ body.shop_modal.open {
 .modal_buy_btn {
     width: 45%;
     height: 40px;
-    background: #3D43CF;
+    background: #fff;
     /*filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));*/
     border: none;
     outline: none;
-    color: white;
-    font-weight: bold;
+    color: black;
+    font-weight: 400;
 
     border-radius: 10px;
-    background: linear-gradient(145deg, #373cba, #4148dd);
+
     box-shadow: 5px 5px 11px #25297e,
     -5px -5px 11px #555dff;
 }
