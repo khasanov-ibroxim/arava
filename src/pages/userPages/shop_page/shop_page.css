@@ -108,15 +108,16 @@ section.shop_page .btn-button {
     background: rgba(0, 0, 0, 0.5);
     z-index: 9999;
     opacity: 0; /* Initially hidden */
-    transition: opacity 0.3s ease;
+    transition: opacity 1s ease;
+
 }
 
 .shop_modal.open {
     opacity: 1; /* Visible when modal is open */
 }
 
-.shop_modal.open .shop_page , .shop_modal.open * {
-    overflow: hidden !important;
+body.modal-open {
+    overflow: hidden; /* Disable scrolling */
 }
 
 .modal_content {
