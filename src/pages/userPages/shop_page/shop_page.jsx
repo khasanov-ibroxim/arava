@@ -90,6 +90,7 @@ const ShopPage = () => {
     const modalRef = useRef(null);
     const [touchStart, setTouchStart] = useState(0);
     const [touchEnd, setTouchEnd] = useState(0);
+
     // Scroll to category
     const scrollToCategory = (id) => {
         const targetRef = categoryRefs.current[id];
@@ -122,6 +123,7 @@ const ShopPage = () => {
             closeModal();
         }
     };
+
     const handleTouchStart = (e) => {
         setTouchStart(e.touches[0].clientY); // Boshlang'ich Y koordinatasini olish
     };
@@ -135,7 +137,7 @@ const ShopPage = () => {
             closeModal();
         }
     };
-    console.log(modalOpen)
+
     return (
         <section className="shop_page" onClick={handleOutsideClick} onTouchEnd={handleSwipeDown}>
             <div className="shop_page_header container">
@@ -145,7 +147,7 @@ const ShopPage = () => {
                 >
                     <ChevronLeftIcon />
                 </Link>
-                <h1 className="shop_name">SHOP NAME </h1>
+                <h1 className="shop_name">SHOP NAME</h1>
             </div>
             <div className="shop_banner container">
                 <Swiper
@@ -217,7 +219,7 @@ const ShopPage = () => {
 
             {/* Modal */}
             {modalOpen && (
-                <div className="shop_modal"
+                <div className={`shop_modal ${modalOpen ? "open" : ""}`}
                      onTouchStart={handleTouchStart}
                      onTouchMove={handleTouchMove}
                      onTouchEnd={handleTouchEnd}

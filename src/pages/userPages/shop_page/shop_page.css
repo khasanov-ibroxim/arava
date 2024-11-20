@@ -87,22 +87,38 @@ section.shop_page .btn-button{
     margin-top: 10px;
 }
 
-.shop_modal{
+.shop_modal {
     position: fixed;
     bottom: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(0 ,0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 9999;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease;
 }
-.modal_content{
+
+.shop_modal.open {
+    opacity: 1; /* Visible when modal is open */
+}
+
+.modal_content {
     position: absolute;
-    height: 80vh;
-    background: white;
     width: 100%;
-    bottom: -5px;
+    bottom: -10px; /* Start just below the screen */
+    background: white;
+    border-radius: 20px 20px 0 0; /* Rounded top corners */
+    padding: 20px;
+    transition: bottom 0.5s ease-out; /* Animate the slide-up effect */
 }
-.modal_content img{
+
+.shop_modal.open .modal_content {
+    bottom: 0; /* Slide up to its final position */
+}
+
+.modal_content img {
     width: 150px;
     height: 150px;
+    object-fit: cover;
+    margin-bottom: 20px;
 }
