@@ -32,6 +32,7 @@ section.shop_page .btn-button{
     color: white;
     border-radius: 10px;
     /*overflow: hidden;*/
+    box-shadow: 0 0 20px rgba(61, 67, 207, 0.2);
 }
 .shop_product_card img{
     width: 100%;
