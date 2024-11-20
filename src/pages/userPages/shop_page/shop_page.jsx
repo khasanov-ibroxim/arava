@@ -4,7 +4,7 @@ import "swiper/css";
 import "./shop_page.css";
 import Banner from "../../../assets/img/image (1).png";
 import Banner2 from "../../../assets/img/Group 18.png";
-import Banner3 from "../../../assets/img/Group 19.svg";
+import Banner3 from "../../../assets/img/Group 18.svg";
 import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreRounded";
 import { Link, useParams } from "react-router-dom";
 import { USER_HOME } from "../../../utils/const.jsx";

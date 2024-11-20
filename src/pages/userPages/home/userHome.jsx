@@ -19,7 +19,7 @@ import {SwiperSlide, Swiper} from "swiper/react";
 
 import Banner from "../../../assets/img/image (1).png"
 import Banner2 from "../../../assets/img/Group 18.png"
-import Banner3 from "../../../assets/img/Group 19.svg"
+import Banner3 from "../../../assets/img/Group 18.svg"
 
 import product1 from "../../../assets/img/Group 18.svg"
 import {SHOP_PAGE} from "../../../utils/const.jsx";
