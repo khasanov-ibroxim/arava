@@ -141,14 +141,18 @@ const ShopPage = () => {
     const handleTouchEnd = () => {
         if (isSwipeActive) {
             const swipeDistance = touchEnd - touchStart;
-            if (swipeDistance > 1) { // If swipe down is more than 100px
+
+            // Set a small threshold like 30px for swipes to close the modal
+            if (swipeDistance > 30) { // Close modal if swipe down is more than 30px
                 closeModal(); // Close the modal
             } else {
                 setModalTranslateY(0); // Reset position if swipe is too small
             }
+
             setIsSwipeActive(false); // End swipe tracking
         }
     };
+
 
 
     return (
