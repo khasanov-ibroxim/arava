@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Routes, Route, HashRouter} from "react-router-dom";
-import {SELLER_LAYOUT, USER_LAYOUT, UserRouters} from "./utils/const.jsx";
-import UserLayout from "./pages/userLayout/userLayout.jsx";
-import SellerLayout from "./pages/sellerLayout/sellerLayout.jsx";
+import { UserRouters} from "./utils/const.jsx";
+
 import UserHome from "./pages/userPages/home/userHome.jsx";
 import SellerHome from "./pages/sellerPages/home/sellerHome.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,6 +10,8 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
+import Top from "./component/top/Top.jsx";
+import Bottom from "./component/bottom/Bottom.jsx";
 
 const AppContent = () => {
 
@@ -72,11 +73,8 @@ const AppContent = () => {
             />
             {user.status === "client" && (
                 UserRouters.map(({ Path, Component }, index) => (
-                        <Route key={Path} path={Path } element={<Component user={user}/>} />
+                        <Route key={Path} path={Path } element={<><Component user={user}/><Bottom/></>} />
                     ))
-            )}
-            {user.status === "seller" && (
-                <Route path={SELLER_LAYOUT + "*"} element={<SellerLayout />} />
             )}
             <Route path="*" element={<div>Not Found</div>} />
         </Routes>

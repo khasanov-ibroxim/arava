@@ -13,17 +13,42 @@ import foto from '../../../assets/img/Group 2.svg'
 import star from '../../../assets/img/Vector.svg'
 import foto1 from '../../../assets/img/Group 3.svg'
 import foto2 from '../../../assets/img/Group 10.svg'
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {A11y,} from "swiper/modules";
-import {SwiperSlide , Swiper} from "swiper/react";
+import {SwiperSlide, Swiper} from "swiper/react";
 
 import Banner from "../../../assets/img/image (1).png"
 import Banner2 from "../../../assets/img/Group 18.png"
 import Banner3 from "../../../assets/img/Group 19.svg"
 
+import product1 from "../../../assets/img/Group 18.svg"
+import {SHOP_PAGE} from "../../../utils/const.jsx";
+
+const shop_item = [
+    {
+        id:1,
+        img_url: product1,
+        sell: "65",
+        rating: "4.5",
+        name: "VIVO Supermarket",
+        sub_name: "Business Bay",
+        category: "oziq - ovqat do’kon",
+        deliver: "60"
+    },
+    {
+        id:2,
+        img_url: product1,
+        sell: "65",
+        rating: "4.5",
+        name: "Ovear Supermarket",
+        sub_name: "Business Bay",
+        category: "oziq - ovqat do’kon",
+        deliver: null
+    },
+]
 
 const UserHome = ({user}) => {
-    const {user_id} = useParams();
+    const {user_id, language} = useParams();
 
     return (
         <>
@@ -54,7 +79,7 @@ const UserHome = ({user}) => {
                                 </Swiper>
 
                             </div>
-                            <div >
+                            <div>
                                 <Swiper
                                     className="btn-button"
                                     // install Swiper modules
@@ -75,68 +100,29 @@ const UserHome = ({user}) => {
                                 </Swiper>
 
 
-
                             </div>
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-lg-12">
-                            <div className="product-two">
-                                <img src={foto} className='logo' alt=""/>
-                                <div className="bottom">
-                                    <p className="left">65% gacha chegirma</p>
-                                    <p className="right"><img src={star} className='star' alt=""/> 4.5 (500+)</p>
+                        {shop_item.map((item, index) => (
+                            <Link to={SHOP_PAGE.replace(":shop_id" , item.id).replace(":user_id" , user_id).replace(":language" , language)} className="col-lg-12" key={index}>
+                                <div className="product_item" style={{background: `url(${item.img_url})`}}>
+                                    <div className="bottom">
+                                        <p className="left">{item.sell}% gacha chegirma</p>
+                                        <p className="right"><img src={star} className='star' alt=""/> {item.rating}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="product-two-bottom">
-                                <p className="bottom-left">
-                                    VIVO Supermarket <span className='one'>Business Bay</span><br/>
-                                    <span className='two'>oziq - ovqat do’kon</span>
-                                </p>
-                                <p className="bottom-right">
-                                    60 min
-                                    <AccessTimeIcon/>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="product-three">
-                                <img src={foto1} className='logo' alt=""/>
-                                <div className="bottom">
-                                    <p className="left">65% chegirma</p>
-                                    <p className="right"><img src={star} className='star' alt=""/> 4.5 (500+)</p>
+                                <div className="product_item-bottom">
+                                    <p className="bottom-left">
+                                        {item.name} <span className='one'>{item.sub_name && item.sub_name}</span><br/>
+                                        <span className='two'>{item.category}</span>
+                                    </p>
+                                    <p className="bottom-right">
+                                        {item.deliver ? <>{item.deliver} min <AccessTimeIcon/></> : <>Grafik <CalendarMonthIcon style={{transform:"rotate(0deg)"}}/></>}
+                                    </p>
                                 </div>
-                            </div>
-                            <div className="product-three-bottom">
-                                <p className="bottom-left">
-                                    Ovear Supermarket <span className='one'>Business Bay</span><br/>
-                                    <span className='two'>oziq - ovqat do’kon</span>
-                                </p>
-                                <p className="bottom-right">
-                                    Grafik
-                                    <CalendarMonthIcon/>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="product-four">
-                                <img src={foto2} className='logo' alt=""/>
-                            </div>
-                            <div className="product-three-bottom">
-                                <p className="bottom-left">
-                                    Ovear Supermarket <span className='one'>Business Bay</span><br/>
-                                    <span className='two'>oziq - ovqat do’kon</span>
-                                </p>
-                                <p className="bottom-right">
-                                    Grafik
-                                    <CalendarMonthIcon/>
-                                </p>
-                            </div>
-                        </div>
+                            </Link>
+                        ))}
                     </div>
                 </div>
             </section>
