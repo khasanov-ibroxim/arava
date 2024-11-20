@@ -135,7 +135,7 @@ const ShopPage = () => {
     const handleTouchMove = (e) => {
         if (isSwipeActive) {
             const moveDistance = e.touches[0].clientY - touchStart;
-            const maxSwipeDistance = 100; // Limit the swipe to 30px
+            const maxSwipeDistance = 500; // Limit the swipe to 30px
             setModalTranslateY(Math.min(Math.max(moveDistance, -maxSwipeDistance), maxSwipeDistance)); // Clamp the value between -30px and 30px
         }
     };
@@ -146,7 +146,7 @@ const ShopPage = () => {
             const swipeDistance =  touchStart - touchEnd;
             console.log(swipeDistance)
             // Set a small threshold like 30px for swipes to close the modal
-            if (swipeDistance > 100) { // Close modal if swipe down is more than 30px
+            if (swipeDistance > 500) { // Close modal if swipe down is more than 30px
                 setModalOpen(false);
                 setSelectedProduct(null);
                 setModalTranslateY(0);
