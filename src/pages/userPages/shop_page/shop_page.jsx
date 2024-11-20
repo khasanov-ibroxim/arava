@@ -233,15 +233,17 @@ const ShopPage = () => {
             {/* Modal */}
             {modalOpen && (
                 <div className={`shop_modal ${modalOpen ? "open" : ""}`}
-                     onTouchStart={handleTouchStart}
-                     onTouchMove={handleTouchMove}
-                     onTouchEnd={handleTouchEnd}
-                     style={{
-                         transform: `translateY(${modalTranslateY}px)`, // Control the slide distance
-                         transition: isSwipeActive ? "none" : "transform 0.3s ease", // No transition during swipe, smooth transition after swipe
-                     }}
+
                 >
-                    <div className="modal_content" ref={modalRef}>
+                    <div className="modal_content" ref={modalRef}
+                         onTouchStart={handleTouchStart}
+                         onTouchMove={handleTouchMove}
+                         onTouchEnd={handleTouchEnd}
+                         style={{
+                             transform: `translateY(${modalTranslateY}px)`, // Control the slide distance
+                             transition: isSwipeActive ? "none" : "transform 0.3s ease", // No transition during swipe, smooth transition after swipe
+                         }}
+                    >
                         {selectedProduct && (
                             <>
                                 <img src={selectedProduct.img_url} alt={selectedProduct.name} />
