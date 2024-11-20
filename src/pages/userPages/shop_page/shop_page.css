@@ -253,6 +253,11 @@ body.shop_modal.open {
     background: #fff;
     border: none;
     outline: none;
+    text-align: center;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal_calc button {

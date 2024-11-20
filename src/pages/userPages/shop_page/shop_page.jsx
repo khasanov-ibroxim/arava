@@ -1,23 +1,23 @@
-import React, {useState, useRef} from "react";
-import {Swiper, SwiperSlide} from "swiper/react";
+import React, { useState, useRef } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "./shop_page.css";
 import Banner from "../../../assets/img/image (1).png";
 import Banner2 from "../../../assets/img/Group 18.png";
 import Banner3 from "../../../assets/img/Group 19.svg";
 import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreRounded";
-import {Link, useParams} from "react-router-dom";
-import {USER_HOME} from "../../../utils/const.jsx";
+import { Link, useParams } from "react-router-dom";
+import { USER_HOME } from "../../../utils/const.jsx";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import CloseIcon from '@mui/icons-material/Close';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import CloseIcon from "@mui/icons-material/Close";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const category = [
-    {id: 1, category_name: "Go'sht"},
-    {id: 2, category_name: "Tuxum"},
-    {id: 3, category_name: "Sabzavotlar"},
-    {id: 4, category_name: "Mevalar"},
-    {id: 5, category_name: "Dorixona"},
+    { id: 1, category_name: "Go'sht" },
+    { id: 2, category_name: "Tuxum" },
+    { id: 3, category_name: "Sabzavotlar" },
+    { id: 4, category_name: "Mevalar" },
+    { id: 5, category_name: "Dorixona" },
 ];
 
 const product = [
@@ -28,22 +28,9 @@ const product = [
         price: "720900",
         info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
         category_id: "1",
-    }, {
-        id: 1,
-        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
-        name: "Go'sht",
-        price: "72900",
-        info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-        category_id: "1",
-    }, {
-        id: 1,
-        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
-        name: "Go'sht",
-        price: "72900",
-        info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-        category_id: "1",
-    }, {
-        id: 1,
+    },
+    {
+        id: 2,
         img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Go'sht",
         price: "72900",
@@ -51,51 +38,31 @@ const product = [
         category_id: "1",
     },
     {
-        id: 2,
+        id: 3,
         img_url: "",
         name: "Tuxum",
         price: "25000",
         info: "Yangi va sifatli tuxumlar.",
         category_id: "2",
     },
-    {
-        id: 3,
-        img_url: "",
-        name: "Kartoshka",
-        price: "15000",
-        info: "Yangi sabzavot.",
-        category_id: "3",
-    },
-    {
-        id: 4,
-        img_url: "",
-        name: "Olma",
-        price: "20000",
-        info: "Mevalar orasida mashhur.",
-        category_id: "4",
-    },
-    {
-        id: 5,
-        img_url: "",
-        name: "Vitaminlar",
-        price: "50000",
-        info: "Dorixona mahsuloti.",
-        category_id: "5",
-    },
 ];
+
 const ShopPage = () => {
     const [products] = useState(product);
-    const {user_id, language} = useParams();
+    const { user_id, language } = useParams();
     const categoryRefs = useRef([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const modalRef = useRef(null);
-    const [save, setSave] = useState(false)
+
+    // Individual states for save and calc (quantity)
+    const [saveStatus, setSaveStatus] = useState({});
+    const [productQuantity, setProductQuantity] = useState({});
 
     const scrollToCategory = (id) => {
         const targetRef = categoryRefs.current[id];
         if (targetRef) {
-            targetRef.scrollIntoView({behavior: "smooth", block: "start"});
+            targetRef.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     };
 
@@ -111,26 +78,36 @@ const ShopPage = () => {
         setSelectedProduct(null);
     };
 
-    // Close modal on outside click or swipe down
-    const handleOutsideClick = (e) => {
-        if (modalRef.current && !modalRef.current.contains(e.target)) {
-            closeModal();
-        }
+    // Save functionality for each product
+    const toggleSave = (productId) => {
+        setSaveStatus((prev) => ({
+            ...prev,
+            [productId]: !prev[productId], // Toggle save status
+        }));
     };
 
-    function numberFormatter(number) {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    }
+    // Update quantity for each product
+    const updateQuantity = (productId, action) => {
+        setProductQuantity((prev) => {
+            const currentQty = prev[productId] || 1; // Default quantity is 1
+            const newQty =
+                action === "increment" ? currentQty + 1 : Math.max(1, currentQty - 1); // Minimum is 1
+            return { ...prev, [productId]: newQty };
+        });
+    };
 
-    console.log(save)
+    const numberFormatter = (number) => {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    };
+
     return (
-        <section className="shop_page" onClick={handleOutsideClick}>
+        <section className="shop_page">
             <div className="shop_page_header container">
                 <Link
                     className="user_map_top_back"
                     to={USER_HOME.replace(":user_id", user_id).replace(":language", language)}
                 >
-                    <ChevronLeftIcon/>
+                    <ChevronLeftIcon />
                 </Link>
                 <h1 className="shop_name">SHOP NAME</h1>
             </div>
@@ -142,29 +119,14 @@ const ShopPage = () => {
                     slidesPerView={1.1}
                 >
                     <SwiperSlide>
-                        <img src={Banner} alt="Banner 1"/>
+                        <img src={Banner} alt="Banner 1" />
                     </SwiperSlide>
                     <SwiperSlide>
-                        <img src={Banner2} alt="Banner 2"/>
+                        <img src={Banner2} alt="Banner 2" />
                     </SwiperSlide>
                     <SwiperSlide>
-                        <img src={Banner3} alt="Banner 3"/>
+                        <img src={Banner3} alt="Banner 3" />
                     </SwiperSlide>
-                </Swiper>
-
-                {/* Category buttons */}
-                <Swiper
-                    className="btn-button"
-                    grabCursor={true}
-                    spaceBetween={20}
-                    slidesPerView={2.5}
-                >
-                    {category.map((cat) => (
-                        <SwiperSlide key={cat.id} onClick={() => scrollToCategory(cat.id - 1)}>
-                            <LocalGroceryStoreRoundedIcon/>
-                            {cat.category_name}
-                        </SwiperSlide>
-                    ))}
                 </Swiper>
             </div>
 
@@ -177,23 +139,24 @@ const ShopPage = () => {
                         ref={(el) => (categoryRefs.current[index] = el)}
                     >
                         <h2 className="category_title">
-                            <LocalGroceryStoreRoundedIcon/>
+                            <LocalGroceryStoreRoundedIcon />
                             {cat.category_name}
                         </h2>
                         <div className="product_row">
                             {products
                                 .filter((product) => product.category_id === cat.id.toString())
-                                .map((product, index) => (
+                                .map((product) => (
                                     <div
-                                        key={index}
+                                        key={product.id}
                                         className="shop_product_card"
                                         onClick={() => openModal(product)}
                                     >
-                                        <img src={product?.img_url} alt=""/>
+                                        <img src={product?.img_url} alt="" />
                                         <div className="shop_product_text">
                                             <h3>{product.name}</h3>
-                                            <p className="product_count">{numberFormatter(500)} gr</p>
-                                            <p className="product_price">{numberFormatter(product.price)} so'm</p>
+                                            <p className="product_price">
+                                                {numberFormatter(product.price)} so'm
+                                            </p>
                                         </div>
                                     </div>
                                 ))}
@@ -203,46 +166,55 @@ const ShopPage = () => {
             </div>
 
             {/* Modal */}
-            {modalOpen && (
-                <div className={`shop_modal ${modalOpen ? "open" : ""}`}>
-                    <div className={`modal_content ${modalOpen ? "open" : ""}`} ref={modalRef}>
-                        {selectedProduct && (<>
-                                <div className={"modal_item"}>
-                                    <div className="modal_item_img">
-                                        <img src={selectedProduct.img_url} alt={selectedProduct.name}/>
-                                    </div>
+            {modalOpen && selectedProduct && (
+                <div className={`shop_modal open`}>
+                    <div className="modal_content open" ref={modalRef}>
+                        <div className="modal_item">
+                            <img
+                                src={selectedProduct.img_url}
+                                alt={selectedProduct.name}
+                            />
+                            <h3>{selectedProduct.name}</h3>
+                            <p> {numberFormatter(selectedProduct.price)} so'm</p>
+                            <div className="modal_info">
+                                <p>{selectedProduct.info}</p>
+                            </div>
+                        </div>
 
-                                    <div className="modal_item_text">
-                                        <h3>{selectedProduct.name}</h3>
-                                        <p>Price: {numberFormatter(selectedProduct.price)} so'm</p>
+                        <button onClick={closeModal} className="modal_close">
+                            <CloseIcon/>
+                        </button>
 
-                                        <div className="modal_info">
-                                            <p>{selectedProduct.info}</p>
-                                        </div>
-                                    </div>
-                                </div>
+                        <button
+                            onClick={() => toggleSave(selectedProduct.id)}
+                            className={`modal_save ${saveStatus[selectedProduct.id] ? "saved" : ""}`}
+                        >
+                            <FavoriteIcon />
+                        </button>
 
-
-                                <button onClick={closeModal} className={"modal_close"}><CloseIcon/></button>
-                                <button onClick={() => setSave(!save)} className={`modal_save ${save ? "saved" : ""}`}>
-                                    <FavoriteIcon/>
+                        <div className="modal_buy">
+                            <div className="modal_calc">
+                                <button
+                                    onClick={() => updateQuantity(selectedProduct.id, "decrement")}
+                                >
+                                    -
                                 </button>
-
-                                <div className="modal_buy">
-                                    <div className="modal_calc">
-                                        <button>+</button>
-                                        <input type="text"/>
-                                        <button>-</button>
-                                    </div>
-                                    <button className="modal_buy_btn">BUY</button>
-                                </div>
-                            </>
-                        )}
+                                <input
+                                    type="number"
+                                    readOnly
+                                    value={productQuantity[selectedProduct.id] || 1}
+                                />
+                                <button
+                                    onClick={() => updateQuantity(selectedProduct.id, "increment")}
+                                >
+                                    +
+                                </button>
+                            </div>
+                            <button className="modal_buy_btn">Buyurtma berish</button>
+                        </div>
                     </div>
                 </div>
             )}
-
-
         </section>
     );
 };
