@@ -121,8 +121,11 @@ const ShopPage = () => {
     };
 
     const handleSwipeDown = (e) => {
-        if (e.changedTouches && e.changedTouches[0].clientY - e.touches[0].clientY > 50) {
-            closeModal();
+        if (modalRef.current && !modalRef.current.contains(e.target)) {
+            // Only close the modal if the swipe gesture is outside the modal
+            if (e.changedTouches && e.changedTouches[0].clientY - e.touches[0].clientY > 50) {
+                closeModal();
+            }
         }
     };
 
@@ -141,22 +144,25 @@ const ShopPage = () => {
     };
 
     const handleTouchEnd = () => {
-        console.log(isSwipeActive)
         if (isSwipeActive) {
-            const swipeDistance =  touchStart - touchEnd;
-            console.log(swipeDistance)
-            // Set a small threshold like 30px for swipes to close the modal
-            if (swipeDistance > 200) { // Close modal if swipe down is more than 30px
-                setModalOpen(false);
-                setSelectedProduct(null);
-                setModalTranslateY(0);
-            } else {
-                setModalTranslateY(0); // Reset position if swipe is too small
+            const swipeDistance = touchStart - touchEnd;
+
+            // Check if swipe was outside the modal (this will prevent swipe inside modal from closing it)
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                // Set a small threshold like 30px for swipes to close the modal
+                if (swipeDistance > 200) { // Close modal if swipe down is more than 30px
+                    setModalOpen(false);
+                    setSelectedProduct(null);
+                    setModalTranslateY(0);
+                } else {
+                    setModalTranslateY(0); // Reset position if swipe is too small
+                }
             }
 
             setIsSwipeActive(false); // End swipe tracking
         }
     };
+
 
     const handleMouseDown = (e) => {
         setTouchStart(e.clientY); // Initial mouse position
@@ -174,17 +180,18 @@ const ShopPage = () => {
     };
 
     const handleMouseUp = () => {
-
         if (isSwipeActive) {
             const swipeDistance = touchStart - touchEnd;
-            console.log(swipeDistance)
-            // Set a small threshold like 30px for swipes to close the modal
-            if (swipeDistance > 100) { // Close modal if swipe down is more than 30px
-                setModalOpen(false);
-                setSelectedProduct(null);
-                setModalTranslateY(0);
-            } else {
-                setModalTranslateY(0); // Reset position if swipe is too small
+
+            // Check if mouse event happened outside the modal (this prevents closing modal on swipe inside it)
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                if (swipeDistance > 100) { // Close modal if swipe down is more than 30px
+                    setModalOpen(false);
+                    setSelectedProduct(null);
+                    setModalTranslateY(0);
+                } else {
+                    setModalTranslateY(0); // Reset position if swipe is too small
+                }
             }
 
             setIsSwipeActive(false); // End swipe tracking
