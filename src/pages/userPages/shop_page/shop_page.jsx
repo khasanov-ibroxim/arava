@@ -39,11 +39,19 @@ const product = [
     },
     {
         id: 3,
-        img_url: "",
+        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Tuxum",
         price: "25000",
         info: "Yangi va sifatli tuxumlar.",
         category_id: "2",
+    },
+    {
+        id: 3,
+        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
+        name: "Tuxum",
+        price: "25000",
+        info: "Yangi va sifatli tuxumlar.",
+        category_id: "4",
     },
 ];
 
@@ -128,41 +136,61 @@ const ShopPage = () => {
                         <img src={Banner3} alt="Banner 3" />
                     </SwiperSlide>
                 </Swiper>
-            </div>
+
+                <Swiper
+                    className="btn-button"
+                    grabCursor={true}
+                    spaceBetween={20}
+                    slidesPerView={2.5}
+                >
+                    {category.map((cat,index) => (
+                        <SwiperSlide key={index} onClick={() => scrollToCategory(cat.id - 1)}>
+                            <LocalGroceryStoreRoundedIcon/>
+                            {cat.category_name}
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+
+        </div>
 
             {/* Categories */}
             <div className="category_section container">
-                {category.map((cat, index) => (
-                    <div
-                        key={index}
-                        className="category_block"
-                        ref={(el) => (categoryRefs.current[index] = el)}
-                    >
-                        <h2 className="category_title">
-                            <LocalGroceryStoreRoundedIcon />
-                            {cat.category_name}
-                        </h2>
-                        <div className="product_row">
-                            {products
-                                .filter((product) => product.category_id === cat.id.toString())
-                                .map((product) => (
-                                    <div
-                                        key={product.id}
-                                        className="shop_product_card"
-                                        onClick={() => openModal(product)}
-                                    >
-                                        <img src={product?.img_url} alt="" />
-                                        <div className="shop_product_text">
-                                            <h3>{product.name}</h3>
-                                            <p className="product_price">
-                                                {numberFormatter(product.price)} so'm
-                                            </p>
+                {category
+                    .filter((cat) =>
+                        products.some((product) => product.category_id === cat.id.toString())
+                    )
+                    .map((cat, index) => (
+                        <div
+                            key={index}
+                            className="category_block"
+                            ref={(el) => (categoryRefs.current[index] = el)}
+                        >
+                            <h2 className="category_title">
+                                <LocalGroceryStoreRoundedIcon />
+                                {cat.category_name}
+                            </h2>
+                            <div className="product_row">
+                                {products
+                                    .filter((product) => product.category_id === cat.id.toString())
+                                    .map((product) => (
+                                        <div
+                                            key={product.id}
+                                            className="shop_product_card"
+                                            onClick={() => openModal(product)}
+                                        >
+                                            <img src={product?.img_url} alt="" />
+                                            <div className="shop_product_text">
+                                                <h3>{product.name}</h3>
+                                                <p className="product_price">
+                                                    {numberFormatter(product.price)} so'm
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+
             </div>
 
             {/* Modal */}
