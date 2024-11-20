@@ -122,7 +122,8 @@ section.shop_page .btn-button {
 .modal_content {
     position: absolute;
     width: 100%;
-    bottom: -10px; /* Start just below the screen */
+    height: 70vh;
+    bottom: 0; /* Start just below the screen */
     background: white;
     border-radius: 20px 20px 0 0; /* Rounded top corners */
     padding: 20px;
