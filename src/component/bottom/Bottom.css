@@ -107,14 +107,14 @@ section.bottom .page .box p.bottom {
     color: rgba(0, 0, 0, 0.5);
 }
 
-section.bottom .page .box:hover svg {
+section.bottom .page .box:hover svg  , section.bottom .page .box.active svg {
     cursor: pointer;
     transition: .3s;
     background-color: rgba(61, 67, 207, 0.3);
     color: rgba(61, 67, 207, 1);
 }
 
-section.bottom .page .box:hover p.bottom {
+section.bottom .page .box:hover p.bottom ,  section.bottom .page .box.active  p.bottom  {
     cursor: pointer;
     transition: .3s;
     color: rgba(61, 67, 207, 1);
