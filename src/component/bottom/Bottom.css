@@ -86,6 +86,7 @@ section.bottom .page {
 
 section.bottom .page .box {
     z-index: 1;
+    text-decoration: none;
 }
 
 section.bottom .page .box svg {
