@@ -6,16 +6,21 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArticleIcon from '@mui/icons-material/Article';
 import PersonIcon from '@mui/icons-material/Person';
 import foto from '../../assets/img/Ellipse 2.svg'
+import {useTranslation} from "react-i18next";
+
+
 export default function Bottom() {
+  const {t} = useTranslation();
+
   return (
     <section className='bottom'>
-            <div className="box-top">
+            <div className="box-top" >
               <img src={foto} alt="" />
               <div className="icon">
                 <ShoppingBasketIcon />
               </div>
               <p className="last">83 856 UZS</p>
-              <p className="last_savat">savat</p>
+              <p className="last_savat">{t("bottomBar.basket")}</p>
             </div>
       <div className="container">
         <div className="row">
@@ -23,22 +28,22 @@ export default function Bottom() {
             <div className="page">
               <div className="box">
                 <HomeIcon />
-                <p className="bottom">Bosh Sahifa</p>
+                <p className="bottom">{t("bottomBar.home")}</p>
               </div>
               <div className="box">
                 <SearchIcon />
-                <p className="bottom">Qidiruv</p>
+                <p className="bottom">{t("bottomBar.search")}</p>
               </div>
               <div className="box">
                 <p className="bottom"></p>
               </div>
               <div className="box">
                 <ArticleIcon />
-                <p className="bottom">Yangiliklar</p>
+                <p className="bottom">{t("bottomBar.news")}</p>
               </div>
               <div className="box">
                 <PersonIcon />
-                <p className="bottom">Profile</p>
+                <p className="bottom">{t("bottomBar.profile")}</p>
               </div>
             </div>
           </div>

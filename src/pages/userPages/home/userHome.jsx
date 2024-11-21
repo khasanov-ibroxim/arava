@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import "./userHome.css"
 import Top from '../../../component/top/Top';
 import LocalGroceryStoreRoundedIcon from '@mui/icons-material/LocalGroceryStoreRounded';
@@ -23,10 +23,11 @@ import Banner3 from "../../../assets/img/Group 18.svg"
 
 import product1 from "../../../assets/img/Group 18.svg"
 import {SHOP_PAGE} from "../../../utils/const.jsx";
+import {$API} from "../../../utils/http.jsx";
 
 const shop_item = [
     {
-        id:1,
+        id: 1,
         img_url: product1,
         sell: "65",
         rating: "4.5",
@@ -36,7 +37,17 @@ const shop_item = [
         deliver: "60"
     },
     {
-        id:2,
+        id: 2,
+        img_url: product1,
+        sell: "65",
+        rating: "4.5",
+        name: "Ovear Supermarket",
+        sub_name: "Business Bay",
+        category: "oziq - ovqat do’kon",
+        deliver: null
+    },
+    {
+        id: 2,
         img_url: product1,
         sell: "65",
         rating: "4.5",
@@ -49,16 +60,22 @@ const shop_item = [
 
 const UserHome = ({user}) => {
     const {user_id, language} = useParams();
-
+    const [shopLayout, setShopLayout] = useState(false);
+    const getShop = async () => {
+        try {
+            const res = $API.get('/shop/')
+        } catch (e) {
+            console.log(e)
+        }
+    }
     return (
         <>
             <Top user={user} user_id={user_id}/>
             {/*{user_id}*/}
             <section className='user'>
                 <div className="container">
-                    <div className="icon">
-                        <ViewListRoundedIcon/>
-                        <ViewCompactAltIcon/>
+                    <div className="icon" onClick={()=>setShopLayout(!shopLayout)}>
+                        {shopLayout ? <ViewCompactAltIcon/> :  <ViewListRoundedIcon/>}
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
@@ -98,15 +115,15 @@ const UserHome = ({user}) => {
                                     <SwiperSlide><AddRoundedIcon/> Dorixona12</SwiperSlide>
                                     <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
                                 </Swiper>
-
-
                             </div>
                         </div>
                     </div>
-                    <div className="row">
+                    <div className={`row ${shopLayout ? "shop_active" : ''}`}>
                         {shop_item.map((item, index) => (
-                            <Link to={SHOP_PAGE.replace(":shop_id" , item.id).replace(":user_id" , user_id).replace(":language" , language)} className="col-lg-12" key={index}>
-                                <div className="product_item" style={{background: `url(${item.img_url})`}}>
+                            <Link
+                                to={SHOP_PAGE.replace(":shop_id", item.id).replace(":user_id", user_id).replace(":language", language)}
+                                className={`col-lg-12 ${shopLayout ? "shop_active_item" : ''}`} key={index}>
+                                <div className={`product_item ${shopLayout ? "shop_active_item_product" : ''}`} style={{background: `url(${item.img_url})`}}>
                                     <div className="bottom">
                                         <p className="left">{item.sell}% gacha chegirma</p>
                                         <p className="right"><img src={star} className='star' alt=""/> {item.rating}</p>
@@ -118,7 +135,8 @@ const UserHome = ({user}) => {
                                         <span className='two'>{item.category}</span>
                                     </p>
                                     <p className="bottom-right">
-                                        {item.deliver ? <>{item.deliver} min <AccessTimeIcon/></> : <>Grafik <CalendarMonthIcon style={{transform:"rotate(0deg)"}}/></>}
+                                        {item.deliver ? <>{item.deliver} min <AccessTimeIcon/></> : <>Grafik <CalendarMonthIcon
+                                            style={{transform: "rotate(0deg)"}}/></>}
                                     </p>
                                 </div>
                             </Link>

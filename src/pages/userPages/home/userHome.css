@@ -183,6 +183,59 @@ section.user a {
 }
 
 
+
+section.user .icon{
+    background: rgba(61, 67, 207, 1);
+    color: white;
+    font-size: 40px;
+    padding: 5px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+section.user .icon svg{
+    font-size: 30px;
+    font-weight: 300;
+}
+.shop_active{
+    justify-content: space-between;
+    align-items: center;
+}
+.shop_active_item{
+    width: 33.33% !important;
+    height: 100px !important;
+}
+.shop_active_item_product{
+    height: 110px !important;
+}
+.shop_active_item_product .bottom{
+    flex-direction: column;
+    height: 100%;
+}
+.shop_active_item_product .bottom p.left{
+    width: 100% !important;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    text-align: center;
+    margin-left: 0 !important;
+    font-size: 8px !important;
+}
+.shop_active_item_product .bottom p.right{
+    display: none !important;
+}
+ .shop_active_item .product_item-bottom p.bottom-left {
+    font-size: 14px !important;
+     text-align: center !important;
+}
+.shop_active_item .product_item-bottom p.bottom-left .two{display: none}
+.shop_active_item .product_item-bottom{position: relative}
+.shop_active_item .product_item-bottom p.bottom-right{
+    display: flex;
+    position: absolute;
+    top: -30px;
+    right: 3px;
+    font-size: 14px !important;
+}
 @media(max-width:575px){
     section.user .btn-button button{
         padding: 2px 10px;

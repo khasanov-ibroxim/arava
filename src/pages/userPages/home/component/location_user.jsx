@@ -9,6 +9,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NearMeIcon from '@mui/icons-material/NearMe';
 import {Link, useParams} from "react-router-dom";
 import {USER_HOME} from "../../../../utils/const.jsx";
+import {$API} from "../../../../utils/http.jsx";
+import {useTranslation} from "react-i18next";
 
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
@@ -31,11 +33,12 @@ const LocationUser = ({user}) => {
         lat: user.lat,
         long: user.long,
     });
-
     const [searchText, setSearchText] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [clicked, setClicked] = useState(false);
     const mapRef = useRef(null);
+    const {t} = useTranslation();
+
 
     const tashkentRegion = uzbekistan.features.find(
         (feature) => feature.properties.ADM1_EN === 'Tashkent city'
@@ -106,6 +109,18 @@ const LocationUser = ({user}) => {
 
     };
 
+    const updateLocation = async () => {
+        try {
+            const res = await $API.patch('/users/profile', {
+                lat: position.lat,
+                long: position.long
+            }, {params: {user_id}})
+            console.log(res)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     useEffect(() => {
         search();
     }, [searchText]);
@@ -147,7 +162,7 @@ const LocationUser = ({user}) => {
                         type="text"
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
-                        placeholder="Search for a location"
+                        placeholder={t("location.search")}
                     />
                     <NearMeIcon/>
                 </div>
@@ -168,7 +183,7 @@ const LocationUser = ({user}) => {
             </div>
             {showBottomBar && (
                 <div className="user_map_bottom_bar">
-                    <button>SAVE</button>
+                    <button onClick={updateLocation}>{t("location.save")}</button>
                 </div>
             )}
             <MapContainer
@@ -180,7 +195,7 @@ const LocationUser = ({user}) => {
             >
                 <TileLayer
                     url={'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'}
-                    subdomains={['mt0','mt1','mt2','mt3']}
+                    subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
                 />
 
                 {tashkentRegion && (

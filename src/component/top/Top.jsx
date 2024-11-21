@@ -6,12 +6,13 @@ import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import {Link, useParams} from "react-router-dom";
 import {USER_HOME, USER_LOCATION} from "../../utils/const.jsx";
+import {useTranslation} from "react-i18next";
 
 
 export default function Top({user}) {
     const {user_id, language} = useParams();
     const [address, setAddress] = useState("Aniqlanmoqda...");
-
+    const {t} = useTranslation();
     useEffect(() => {
         if (user?.lat && user?.long) {
             // OpenStreetMap orqali geokodlash
@@ -53,14 +54,14 @@ export default function Top({user}) {
                         >
                             <div className="text">
                                 <p className="top">
-                                    Yetkazib berish:
+                                    {t("top.text")}
                                 </p>
                                 <p className="bottom">{address}</p>
                             </div>
                         </Link>
                         <form action="">
                             <SearchRoundedIcon/>
-                            <input type="text" placeholder="Har qanday do'kon yoki mahsulotni qidiring"/>
+                            <input type="text" placeholder={t("top.search")}/>
                         </form>
 
                     </div>
