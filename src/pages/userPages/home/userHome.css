@@ -234,6 +234,7 @@ section.user .icon svg {
     border-radius: 0 !important;
     border-top-left-radius: 20px !important;
     border-top-right-radius: 20px !important;
+    padding-left: 9px !important;
 }
 
 .shop_active_item_product .bottom p.right {
