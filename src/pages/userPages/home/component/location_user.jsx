@@ -111,10 +111,15 @@ const LocationUser = ({user}) => {
 
     const updateLocation = async () => {
         try {
+            console.log(position)
             const res = await $API.patch('/users/profile', {
-                lat: position.lat,
-                long: position.long
-            }, {params: {user_id}})
+                lat: parseFloat(position.lat),
+                long: parseFloat(position.long)
+            }, {
+                params: {
+                    user_id,
+                }
+            })
             console.log(res)
         } catch (e) {
             console.log(e)

@@ -37,6 +37,16 @@ const shop_item = [
         deliver: "60"
     },
     {
+        id: 1,
+        img_url: product1,
+        sell: "65",
+        rating: "4.5",
+        name: "VIVO Supermarket",
+        sub_name: "Business Bay",
+        category: "oziq - ovqat do’kon",
+        deliver: "60"
+    },
+    {
         id: 2,
         img_url: product1,
         sell: "65",

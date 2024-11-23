@@ -38,6 +38,22 @@ const product = [
         category_id: "1",
     },
     {
+        id: 2,
+        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
+        name: "Go'sht",
+        price: "72900",
+        info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+        category_id: "1",
+    },
+    {
+        id: 2,
+        img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
+        name: "Go'sht",
+        price: "72900",
+        info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
+        category_id: "1",
+    },
+    {
         id: 3,
         img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Tuxum",
@@ -144,7 +160,7 @@ const ShopPage = () => {
                     slidesPerView={2.5}
                 >
                     {category.map((cat,index) => (
-                        <SwiperSlide key={index} onClick={() => scrollToCategory(cat.id - 1)}>
+                        <SwiperSlide key={index} onClick={() => scrollToCategory(index)}>
                             <LocalGroceryStoreRoundedIcon/>
                             {cat.category_name}
                         </SwiperSlide>
@@ -180,7 +196,11 @@ const ShopPage = () => {
                                         >
                                             <img src={product?.img_url} alt="" />
                                             <div className="shop_product_text">
+
                                                 <h3>{product.name}</h3>
+                                                <div className="product_count">
+                                                    300 sa
+                                                </div>
                                                 <p className="product_price">
                                                     {numberFormatter(product.price)} so'm
                                                 </p>

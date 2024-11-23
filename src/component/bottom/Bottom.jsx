@@ -8,7 +8,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import foto from '../../assets/img/Ellipse 2.svg'
 import {useTranslation} from "react-i18next";
 import {Link, useLocation, useParams} from "react-router-dom";
-import {USER_HOME} from "../../utils/const.jsx";
+import {USER_HOME, USER_NEWS, USER_PROFILE, USER_SEARCH} from "../../utils/const.jsx";
 
 
 export default function Bottom() {
@@ -34,22 +34,28 @@ export default function Bottom() {
                                 <HomeIcon/>
                                 <p className="bottom">{t("bottomBar.home")}</p>
                             </Link>
-                            <div className={`box ${location.pathname === `/${user_id}/${language}/search` ? 'active' : ''}`}
+                            <Link
+                                to={USER_SEARCH.replace(":user_id", user_id).replace(":language", language)}
+                                className={`box ${location.pathname === `/${user_id}/${language}/user_search` ? 'active' : ''}`}
                                  style={{marginLeft: "14px"}}>
                                 <SearchIcon/>
                                 <p className="bottom">{t("bottomBar.search")}</p>
-                            </div>
+                            </Link>
                             <div className="box" style={{marginRight: "100px"}}>
                                 <p className="bottom"></p>
                             </div>
-                            <div  className={`box ${location.pathname === `/${user_id}/${language}/news` ? 'active' : ''}`}>
+                            <Link
+                                to={USER_NEWS.replace(":user_id", user_id).replace(":language", language)}
+                                className={`box ${location.pathname === `/${user_id}/${language}/user_news` ? 'active' : ''}`}>
                                 <ArticleIcon/>
                                 <p className="bottom">{t("bottomBar.news")}</p>
-                            </div>
-                            <div  className={`box ${location.pathname === `/${user_id}/${language}/profile` ? 'active' : ''}`}>
+                            </Link>
+                            <Link
+                                to={USER_PROFILE.replace(":user_id", user_id).replace(":language", language)}
+                                className={`box ${location.pathname === `/${user_id}/${language}/user_profile` ? 'active' : ''}`}>
                                 <PersonIcon/>
                                 <p className="bottom">{t("bottomBar.profile")}</p>
-                            </div>
+                            </Link>
                         </div>
                     </div>
                 </div>
