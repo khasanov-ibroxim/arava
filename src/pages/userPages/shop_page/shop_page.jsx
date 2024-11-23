@@ -258,7 +258,7 @@ const ShopPage = () => {
                                     +
                                 </button>
                             </div>
-                            <button className="modal_buy_btn">Buyurtma berish</button>
+                            <button className="modal_buy_btn">Savatga qo'shish</button>
                         </div>
                     </div>
                 </div>
