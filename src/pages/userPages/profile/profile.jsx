@@ -2,6 +2,9 @@ import React from 'react';
 import "./profile.css"
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import SettingsIcon from '@mui/icons-material/Settings';
 const Profile = ({user}) => {
     console.log(user)
     return (
@@ -18,17 +21,17 @@ const Profile = ({user}) => {
                   <div className="user_profile_item_icon"><ArrowForwardIosIcon/></div>
               </div>
               <div className="user_profile_item">
-                  <div className="user_profile_item_img"><PermIdentityIcon/></div>
+                  <div className="user_profile_item_img"><FavoriteBorderIcon/></div>
                   <div className="user_profile_item_text">Sevimli mahsulotlarim</div>
                   <div className="user_profile_item_icon"><ArrowForwardIosIcon/></div>
               </div>
               <div className="user_profile_item">
-                  <div className="user_profile_item_img"><PermIdentityIcon/></div>
+                  <div className="user_profile_item_img"><ShoppingBasketIcon/></div>
                   <div className="user_profile_item_text">Buyurtmalarim</div>
                   <div className="user_profile_item_icon"><ArrowForwardIosIcon/></div>
               </div>
               <div className="user_profile_item">
-                  <div className="user_profile_item_img"><PermIdentityIcon/></div>
+                  <div className="user_profile_item_img"><SettingsIcon/></div>
                   <div className="user_profile_item_text">Sozlamalar</div>
                   <div className="user_profile_item_icon"><ArrowForwardIosIcon/></div>
               </div>

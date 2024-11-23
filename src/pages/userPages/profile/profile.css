@@ -17,9 +17,10 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 30px;
     align-items: center;
     flex-direction: column;
+    margin-top: 20px;
 }
 
 .user_profile_item{
