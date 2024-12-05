@@ -55,7 +55,7 @@ section.shop_page .btn-button {
 .shop_product_card {
     background: #3D43CF;
     width: 47%;
-    height: 12rem;
+    height: 15rem;
     margin: 5px;
     cursor: pointer;
     color: white;
@@ -83,11 +83,12 @@ section.shop_page .btn-button {
 .shop_product_card h3 {
     margin: 0;
     font-size: 0.8rem;
-    height: 33.33%;
-    line-height: 1.2; /* Satrlardagi bo'shliqni aniqlaydi */
+    height: 35%;
     overflow: hidden; /* Cheklangan balandlikdan oshgan matnni yashiradi */
-    text-overflow: ellipsis; /* Yashirilgan joyda "..." qo'yadi */
-    white-space: nowrap; /* Matnni bir qatorli qiladi */
+    display: -webkit-box; /* Flex-like layout yaratadi */
+    -webkit-box-orient: vertical; /* Matn yo‘nalishini o‘rnatadi */
+    -webkit-line-clamp: 2; /* Maksimal qatorlar sonini belgilaydi */
+    text-overflow: ellipsis; /* Qatorlardan oshgan joyda "..." qo'yadi */
 }
 
 .shop_product_text .product_count {
