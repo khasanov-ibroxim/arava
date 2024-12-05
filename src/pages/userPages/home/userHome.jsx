@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import "./userHome.css"
 import Top from '../../../component/top/Top';
 import LocalGroceryStoreRoundedIcon from '@mui/icons-material/LocalGroceryStoreRounded';
@@ -24,6 +24,7 @@ import Banner3 from "../../../assets/img/Group 18.svg"
 import product1 from "../../../assets/img/Group 18.svg"
 import {SHOP_PAGE} from "../../../utils/const.jsx";
 import {$API} from "../../../utils/http.jsx";
+import {shopStore} from "../../../zustand/shopStore.jsx";
 
 const shop_item = [
     {
@@ -71,13 +72,14 @@ const shop_item = [
 const UserHome = ({user}) => {
     const {user_id, language} = useParams();
     const [shopLayout, setShopLayout] = useState(false);
-    const getShop = async () => {
-        try {
-            const res = $API.get('/shop/')
-        } catch (e) {
-            console.log(e)
+    const [shopList , setShopList] = useState([])
+    const { getShop, data, loading } = shopStore();
+
+    useEffect(() => {
+        if (!data) { // Agar ma'lumot yo'q bo'lsa, API chaqiradi
+            getShop();
         }
-    }
+    }, [data, getShop]);
     return (
         <>
             <Top user={user} user_id={user_id}/>
@@ -92,13 +94,9 @@ const UserHome = ({user}) => {
                             <div className="product">
                                 <Swiper
                                     className="product"
-                                    // install Swiper modules
-                                    // modules={[ A11y ]}
                                     grabCursor={true}
                                     spaceBetween={20}
                                     slidesPerView={1.1}
-                                    onSwiper={(swiper) => console.log(swiper)}
-                                    onSlideChange={() => console.log('slide change')}
                                 >
                                     <SwiperSlide> <img src={Banner} alt=""/></SwiperSlide>
                                     <SwiperSlide> <img src={Banner2} alt=""/></SwiperSlide>
@@ -114,8 +112,6 @@ const UserHome = ({user}) => {
                                     grabCursor={true}
                                     spaceBetween={20}
                                     slidesPerView={2.5}
-                                    onSwiper={(swiper) => console.log(swiper)}
-                                    onSlideChange={() => console.log('slide change')}
                                 >
                                     <SwiperSlide> <LocalGroceryStoreRoundedIcon/>Supermarket</SwiperSlide>
                                     <SwiperSlide><LocalDiningRoundedIcon/>Restoranlar</SwiperSlide>

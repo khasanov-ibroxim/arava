@@ -7,42 +7,21 @@ import axios from "axios";
 import {Link, useParams} from "react-router-dom";
 import {USER_HOME, USER_LOCATION} from "../../utils/const.jsx";
 import {useTranslation} from "react-i18next";
+import {userLocationStore, userStore} from "../../zustand/userStore.jsx";
 
 
 export default function Top({user}) {
     const {user_id, language} = useParams();
-    const [address, setAddress] = useState("Aniqlanmoqda...");
+    const { getLocation, address, success, error } = userLocationStore();
     const {t} = useTranslation();
+    const { getUser, data, loading } = userStore();
+
+
     useEffect(() => {
-        if (user?.lat && user?.long) {
-            // OpenStreetMap orqali geokodlash
-            const fetchAddress = async () => {
-                try {
-                    const response = await axios.get(
-                        `https://nominatim.openstreetmap.org/reverse`,
-                        {
-                            params: {
-                                lat: user.lat,
-                                lon: user.long,
-                                format: "json",
-                            },
-                        }
-                    );
-                    const location = response.data.address;
-                    console.log(location)
-                    const formattedAddress =
-                        `${location.city || ""} - ${
-                        location.residential || location.neighbourhood || location.road
-                    } - ${location.house_number || location.neighbourhood || location.road}`;
-                    setAddress(formattedAddress);
-                } catch (error) {
-                    console.error("Geokodlashda xatolik:", error);
-                    setAddress("Manzilni aniqlab bo'lmadi.");
-                }
-            };
-            fetchAddress();
+        if (data?.lat && data?.long) {
+            getLocation(); // Faqat foydalanuvchi joylashuvi bo‘lsa chaqiradi
         }
-    }, [user?.lat, user?.long]);
+    }, [data, getLocation]);
     return (
         <section className='top'>
             <div className="container">

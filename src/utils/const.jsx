@@ -7,7 +7,7 @@ import ShopPage from "../pages/userPages/shop_page/shop_page.jsx";
 import News from "../pages/userPages/news/news.jsx";
 import Profile from "../pages/userPages/profile/profile.jsx";
 import Search from "../pages/userPages/search/search.jsx";
-import Basket from "../pages/userPages/basket/basket.jsx";
+import Basket_bar from "../pages/userPages/basket_bar/basket_bar.jsx";
 
 // USER
 
@@ -16,7 +16,7 @@ export const USER_LOCATION = `${USER_HOME}/user_location`
 export const USER_NEWS = `${USER_HOME}/user_news`
 export const USER_PROFILE = `${USER_HOME}/user_profile`
 export const USER_SEARCH = `${USER_HOME}/user_search`
-export const USER_BASKET = `${USER_HOME}/user_BASKET`
+export const USER_BASKET_BAR = `${USER_HOME}/user_basket_bar`
 export const SHOP_PAGE = `${USER_HOME}/:shop_id`
 
 // SELLER
@@ -51,8 +51,8 @@ export const UserRouters = [
         Path: USER_SEARCH,
     },
     {
-        Component:Basket,
-        Path: USER_BASKET,
+        Component:Basket_bar,
+        Path: USER_BASKET_BAR,
     },
 
 ]

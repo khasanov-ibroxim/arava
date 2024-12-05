@@ -24,7 +24,7 @@ const product = [
     {
         id: 1,
         img_url: Banner,
-        name: "Mol go'shti qovirga",
+        name: "Mol go'shti qovirga sadasd as dasdasdas asdasd",
         price: "720900",
         info: "Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
         category_id: "1",

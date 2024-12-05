@@ -113,8 +113,8 @@ const LocationUser = ({user}) => {
         try {
             console.log(position)
             const res = await $API.patch('/users/profile', {
-                lat: parseFloat(position.lat),
-                long: parseFloat(position.long)
+                lat: parseFloat("60.33333"),
+                long: parseFloat("60.33333")
             }, {
                 params: {
                     user_id,
@@ -136,6 +136,7 @@ const LocationUser = ({user}) => {
             map.flyTo([position.lat, position.long], map.getZoom());
         }
     }, [position]);
+
     useEffect(() => {
         const fetchAddress = async () => {
             try {

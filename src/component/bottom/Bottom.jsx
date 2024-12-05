@@ -8,58 +8,38 @@ import PersonIcon from '@mui/icons-material/Person';
 import foto from '../../assets/img/Ellipse 2.svg'
 import {useTranslation} from "react-i18next";
 import {Link, useLocation, useParams} from "react-router-dom";
-import {USER_HOME, USER_NEWS, USER_PROFILE, USER_SEARCH} from "../../utils/const.jsx";
+import {USER_BASKET_BAR, USER_HOME, USER_NEWS, USER_PROFILE, USER_SEARCH} from "../../utils/const.jsx";
 
 
 export default function Bottom() {
     const {t} = useTranslation();
     const {user_id, language} = useParams()
     const location = useLocation();
-    return (
-        <section className='bottom'>
-            <div className="box-top">
-                <img src={foto} alt=""/>
-                <div className="icon">
-                    <ShoppingBasketIcon/>
-                </div>
-                <p className="last">83 856 UZS</p>
-                <p className="last_savat">{t("bottomBar.basket")}</p>
-            </div>
-            <div className="container">
-                <div className="row">
-                    <div className="col-lg-12">
-                        <div className="page">
-                            <Link to={USER_HOME.replace(":user_id", user_id).replace(":language", language)}
-                                  className={`box ${location.pathname === `/${user_id}/${language}` ? 'active' : ''}`}>
-                                <HomeIcon/>
-                                <p className="bottom">{t("bottomBar.home")}</p>
-                            </Link>
-                            <Link
-                                to={USER_SEARCH.replace(":user_id", user_id).replace(":language", language)}
-                                className={`box ${location.pathname === `/${user_id}/${language}/user_search` ? 'active' : ''}`}
-                                 style={{marginLeft: "14px"}}>
-                                <SearchIcon/>
-                                <p className="bottom">{t("bottomBar.search")}</p>
-                            </Link>
-                            <div className="box" style={{marginRight: "100px"}}>
-                                <p className="bottom"></p>
-                            </div>
-                            <Link
-                                to={USER_NEWS.replace(":user_id", user_id).replace(":language", language)}
-                                className={`box ${location.pathname === `/${user_id}/${language}/user_news` ? 'active' : ''}`}>
-                                <ArticleIcon/>
-                                <p className="bottom">{t("bottomBar.news")}</p>
-                            </Link>
-                            <Link
-                                to={USER_PROFILE.replace(":user_id", user_id).replace(":language", language)}
-                                className={`box ${location.pathname === `/${user_id}/${language}/user_profile` ? 'active' : ''}`}>
-                                <PersonIcon/>
-                                <p className="bottom">{t("bottomBar.profile")}</p>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    )
+    return (<>
+        <footer>
+            <Link
+                  to={USER_HOME.replace(":user_id", user_id).replace(":language", language)}
+                  className={`footer_item ${location.pathname === `/${user_id}/${language}` ? 'active' : ''}`}
+            >
+                <HomeIcon/>
+                <p>Marketplace</p>
+            </Link>
+            <Link
+
+                to={USER_BASKET_BAR.replace(":user_id", user_id).replace(":language", language)}
+                className={`footer_item ${location.pathname === `/${user_id}/${language}/user_basket_bar` ? 'active' : ''}`}
+            >
+                <ShoppingBasketIcon/>
+                <p>Basket</p>
+            </Link>
+            <Link
+
+                  to={USER_PROFILE.replace(":user_id", user_id).replace(":language", language)}
+                  className={`footer_item ${location.pathname === `/${user_id}/${language}/user_profile` ? 'active' : ''}`}
+            >
+                <PersonIcon/>
+               <p>Profile</p>
+            </Link>
+        </footer>
+    </>)
 }
