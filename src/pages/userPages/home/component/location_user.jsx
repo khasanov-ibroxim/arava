@@ -4,7 +4,7 @@ import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import uzbekistan from './uzbekistan.json';
-import "./location_user.css"
+import "./location_user.css";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NearMeIcon from '@mui/icons-material/NearMe';
 import {Link, useParams} from "react-router-dom";
@@ -12,8 +12,6 @@ import {USER_HOME} from "../../../../utils/const.jsx";
 import {$API} from "../../../../utils/http.jsx";
 import {useTranslation} from "react-i18next";
 import {message} from "antd";
-import zIndex from "@mui/material/styles/zIndex.js";
-
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
@@ -40,7 +38,6 @@ const LocationUser = ({user}) => {
     const [clicked, setClicked] = useState(false);
     const mapRef = useRef(null);
     const {t} = useTranslation();
-
 
     const tashkentRegion = uzbekistan.features.find(
         (feature) => feature.properties.ADM1_EN === 'Tashkent city'
@@ -78,8 +75,8 @@ const LocationUser = ({user}) => {
             format: "json",
             addressdetails: 1,
             polygon_geojson: 0,
-            countrycodes: "UZ", // O‘zbekistonni cheklash
-            bounded: 1, // Qidiruvni bounding box bilan cheklash
+            countrycodes: "UZ",
+            bounded: 1,
             viewbox: "55.208748,45.588097,73.148606,37.182116",
         };
         const queryString = new URLSearchParams(params).toString();
@@ -106,14 +103,31 @@ const LocationUser = ({user}) => {
             long: parseFloat(place.lon),
         });
         setClicked(true);
-        setSearchResults([])
+        setSearchResults([]);
         setShowBottomBar(true);
+    };
 
+    const handleCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const {latitude, longitude} = pos.coords;
+                    setPosition({lat: latitude, long: longitude});
+                    setShowBottomBar(true);
+                },
+                (err) => {
+                    console.error("Error getting location:", err);
+                    message.error(t("location.error"));
+                }
+            );
+        } else {
+            message.error(t("location.unsupported"));
+        }
     };
 
     const updateLocation = async () => {
         try {
-            console.log(position)
+            console.log(position);
             const res = await $API.patch('/users/profile',
                 {
                     lat: position.lat,
@@ -126,15 +140,15 @@ const LocationUser = ({user}) => {
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     }
-                })
-
+                });
+            console.log(res);
         } catch (e) {
-            console.log(e)
-        }finally {
-            message.success("Manzilingiz o'zgartirildi")
-            setShowBottomBar(false)
+            console.log(e);
+        } finally {
+            message.success("Manzilingiz o'zgartirildi");
+            setShowBottomBar(false);
         }
-    }
+    };
 
     useEffect(() => {
         search();
@@ -155,7 +169,7 @@ const LocationUser = ({user}) => {
                 );
 
                 console.log(res.data);
-                setAddress(res.data.display_name)
+                setAddress(res.data.display_name);
             } catch (error) {
                 console.error('Error fetching address:', error);
             }
@@ -164,7 +178,7 @@ const LocationUser = ({user}) => {
         if (position.lat && position.long) {
             fetchAddress();
         }
-    }, [position]); // `position` o‘zgarganida qayta ishga tushadi
+    }, [position]);
 
     return (
         <div className={"user_map_box"}>
@@ -180,7 +194,7 @@ const LocationUser = ({user}) => {
                         onChange={(e) => setSearchText(e.target.value)}
                         placeholder={t("location.search")}
                     />
-                    <NearMeIcon/>
+                    <NearMeIcon onClick={handleCurrentLocation}/>
                 </div>
 
                 {searchResults.length > 0 && (
@@ -189,6 +203,7 @@ const LocationUser = ({user}) => {
                             <li
                                 style={{cursor: 'pointer', margin: '5px 0'}}
                                 onClick={() => handleSearchSelect(place)}
+                                key={index}
                             >
                                 {place.display_name}
                             </li>
@@ -202,12 +217,12 @@ const LocationUser = ({user}) => {
                     <button onClick={updateLocation}>{t("location.save")}</button>
                 </div>
             )}
+
             <MapContainer
                 ref={mapRef}
                 center={[position.lat, position.long]}
                 zoom={15}
                 className={"user_map"}
-
             >
                 <TileLayer
                     url={'https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'}

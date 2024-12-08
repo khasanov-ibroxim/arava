@@ -24,7 +24,7 @@ import Banner3 from "../../../assets/img/Group 18.svg"
 import product1 from "../../../assets/img/Group 18.svg"
 import {SHOP_PAGE} from "../../../utils/const.jsx";
 import {$API} from "../../../utils/http.jsx";
-import {shopStore} from "../../../zustand/shopStore.jsx";
+import {homeBannerStore, homeCategoryStore, shopStore} from "../../../zustand/shopStore.jsx";
 
 const shop_item = [
     {
@@ -74,6 +74,8 @@ const UserHome = ({user}) => {
     const [shopLayout, setShopLayout] = useState(false);
     const [shopList , setShopList] = useState([])
     const { getShop, data, loading } = shopStore();
+    const {getBanner , data_banner} = homeBannerStore()
+    const {getCategory , data_category} = homeCategoryStore()
     const [activeIndex, setActiveIndex] = useState(0); // Track active slide index
 
     const handleSlideClick = (index) => {
@@ -82,8 +84,12 @@ const UserHome = ({user}) => {
     useEffect(() => {
         if (!data) { // Agar ma'lumot yo'q bo'lsa, API chaqiradi
             getShop();
+            getBanner();
+            getCategory()
         }
     }, [data, getShop]);
+
+    console.log(data_category)
     return (
         <>
             <Top user={user} user_id={user_id}/>
@@ -114,42 +120,24 @@ const UserHome = ({user}) => {
                                     grabCursor={true}
                                     spaceBetween={0} // Remove space between slides
                                     slidesPerView={2.5}
-                                    loop={false} // Loop slides for continuous scrolling
-                                    touchRatio={1} // Make it easier to swipe on mobile
-                                    resistanceRatio={0.5} // Adjust resistance on mobile
+                                    loop={false} // Disable looping
+                                    touchRatio={1} // Make it easier to swipe
+                                    resistanceRatio={0.5} // Adjust swipe resistance
                                     speed={600} // Speed of the slide transition
+                                    onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Track active slide index
                                 >
-                                    <SwiperSlide
-                                        className={activeIndex === 0 ? "active" : ""}
-                                        onClick={() => handleSlideClick(0)}
-                                    >
-                                        <LocalGroceryStoreRoundedIcon /> Supermarket
-                                    </SwiperSlide>
-                                    <SwiperSlide
-                                        className={activeIndex === 2 ? "active" : ""}
-                                        onClick={() => handleSlideClick(2)}
-                                    >
-                                        <LocalGroceryStoreRoundedIcon /> Supermarket
-                                    </SwiperSlide>
-                                    <SwiperSlide
-                                        className={activeIndex === 3 ? "active" : ""}
-                                        onClick={() => handleSlideClick(3)}
-                                    >
-                                        <LocalGroceryStoreRoundedIcon /> Supermarket
-                                    </SwiperSlide>
-                                    <SwiperSlide
-                                        className={activeIndex === 4 ? "active" : ""}
-                                        onClick={() => handleSlideClick(4)}
-                                    >
-                                        <LocalGroceryStoreRoundedIcon /> Supermarket
-                                    </SwiperSlide>
-                                    <SwiperSlide
-                                        className={activeIndex === 5 ? "active" : ""}
-                                        onClick={() => handleSlideClick(5)}
-                                    >
-                                        <LocalGroceryStoreRoundedIcon /> Supermarket
-                                    </SwiperSlide>
+                                    {data_category.length > 0 &&
+                                        data_category.map((cat, index) => (
+                                            <SwiperSlide
+                                                key={index}
+                                                className={activeIndex === index ? "active" : ""} // Apply 'active' class to the correct slide
+                                                onClick={() => handleSlideClick(index)} // Set active index on click
+                                            >
+                                                {cat.name}
+                                            </SwiperSlide>
+                                        ))}
                                 </Swiper>
+
                             </div>
                         </div>
                     </div>
