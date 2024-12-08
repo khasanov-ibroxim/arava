@@ -24,3 +24,11 @@ export const shopStore = create(devtools((set, get) => ({
         }
     }
 })))
+
+
+const shopSingleStoreState = {
+
+}
+export const shopSingleStore = create((set, get) => ({
+
+}))

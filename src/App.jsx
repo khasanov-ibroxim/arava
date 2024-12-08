@@ -10,6 +10,8 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import Bottom from "./component/bottom/Bottom.jsx";
 import { userStore } from "./zustand/userStore.jsx";
+import Loading from "./component/loading/loading.jsx";
+import Error_loading from "./component/loading/error_loading.jsx";
 
 const AppContent = () => {
     const tg = window.Telegram.WebApp;
@@ -28,8 +30,9 @@ const AppContent = () => {
         getUser();
     }, [tg, getUser]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error loading user data</div>;
+    if (loading) return <Loading/>;
+    if (error) return <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
+                                     error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"} refresh={true}/>;
 
     return (
         <Routes>

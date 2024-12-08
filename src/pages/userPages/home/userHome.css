@@ -28,31 +28,33 @@ section.user .product img {
 }
 
 
-section.user .product button {
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    font-size: 10px;
-    line-height: 13px;
-    font-weight: 600;
-    color: white;
-    padding: 3px 15px;
-    border: none;
-    background: rgba(66, 146, 46, 1);
-    border-radius: 10px;
+
+
+
+.btn-button {
+    width: 100%;
+    margin: 10px 0;/* Ensure the swiper takes full width */
 }
 
-section.user .btn-button {
-    padding: 15px 0px;
-    /*display: flex;*/
-    /*align-items: center;*/
-    /*justify-content: space-between;*/
-}
+/*.swiper-container {*/
+/*    overflow: hidden; !* Prevents unwanted scrollbars *!*/
+/*}*/
+
+/*.swiper-slide {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    padding: 0.5rem;  !* Adjust padding to avoid extra spaces *!*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+
 
 .btn-button .swiper-slide {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    padding: 0 5px 0 0;
     /*width: 110px !important;*/
     height: 50px;
     overflow: hidden;
@@ -61,11 +63,8 @@ section.user .btn-button {
     font-weight: 400;
     font-size: 12px;
     line-height: 20px;
-    padding: 0 10px;
     border-radius: 15px;
     color: rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    margin-right: 20px !important;
 
 }
 
@@ -73,14 +72,13 @@ section.user .btn-button {
     margin-right: 5px;
 }
 
-section.user .btn-button .swiper-slide:hover {
+section.user .btn-button .swiper-slide.active {
     cursor: pointer;
     transition: .3s;
     background: rgba(61, 67, 207, 1);
     color: white;
-    border: none;
+    border: 1px solid rgba(0, 0, 0, 0.4);
 }
-
 
 section.user .icon {
     position: fixed;
@@ -159,7 +157,7 @@ section.user .product_item-bottom p.bottom-left span.two {
 }
 
 section.user .product_item-bottom p.bottom-right {
-    font-size: 16px;
+    font-size: 0.8rem;
     line-height: 26px;
     font-weight: 600;
     color: rgba(213, 32, 47, 1);

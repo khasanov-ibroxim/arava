@@ -2,6 +2,8 @@ import {create} from "zustand";
 import {$API} from "../utils/http.jsx";
 import {devtools} from "zustand/middleware";
 import axios from "axios";
+import {message} from "antd";
+import {USER_LOCATION} from "../utils/const.jsx";
 
 const hashParts = window.location.hash.split("/");
 const userId = parseInt(hashParts[1], 10); // Specify radix
@@ -24,12 +26,34 @@ export const userStore = create(devtools((set) => ({
                     user_id: userId,
                 },
             });
+            console.log(res)
             set({...initialState, loading: false, success: true, data: res.data});
         } catch (err) {
             console.error("Error in data fetch:", err);
             set({...initialState, error: true, errorData: err.message});
         }
     },
+
+
+    updateUser: async (user) => {
+        console.log(user)
+        try {
+            const res = await $API.patch('/users/profile', user , {
+                params:{
+                    user_id:parseInt(userId)
+                },
+                headers:{
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            })
+            console.log(res)
+            }catch(err) {
+            console.error("Error in data fetch:", err);
+
+        }
+    }
+
+
 })));
 
 const userAddress = {

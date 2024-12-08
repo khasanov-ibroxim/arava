@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "./shop_page.css";
@@ -11,6 +11,7 @@ import { USER_HOME } from "../../../utils/const.jsx";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import infoIcon from "../../../assets/icons/info.png";
 
 const category = [
     { id: 1, category_name: "Go'sht" },
@@ -38,7 +39,7 @@ const product = [
         category_id: "1",
     },
     {
-        id: 2,
+        id: 120,
         img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Go'sht",
         price: "72900",
@@ -46,7 +47,7 @@ const product = [
         category_id: "1",
     },
     {
-        id: 2,
+        id: 4,
         img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Go'sht",
         price: "72900",
@@ -54,7 +55,7 @@ const product = [
         category_id: "1",
     },
     {
-        id: 3,
+        id: 5,
         img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Tuxum",
         price: "25000",
@@ -62,7 +63,7 @@ const product = [
         category_id: "2",
     },
     {
-        id: 3,
+        id: 6,
         img_url: "https://yukber.uz/image/cache/catalog/product/YK1712/YK1712-600x600.jpg",
         name: "Tuxum",
         price: "25000",
@@ -72,37 +73,47 @@ const product = [
 ];
 
 const ShopPage = () => {
-    const [products] = useState(product);
     const { user_id, language } = useParams();
     const categoryRefs = useRef([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const modalRef = useRef(null);
+    const [activeIndex, setActiveIndex] = useState(null); // Track active slide index
 
-    // Individual states for save and calc (quantity)
     const [saveStatus, setSaveStatus] = useState({});
-    const [productQuantity, setProductQuantity] = useState({});
+    const [productQuantity, setProductQuantity] = useState([]);
 
-    const scrollToCategory = (id) => {
-        const targetRef = categoryRefs.current[id];
+    useEffect(() => {
+        // Load saved cart from localStorage on mount
+        const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+        setProductQuantity(savedCart);
+    }, []);
+
+    useEffect(() => {
+        // Save cart to localStorage whenever productQuantity changes
+        if (productQuantity.length > 0) {
+            localStorage.setItem("cart", JSON.stringify(productQuantity));
+        }
+    }, [productQuantity]);
+
+    const scrollToCategory = (index) => {
+        const targetRef = categoryRefs.current[index];
         if (targetRef) {
             targetRef.scrollIntoView({ behavior: "smooth", block: "start" });
         }
+        setActiveIndex(parseInt(index));
     };
 
-    // Open modal with selected product
     const openModal = (product) => {
         setSelectedProduct(product);
         setModalOpen(true);
     };
 
-    // Close modal function
     const closeModal = () => {
         setModalOpen(false);
         setSelectedProduct(null);
     };
 
-    // Save functionality for each product
     const toggleSave = (productId) => {
         setSaveStatus((prev) => ({
             ...prev,
@@ -110,15 +121,38 @@ const ShopPage = () => {
         }));
     };
 
-    // Update quantity for each product
-    const updateQuantity = (productId, action) => {
-        setProductQuantity((prev) => {
-            const currentQty = prev[productId] || 1; // Default quantity is 1
-            const newQty =
-                action === "increment" ? currentQty + 1 : Math.max(1, currentQty - 1); // Minimum is 1
-            return { ...prev, [productId]: newQty };
-        });
+    const updateQuantity = (product, action) => {
+        setSelectedProduct(product);
+
+        if (selectedProduct) {
+            setProductQuantity((prev) => {
+                const existingProduct = prev.find((item) => item.product_id === product.id);
+                const newQuantity =
+                    action === "increment"
+                        ? existingProduct
+                            ? existingProduct.count + 1
+                            : 1  // Start count at 1 when adding a new product
+                        : existingProduct
+                            ? Math.max(1, existingProduct.count - 1)
+                            : 1; // Ensure count doesn't go below 1
+
+                if (existingProduct) {
+                    return prev.map((item) =>
+                        item.product_id === product.id
+                            ? { ...item, count: newQuantity, price_product: selectedProduct.price }
+                            : item
+                    );
+                }
+
+                // Otherwise, add a new product to the cart
+                return [
+                    ...prev,
+                    { product_id: product.id, count: newQuantity, price_product: selectedProduct.price },
+                ];
+            });
+        }
     };
+
 
     const numberFormatter = (number) => {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -136,12 +170,7 @@ const ShopPage = () => {
                 <h1 className="shop_name">SHOP NAME</h1>
             </div>
             <div className="shop_banner container">
-                <Swiper
-                    className="product_slider"
-                    grabCursor={true}
-                    spaceBetween={20}
-                    slidesPerView={1.1}
-                >
+                <Swiper className="product_slider" grabCursor={true} spaceBetween={20} slidesPerView={1.1}>
                     <SwiperSlide>
                         <img src={Banner} alt="Banner 1" />
                     </SwiperSlide>
@@ -156,66 +185,68 @@ const ShopPage = () => {
                 <Swiper
                     className="btn-button"
                     grabCursor={true}
-                    spaceBetween={20}
+                    spaceBetween={0} // Remove space between slides
                     slidesPerView={2.5}
+                    loop={false} // Loop slides for continuous scrolling
+                    touchRatio={1} // Make it easier to swipe on mobile
+                    resistanceRatio={0.5} // Adjust resistance on mobile
+                    speed={600} // Speed of the slide transition
+                    onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Update activeIndex when slide changes
                 >
-                    {category.map((cat,index) => (
-                        <SwiperSlide key={index} onClick={() => scrollToCategory(index)}>
-                            <LocalGroceryStoreRoundedIcon/>
+                    {category.map((cat, index) => (
+                        <SwiperSlide
+                            key={index}
+                            className={activeIndex === index ? "active" : ""}
+                            onClick={() => scrollToCategory(index)} // When clicked, scroll to category
+                        >
+                            <LocalGroceryStoreRoundedIcon />
                             {cat.category_name}
                         </SwiperSlide>
                     ))}
                 </Swiper>
 
-        </div>
+            </div>
 
-            {/* Categories */}
             <div className="category_section container">
                 {category
-                    .filter((cat) =>
-                        products.some((product) => product.category_id === cat.id.toString())
-                    )
+                    .filter((cat) => product.some((product) => product.category_id === cat.id.toString()))
                     .map((cat, index) => (
-                        <div
-                            key={index}
-                            className="category_block"
-                            ref={(el) => (categoryRefs.current[index] = el)}
-                        >
+                        <div key={index} className="category_block" ref={(el) => (categoryRefs.current[index] = el)}>
                             <h2 className="category_title">
                                 <LocalGroceryStoreRoundedIcon />
                                 {cat.category_name}
                             </h2>
                             <div className="product_row">
-                                {products
+                                {product
                                     .filter((product) => product.category_id === cat.id.toString())
                                     .map((product) => (
                                         <div
                                             key={product.id}
                                             className="shop_product_card"
-                                            onClick={() => openModal(product)}
+                                            onClick={() => updateQuantity(product, "increment")}
                                         >
+                                            {productQuantity.some((item) => item.product_id === product.id) && (
+                                                <p className={"shop_product_count"}>
+                                                    {productQuantity.find((item) => item.product_id === product.id).count}
+                                                </p>
+                                            )}
+                                            <img src={infoIcon} onClick={() => openModal(product)} className={"product_info_icon"} />
                                             <img src={product?.img_url} alt="" />
                                             <div className="shop_product_text">
-
                                                 <h3>{product.name}</h3>
-                                                <div className="product_count">
-                                                    300 sa
-                                                </div>
-                                                <p className="product_price">
-                                                    {numberFormatter(product.price)} so'm
-                                                </p>
+                                                <div className="product_count">300 sa</div>
+                                                <p className="product_price">{numberFormatter(product.price)} so'm</p>
                                             </div>
                                         </div>
                                     ))}
                             </div>
                         </div>
                     ))}
-
             </div>
 
             {/* Modal */}
             {modalOpen && selectedProduct && (
-                <div className={`shop_modal open`}>
+                <div className={"shop_modal open"}>
                     <div className="modal_content open" ref={modalRef}>
                         <div className="modal_item">
                             <img
@@ -237,23 +268,23 @@ const ShopPage = () => {
                             onClick={() => toggleSave(selectedProduct.id)}
                             className={`modal_save ${saveStatus[selectedProduct.id] ? "saved" : ""}`}
                         >
-                            <FavoriteIcon />
+                            <FavoriteIcon/>
                         </button>
 
                         <div className="modal_buy">
                             <div className="modal_calc">
                                 <button
-                                    onClick={() => updateQuantity(selectedProduct.id, "decrement")}
+                                    onClick={() => updateQuantity(selectedProduct, "decrement")}
                                 >
                                     -
                                 </button>
-                                <input
-                                    type="number"
-                                    readOnly
-                                    value={productQuantity[selectedProduct.id] || 1}
-                                />
+                                {productQuantity.some((item) => item.product_id === selectedProduct.id) && (
+                                    <p className={""}>
+                                        {productQuantity.find((item) => item.product_id === selectedProduct.id).count}
+                                    </p>
+                                )}
                                 <button
-                                    onClick={() => updateQuantity(selectedProduct.id, "increment")}
+                                    onClick={() => updateQuantity(selectedProduct, "increment")}
                                 >
                                     +
                                 </button>
@@ -263,6 +294,7 @@ const ShopPage = () => {
                     </div>
                 </div>
             )}
+
         </section>
     );
 };

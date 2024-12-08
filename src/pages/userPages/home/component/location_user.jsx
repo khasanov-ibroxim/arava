@@ -11,6 +11,8 @@ import {Link, useParams} from "react-router-dom";
 import {USER_HOME} from "../../../../utils/const.jsx";
 import {$API} from "../../../../utils/http.jsx";
 import {useTranslation} from "react-i18next";
+import {message} from "antd";
+import zIndex from "@mui/material/styles/zIndex.js";
 
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
@@ -112,17 +114,25 @@ const LocationUser = ({user}) => {
     const updateLocation = async () => {
         try {
             console.log(position)
-            const res = await $API.patch('/users/profile', {
-                lat: parseFloat("60.33333"),
-                long: parseFloat("60.33333")
-            }, {
-                params: {
-                    user_id,
-                }
-            })
-            console.log(res)
+            const res = await $API.patch('/users/profile',
+                {
+                    lat: position.lat,
+                    long: position.long
+                },
+                {
+                    params: {
+                        user_id: parseInt(user_id),
+                    },
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                })
+
         } catch (e) {
             console.log(e)
+        }finally {
+            message.success("Manzilingiz o'zgartirildi")
+            setShowBottomBar(false)
         }
     }
 

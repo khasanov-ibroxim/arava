@@ -1,0 +1,21 @@
+.back-button{
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-button_icon {
+    background: #3D43CF;
+    padding: 10px 15px;
+    font-size: 25px;
+    border-radius: 10px;
+    color: #fff;
+    text-decoration: none;
+}
+.back-button_icon:hover{
+    background: #555dff;
+}
+.back-button_text{
+    font-size: 20px;
+}

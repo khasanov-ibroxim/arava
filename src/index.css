@@ -32,3 +32,7 @@
     outline: none;
     /*background-color: transparent; !* Ensures no background color change *!*/
 }
+
+.ant-message{
+    z-index: 9999;
+}

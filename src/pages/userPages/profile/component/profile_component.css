@@ -1,0 +1,47 @@
+.personal_user_box{
+    margin-top: 20px;
+    width: 100%;
+}
+.personal_user_item{
+    margin: 20px 0;
+    width: 100%;
+}
+.personal_user_item input{
+    height: 40px;
+}
+.personal_user_item p{
+    font-size: 20px;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+.personal_user_send{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+.personal_user_send button{
+    background: #3D43CF;
+    color: #fff;
+    padding: 25px 0;
+    width: 60%;
+    border-radius: 15px;
+    outline: none;
+    font-weight: 600;
+    border: 1px solid #3D43CF;
+}
+
+.personal_user_item button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #3D43CF;
+    color: #fff;
+    padding: 10px 0;
+    width: 100%;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    font-weight: 600;
+    text-decoration: none;
+}

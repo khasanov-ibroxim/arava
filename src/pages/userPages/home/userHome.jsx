@@ -74,7 +74,11 @@ const UserHome = ({user}) => {
     const [shopLayout, setShopLayout] = useState(false);
     const [shopList , setShopList] = useState([])
     const { getShop, data, loading } = shopStore();
+    const [activeIndex, setActiveIndex] = useState(0); // Track active slide index
 
+    const handleSlideClick = (index) => {
+        setActiveIndex(index); // Set active slide index
+    };
     useEffect(() => {
         if (!data) { // Agar ma'lumot yo'q bo'lsa, API chaqiradi
             getShop();
@@ -107,19 +111,44 @@ const UserHome = ({user}) => {
                             <div>
                                 <Swiper
                                     className="btn-button"
-                                    // install Swiper modules
-                                    // modules={[ A11y ]}
                                     grabCursor={true}
-                                    spaceBetween={20}
+                                    spaceBetween={0} // Remove space between slides
                                     slidesPerView={2.5}
+                                    loop={false} // Loop slides for continuous scrolling
+                                    touchRatio={1} // Make it easier to swipe on mobile
+                                    resistanceRatio={0.5} // Adjust resistance on mobile
+                                    speed={600} // Speed of the slide transition
                                 >
-                                    <SwiperSlide> <LocalGroceryStoreRoundedIcon/>Supermarket</SwiperSlide>
-                                    <SwiperSlide><LocalDiningRoundedIcon/>Restoranlar</SwiperSlide>
-                                    <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
-                                    <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
-                                    <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
-                                    <SwiperSlide><AddRoundedIcon/> Dorixona12</SwiperSlide>
-                                    <SwiperSlide><AddRoundedIcon/> Dorixona1</SwiperSlide>
+                                    <SwiperSlide
+                                        className={activeIndex === 0 ? "active" : ""}
+                                        onClick={() => handleSlideClick(0)}
+                                    >
+                                        <LocalGroceryStoreRoundedIcon /> Supermarket
+                                    </SwiperSlide>
+                                    <SwiperSlide
+                                        className={activeIndex === 2 ? "active" : ""}
+                                        onClick={() => handleSlideClick(2)}
+                                    >
+                                        <LocalGroceryStoreRoundedIcon /> Supermarket
+                                    </SwiperSlide>
+                                    <SwiperSlide
+                                        className={activeIndex === 3 ? "active" : ""}
+                                        onClick={() => handleSlideClick(3)}
+                                    >
+                                        <LocalGroceryStoreRoundedIcon /> Supermarket
+                                    </SwiperSlide>
+                                    <SwiperSlide
+                                        className={activeIndex === 4 ? "active" : ""}
+                                        onClick={() => handleSlideClick(4)}
+                                    >
+                                        <LocalGroceryStoreRoundedIcon /> Supermarket
+                                    </SwiperSlide>
+                                    <SwiperSlide
+                                        className={activeIndex === 5 ? "active" : ""}
+                                        onClick={() => handleSlideClick(5)}
+                                    >
+                                        <LocalGroceryStoreRoundedIcon /> Supermarket
+                                    </SwiperSlide>
                                 </Swiper>
                             </div>
                         </div>
