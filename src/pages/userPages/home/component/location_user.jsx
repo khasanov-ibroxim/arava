@@ -12,6 +12,7 @@ import {USER_HOME} from "../../../../utils/const.jsx";
 import {$API} from "../../../../utils/http.jsx";
 import {useTranslation} from "react-i18next";
 import {message} from "antd";
+import {userStore} from "../../../../zustand/userStore.jsx";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
@@ -26,6 +27,7 @@ const customMarkerIcon = new L.Icon({
 
 const LocationUser = ({user}) => {
     const {username, isMarket} = user;
+    const {getUser} = userStore()
     const [showBottomBar, setShowBottomBar] = useState(false);
     const [address, setAddress] = useState('');
     const {user_id, language} = useParams();
@@ -146,6 +148,7 @@ const LocationUser = ({user}) => {
             console.log(e);
         } finally {
             message.success("Manzilingiz o'zgartirildi");
+            getUser()
             setShowBottomBar(false);
         }
     };

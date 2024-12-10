@@ -1,13 +1,24 @@
 import React from 'react';
 import "./basket.css"
-const Basket_bar = () => {
+import {Swiper, SwiperSlide} from "swiper/react";
+const Basket_bar = ({active_shop_id}) => {
     return (
         <div className="basket_box">
-            <div className="basket_item">
-                <div className="basket_img"></div>
-                <div className="basket_text"></div>
-                <div className="basket_count"></div>
-            </div>
+            <Swiper
+                className="btn-button"
+                grabCursor={true}
+                spaceBetween={5}
+                slidesPerView={2.5}
+                loop={false}
+                touchRatio={1}
+                resistanceRatio={0.5}
+                speed={600}
+            >
+                    <SwiperSlide>
+                     sadsad
+                    </SwiperSlide>
+
+            </Swiper>
         </div>
     );
 };

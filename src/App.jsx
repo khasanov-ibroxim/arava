@@ -44,7 +44,8 @@ const AppContent = () => {
                     ) : user?.status === "seller" ? (
                         <SellerHome user={user} />
                     ) : (
-                        <div>Not Found</div>
+                        <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
+                                       error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"} refresh={true}/>
                     )
                 }
             />
