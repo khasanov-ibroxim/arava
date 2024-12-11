@@ -1,179 +1,213 @@
-import {create} from "zustand";
-import {devtools} from "zustand/middleware";
-import {$API} from "../utils/http.jsx";
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import { $API } from "../utils/http.jsx";
 
-const initialState = {
+// Generic error handler for stores
+const createErrorHandler = (storeName) => (err) => {
+    console.error(`Error in ${storeName}:`, err);
+    return {
+        error: true,
+        errorData: err.response?.data?.message || err.message || "Unknown error"
+    };
+};
+
+// Shared initial state template
+const createInitialState = (dataKey = 'data') => ({
     loading: false,
     success: false,
     error: false,
-    data: null,
-    shop_photo: [],
-    errorData: null,
-}
+    [dataKey]: [],
+    errorData: null
+});
 
-export const shopStore = create(devtools((set, get) => ({
-    ...initialState,
+// Shop Store
+export const shopStore = create(devtools((set) => ({
+    ...createInitialState('data'),
     getShop: async () => {
-        set({...initialState, loading: true});
+        set(state => ({ ...state, loading: true, error: false }));
         try {
-            const res = await $API.get('/shop')
-            set({...initialState, loading: false, success: true, data: res.data});
-            console.log(res)
+            const res = await $API.get('/shop');
+            set(state => ({
+                ...state,
+                loading: false,
+                success: true,
+                data: res.data || [],
+                error: false
+            }));
         } catch (err) {
-            console.error("Error in data fetch:", err);
-            set({...initialState, error: true, errorData: err.message});
+            const errorHandler = createErrorHandler('shopStore');
+            set(state => ({
+                ...state,
+                ...errorHandler(err),
+                loading: false
+            }));
         }
     },
-})))
+})));
 
-
-const shopSingleState = {
-    loading: false,
-    success: false,
-    error: false,
-    data_shop: null,
-    shop_photo: [],
-    errorData: null,
-}
-
-export const shopSingleStore = create(devtools((set, get) => ({
-    ...shopSingleState,
+// Single Shop Store
+export const shopSingleStore = create(devtools((set) => ({
+    ...createInitialState('data_shop'),
     getSingleShop: async (shop_id) => {
-        set({...shopSingleState, loading: true});
+        if (!shop_id) return;
+
+        set(state => ({ ...state, loading: true, error: false }));
         try {
             const res = await $API.get('/shop/detail', {
-                params: {
-                    shop_id: shop_id,
-                }
-            })
-            set({...shopSingleState, loading: false, success: true, data_shop: res.data});
-            console.log(res)
+                params: { shop_id: Number(shop_id) }
+            });
+            set(state => ({
+                ...state,
+                loading: false,
+                success: true,
+                data_shop: res.data,
+                error: false
+            }));
         } catch (err) {
-            console.error("Error in data fetch:", err);
-            set({...shopSingleState, error: true, errorData: err.message});
+            const errorHandler = createErrorHandler('shopSingleStore');
+            set(state => ({
+                ...state,
+                ...errorHandler(err),
+
+                loading: false
+            }));
         }
     },
-})))
+})));
 
-const HomeBannerState = {
-    loading: false,
-    success: false,
-    error: false,
-    data_banner: [],
-
-}
-export const homeBannerStore = create((set, get) => ({
-    ...HomeBannerState,
+// Home Banner Store
+export const homeBannerStore = create(devtools((set) => ({
+    ...createInitialState('data_banner'),
     getBanner: async () => {
-        set({...HomeBannerState, loading: true});
+        set(state => ({ ...state, loading: true, error: false }));
         try {
-            const res = await $API.get('/banners')
-
-            set({...HomeBannerState, loading: false, success: true, data_banner: res.data.photos});
+            const res = await $API.get('/banners');
+            set(state => ({
+                ...state,
+                loading: false,
+                success: true,
+                data_banner: res.data?.photos || [],
+                error: false
+            }));
         } catch (err) {
-            console.log(err)
-            set({...HomeBannerState, error: true});
+            const errorHandler = createErrorHandler('homeBannerStore');
+            set(state => ({
+                ...state,
+                ...errorHandler(err),
+                loading: false
+            }));
         }
     }
-}))
+})));
 
-
-const HomeCategoryState = {
-    loading: false,
-    success: false,
-    error: false,
-    data_category: [],
-
-}
-export const homeCategoryStore = create((set, get) => ({
-    ...HomeCategoryState,
+// Home Category Store
+export const homeCategoryStore = create(devtools((set) => ({
+    ...createInitialState('data_category'),
     getCategory: async () => {
-        set({...HomeCategoryState, loading: true});
+        set(state => ({ ...state, loading: true, error: false }));
         try {
-            const res = await $API.get('/shop-category')
-            set({...HomeCategoryState, loading: false, success: true, data_category: res.data});
+            const res = await $API.get('/shop-category');
+            set(state => ({
+                ...state,
+                loading: false,
+                success: true,
+                data_category: res.data || [],
+                error: false
+            }));
         } catch (err) {
-            console.log(err)
-            set({...HomeCategoryState, error: true});
+            const errorHandler = createErrorHandler('homeCategoryStore');
+            set(state => ({
+                ...state,
+                ...errorHandler(err),
+                loading: false
+            }));
         }
     }
-}))
+})));
 
-const ShopBannerState = {
-    loading: false,
-    success: false,
-    error: false,
-    data_banner: [],
-
-}
-export const shopBannerStore = create((set, get) => ({
-    ...ShopBannerState,
+// Shop Banner Store
+export const shopBannerStore = create(devtools((set) => ({
+    ...createInitialState('data_banner'),
     getBanner: async (shop_id) => {
-        set({...ShopBannerState, loading: true});
+        if (!shop_id) return;
+
+        set(state => ({ ...state, loading: true, error: false }));
         try {
             const res = await $API.get('/shop/photos', {
-                params: {
-                    shop_id: parseInt(shop_id),
-                }
-            })
-            set({...ShopBannerState, loading: false, success: true, data_banner: res.data});
+                params: { shop_id: Number(shop_id) }
+            });
+            set(state => ({
+                ...state,
+                loading: false,
+                success: true,
+                data_banner: res.data || [],
+                error: false
+            }));
         } catch (err) {
-            console.log(err)
-            set({...ShopBannerState, error: true});
+            const errorHandler = createErrorHandler('shopBannerStore');
+            set(state => ({
+                ...state,
+                ...errorHandler(err),
+                loading: false
+            }));
         }
     }
-}))
+})));
 
-
-const ShopCategoryState = {
-    loading: false,
-    success: false,
-    error: false,
-    data_category: [],
-
-}
-export const shopCategoryStore = create((set, get) => ({
-    ...ShopCategoryState,
+// Shop Category Store
+export const shopCategoryStore = create(devtools((set) => ({
+    ...createInitialState('data_category'),
     getCategory: async (shop_id) => {
-        set({...ShopCategoryState, loading: true});
+        if (!shop_id) return;
+
+        set(state => ({ ...state, loading: true, error: false }));
         try {
             const res = await $API.get('/category/from-shop', {
-                params: {
-                    shop_id: parseInt(shop_id),
-                }
-            })
-            console.log(res)
-            set({...ShopCategoryState, loading: false, success: true, data_category: res.data});
+                params: { shop_id: Number(shop_id) }
+            });
+            set(state => ({
+                ...state,
+                loading: false,
+                success: true,
+                data_category: res.data || [],
+                error: false
+            }));
         } catch (err) {
-            console.log(err)
-            set({...ShopCategoryState, error: true});
+            const errorHandler = createErrorHandler('shopCategoryStore');
+            set(state => ({
+                ...state,
+                ...errorHandler(err),
+                loading: false
+            }));
         }
     }
-}))
+})));
 
-
-const ProductByShopState = {
-    loading: false,
-    success: false,
-    error: false,
-    data_product: [],
-
-}
-export const productByShopStore = create((set, get) => ({
-    ...ProductByShopState,
+// Product By Shop Store
+export const productByShopStore = create(devtools((set) => ({
+    ...createInitialState('data_product'),
     getProductByShop: async (shop_id) => {
-        set({...ProductByShopState, loading: true});
+        if (!shop_id) return;
+
+        set(state => ({ ...state, loading: true, error: false }));
         try {
             const res = await $API.get('/products/from-shop', {
-                params: {
-                    shop_id: parseInt(shop_id),
-                }
-            })
-            console.log(res)
-            set({...ProductByShopState, loading: false, success: true, data_product: res.data});
+                params: { shop_id: Number(shop_id) }
+            });
+            set(state => ({
+                ...state,
+                loading: false,
+                success: true,
+                data_product: res.data || [],
+                error: false
+            }));
         } catch (err) {
-            console.log(err)
-            set({...ProductByShopState, error: true});
+            const errorHandler = createErrorHandler('productByShopStore');
+            set(state => ({
+                ...state,
+                ...errorHandler(err),
+                loading: false
+            }));
         }
     }
-}))
+})));

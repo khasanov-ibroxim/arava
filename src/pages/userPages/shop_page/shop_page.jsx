@@ -1,15 +1,20 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, useCallback, useMemo} from "react";
 import {Swiper, SwiperSlide} from "swiper/react";
 import "swiper/css";
 import "./shop_page.css";
 import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreRounded";
 import {Link, useParams} from "react-router-dom";
-import {USER_HOME} from "../../../utils/const.jsx";
+import {USER_HOME, USER_SINGLE_BASKET_BAR} from "../../../utils/const.jsx";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import {productByShopStore, shopBannerStore, shopCategoryStore, shopSingleStore} from "../../../zustand/shopStore.jsx";
-import {SingleCartStore} from "../../../zustand/cartsStore.jsx"; // Import the Zustand store
+import {
+    productByShopStore,
+    shopBannerStore,
+    shopCategoryStore,
+    shopSingleStore
+} from "../../../zustand/shopStore.jsx";
+import {SingleCartStore} from "../../../zustand/cartsStore.jsx";
 import infoIcon from "../../../assets/icons/info.png";
 import banner from "../../../assets/img/Group 18.svg";
 
@@ -20,102 +25,101 @@ const ShopPage = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [activeIndex, setActiveIndex] = useState(null);
     const [saveStatus, setSaveStatus] = useState({});
-    const [productQuantity, setProductQuantity] = useState([]);
 
     const {data_banner, getBanner} = shopBannerStore();
     const {getSingleShop, data_shop} = shopSingleStore();
     const {getProductByShop, data_product} = productByShopStore();
     const {getCategory, data_category} = shopCategoryStore();
-    const {createSingleCart, getSingleCartState, single_cart_data} = SingleCartStore(); // Use Zustand actions
+    const {
+        createSingleCart,
+        getSingleCartState,
+        resetCartState,
+        single_cart_data,
+        updateSingleCart
+    } = SingleCartStore();
 
-    useEffect(() => {
-        // Fetch necessary data when shop_id is updated
-        getBanner(shop_id);
-        getSingleShop(shop_id);
-        getProductByShop(shop_id);
-        getCategory(shop_id);
-    }, [shop_id]);
+    const fetchShopData = useCallback(() => {
+        if (shop_id) {
+            getBanner(shop_id);
+            getSingleShop(shop_id);
+            getProductByShop(shop_id);
+            getCategory(shop_id);
+        }
+    }, [shop_id, getBanner, getSingleShop, getProductByShop, getCategory]);
 
-    useEffect(() => {
-        // Fetch cart data on product quantity or shop_id change
+    const fetchCartData = useCallback(() => {
         if (user_id && shop_id) {
-            saveToCart()
             getSingleCartState(shop_id, user_id);
         }
-    }, [productQuantity, shop_id, user_id]);
+    }, [user_id, shop_id, getSingleCartState]);
 
-    const scrollToCategory = (index) => {
+    useEffect(() => {
+        fetchShopData();
+    }, [fetchShopData]);
+
+    useEffect(() => {
+        fetchCartData();
+    }, [fetchCartData]);
+
+    const scrollToCategory = useCallback((index) => {
         const targetRef = categoryRefs.current[index];
         if (targetRef) {
             targetRef.scrollIntoView({behavior: "smooth", block: "start"});
         }
         setActiveIndex(index);
-    };
+    }, []);
 
-    const openModal = (product) => {
+    const openModal = useCallback((product) => {
         setSelectedProduct(product);
         setModalOpen(true);
-    };
+    }, []);
 
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         setModalOpen(false);
         setSelectedProduct(null);
-    };
+    }, []);
 
-    const toggleSave = (productId) => {
+    const toggleSave = useCallback((productId) => {
         setSaveStatus((prev) => ({
             ...prev,
             [productId]: !prev[productId],
         }));
-    };
+    }, []);
 
-    const updateQuantity = (product, action) => {
-        setProductQuantity((prev) => {
-            const existingProduct = prev.find((item) => item.product_id === product.id);
-            const newQuantity =
-                action === "increment"
-                    ? existingProduct
-                        ? existingProduct.count + 1
-                        : 1
-                    : existingProduct && existingProduct.count > 1
-                        ? existingProduct.count - 1
-                        : 1;
+    const updateQuantity = useCallback(async (product, action) => {
+        const cartItem = single_cart_data?.carts?.find((item) => item.product_id === product.id);
+        const currentQuantity = cartItem?.count || 0;
+        const newQuantity = action === "increment" ? currentQuantity + 1 : Math.max(1, currentQuantity - 1);
 
-            if (existingProduct) {
-                return prev.map((item) =>
-                    item.product_id === product.id
-                        ? {...item, count: newQuantity}
-                        : item
-                );
-            }
-
-            return [
-                ...prev,
-                {product_id: product.id, count: newQuantity},
-            ];
-        });
-
-    };
-
-    const saveToCart = async () => {
         try {
-            if (productQuantity.length === 0) {
-                console.warn("No items to add to cart.");
-                return;
+            if (cartItem) {
+                await updateSingleCart(newQuantity, user_id, product.id);
+            } else {
+                await createSingleCart(shop_id, product.id, 1, user_id);
             }
 
-            // Handle saving each cart item
-            for (const item of productQuantity) {
-                await createSingleCart(shop_id, item.product_id, item.count, user_id);
-            }
+            fetchCartData();
+            resetCartState();
         } catch (error) {
-            console.error("Failed to save cart:", error);
+            console.error("Failed to update cart:", error);
         }
-    };
+    }, [
+        single_cart_data,
+        user_id,
+        shop_id,
+        updateSingleCart,
+        createSingleCart,
+        fetchCartData,
+        resetCartState
+    ]);
 
-    const numberFormatter = (number) => {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    };
+    const numberFormatter = useCallback((number) =>
+            number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "),
+        []);
+
+    const cartItemCount = useMemo(() =>
+            single_cart_data?.carts?.length || 0,
+        [single_cart_data]);
 
     return (
         <section className="shop_page">
@@ -233,27 +237,19 @@ const ShopPage = () => {
                         >
                             <FavoriteIcon/>
                         </button>
-                        <div className="modal_buy">
-                            <div className="modal_calc">
-                                <button onClick={() => updateQuantity(selectedProduct, "decrement")}>-</button>
-                                <p>
-                                    {productQuantity.find((item) => item.product_id === selectedProduct.id)?.count || 0}
-                                </p>
-                                <button onClick={() => updateQuantity(selectedProduct, "increment")}>+</button>
-                            </div>
-                            <button className="modal_buy_btn" onClick={saveToCart}>
-                                Savatga qo'shish
-                            </button>
-                        </div>
                     </div>
                 </div>
             )}
 
-            {single_cart_data?.carts?.length > 0 && (<div className={"cart_single_shop"}>
-              <h1>Buyurtmalaringiz {single_cart_data?.carts.length}</h1>
-            </div>)}
+            {single_cart_data?.carts?.length > 0 && (
+                <Link className={"cart_single_shop"}
+                      to={USER_SINGLE_BASKET_BAR.replace(":user_id", user_id)
+                          .replace(":language", language)
+                          .replace(":shop_id", shop_id)}>
+                    <h1>Buyurtmalaringiz {single_cart_data?.carts.length}</h1>
+                </Link>)}
         </section>
     );
 };
 
-export default ShopPage;
+export default React.memo(ShopPage);

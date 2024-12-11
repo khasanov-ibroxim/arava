@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import "./userHome.css";
 import Top from "../../../component/top/Top";
 import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreRounded";
@@ -11,55 +11,87 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import Bottom from "../../../component/bottom/Bottom.jsx";
 import star from "../../../assets/img/Vector.svg";
 import product1 from "../../../assets/img/Group 18.svg";
-import {Link, useParams} from "react-router-dom";
-import {SwiperSlide, Swiper} from "swiper/react";
+import { Link, useParams } from "react-router-dom";
+import { SwiperSlide, Swiper } from "swiper/react";
 
-import {SHOP_PAGE} from "../../../utils/const.jsx";
-import {homeBannerStore, homeCategoryStore, shopStore} from "../../../zustand/shopStore.jsx";
+import { SHOP_PAGE } from "../../../utils/const.jsx";
+import { homeBannerStore, homeCategoryStore, shopStore } from "../../../zustand/shopStore.jsx";
+import No_data from "../../../component/no_data/no_data.jsx";
+import Loading from "../../../component/loading/loading.jsx";
 
-const UserHome = ({user}) => {
-    const {user_id, language} = useParams();
+const UserHome = React.memo(({ user }) => {
+    const { user_id, language } = useParams();
     const [shopLayout, setShopLayout] = useState(false);
-    const [activeIndex, setActiveIndex] = useState(0); // Track active slide index
-    const [error, setError] = useState(null);
-    const {getShop, data, loading} = shopStore();
-    const {getBanner, data_banner} = homeBannerStore();
-    const {getCategory, data_category} = homeCategoryStore();
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    const { getShop, data, loading: shopLoading, error: shopError } = shopStore();
+    const { getBanner, data_banner, loading: bannerLoading, error: bannerError } = homeBannerStore();
+    const { getCategory, data_category, loading: categoryLoading, error: categoryError } = homeCategoryStore();
+
+    const fetchInitialData = useCallback(async () => {
+        try {
+            await Promise.all([
+                getShop(),
+                getBanner(),
+                getCategory()
+            ]);
+        } catch (error) {
+            console.error("Failed to fetch initial data:", error);
+        }
+    }, [getShop, getBanner, getCategory]);
 
     useEffect(() => {
-        if (!data) {
-            getShop().catch(() => setError("Failed to load shop data."));
-            getBanner().catch(() => setError("Failed to load banners."));
-            getCategory().catch(() => setError("Failed to load categories."));
-        }
-    }, [data, getShop, getBanner, getCategory]);
+        fetchInitialData();
+    }, [fetchInitialData]);
 
-    const handleSlideClick = (index) => {
-        setActiveIndex(index); // Set active slide index
-    };
+    const handleSlideClick = useCallback((index) => {
+        setActiveIndex(index);
+    }, []);
 
-    const generateShopUrl = (shopId) =>
-        SHOP_PAGE.replace(":shop_id", shopId)
-            .replace(":user_id", user_id)
-            .replace(":language", language);
+    const generateShopUrl = useCallback((shopId) =>
+            SHOP_PAGE.replace(":shop_id", shopId)
+                .replace(":user_id", user_id)
+                .replace(":language", language),
+        [user_id, language]
+    );
+
+    const isLoading = shopLoading || bannerLoading || categoryLoading;
+    const hasError = shopError || bannerError || categoryError;
+
+    const shopsToRender = useMemo(() =>
+            data && data.length > 0 ? data : [],
+        [data]
+    );
+
+    if (isLoading) {
+        return (
+            <div className="loading-container">
+                <Loading/>
+            </div>
+        );
+    }
+
+    if (hasError) {
+        return (
+            <div className="error-container">
+                <p>Failed to load data. Please try again later.</p>
+            </div>
+        );
+    }
 
     return (
         <>
             <Top user={user} user_id={user_id}/>
             <section className="user">
                 <div className="container">
-                    {/* Layout toggle button */}
                     <div className="icon" onClick={() => setShopLayout(!shopLayout)}>
                         {shopLayout ? <ViewCompactAltIcon/> : <ViewListRoundedIcon/>}
                     </div>
 
-                    {/* Banner Section */}
                     <div className="row">
                         <div className="col-lg-12">
-                            <div className="product">
-                                {loading && <p>Loading banners...</p>}
-                                {error && <p className="error-message">{error}</p>}
-                                {data_banner.length > 0 && (
+                            {data_banner.length > 0 && (
+                                <div className="product">
                                     <Swiper
                                         className="product"
                                         grabCursor={true}
@@ -68,16 +100,19 @@ const UserHome = ({user}) => {
                                     >
                                         {data_banner.map((item, index) => (
                                             <SwiperSlide key={index}>
-                                                <img src={item.photo} alt={`Banner ${index + 1}`}/>
+                                                <img
+                                                    src={item.photo}
+                                                    alt={`Banner ${index + 1}`}
+                                                    loading="lazy"
+                                                />
                                             </SwiperSlide>
                                         ))}
                                     </Swiper>
-                                )}
-                            </div>
+                                </div>
+                            )}
 
-                            {/* Category Section */}
-                            <div>
-                                {data_category.length > 0 && (
+                            {data_category.length > 0 && (
+                                <div>
                                     <Swiper
                                         className="btn-button"
                                         grabCursor={true}
@@ -99,19 +134,18 @@ const UserHome = ({user}) => {
                                             </SwiperSlide>
                                         ))}
                                     </Swiper>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    {/* Shop List Section */}
                     <div className={`row ${shopLayout ? "shop_active" : ""}`}>
-                        {data && data.length > 0 ? (
-                            data.map((item, index) => (
+                        {shopsToRender.length > 0 ? (
+                            shopsToRender.map((item) => (
                                 <Link
                                     to={generateShopUrl(item.id)}
                                     className={`col-lg-12 ${shopLayout ? "shop_active_item" : ""}`}
-                                    key={index}
+                                    key={item.id}
                                 >
                                     <div
                                         className={`product_item ${
@@ -120,10 +154,14 @@ const UserHome = ({user}) => {
                                         style={{background: `url(${product1})`}}
                                     >
                                         <div className="bottom">
-
-                                            <p className={`left ${item.discount_price && "active"}`}>{item.discount_price && <>{item.discount_price} % gacha
-                                                chegirma</>}</p>
-                                            <p className="right"><img src={star} className='star' alt=""/> {item.rating}
+                                            {item.discount_price && (
+                                                <p className="left active">
+                                                    {item.discount_price} % gacha chegirma
+                                                </p>
+                                            )}
+                                            <p className="right">
+                                                <img src={star} className='star' alt="Rating"/>
+                                                {item.rating}
                                             </p>
                                         </div>
                                     </div>
@@ -149,7 +187,7 @@ const UserHome = ({user}) => {
                                 </Link>
                             ))
                         ) : (
-                            <p className="no-data">No shops available</p>
+                            <No_data no_data_title={"Do'kon topilmadi"} no_data_msg={"Hozirda mavjud do'konlar yo'q"}/>
                         )}
                     </div>
                 </div>
@@ -157,6 +195,6 @@ const UserHome = ({user}) => {
             <Bottom/>
         </>
     );
-};
+});
 
 export default UserHome;

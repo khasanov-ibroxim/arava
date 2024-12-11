@@ -11,6 +11,7 @@ import Basket_bar from "../pages/userPages/basket_bar/basket_bar.jsx";
 import PersonalInformation from "../pages/userPages/profile/component/personal_information.jsx";
 import UserSettings from "../pages/userPages/profile/component/user_settings.jsx";
 import FavoriteUser from "../pages/userPages/profile/component/favorite_user.jsx";
+import SingleBasket from "../pages/userPages/shop_page/single_basket/single_basket.jsx";
 
 // USER
 
@@ -20,6 +21,7 @@ export const USER_NEWS = `${USER_HOME}/user_news`
 export const USER_PROFILE = `${USER_HOME}/user_profile`
 export const USER_SEARCH = `${USER_HOME}/user_search`
 export const USER_BASKET_BAR = `${USER_HOME}/user_basket_bar`
+export const USER_SINGLE_BASKET_BAR = `${USER_HOME}/user_single_basket/:shop_id`
 export const SHOP_PAGE = `${USER_HOME}/:shop_id`
 
 export const USER_PROFILE_PERSONAL = `${USER_HOME}/user_profile/personal`
@@ -73,6 +75,10 @@ export const UserRouters = [
     {
         Component:FavoriteUser,
         Path: USER_PROFILE_FAVORITE,
+    },
+    {
+        Component:SingleBasket,
+        Path: USER_SINGLE_BASKET_BAR,
     },
 
 ]
