@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
-import { $API } from "../utils/http.jsx";
+import {create} from "zustand";
+import {devtools} from "zustand/middleware";
+import {$API} from "../utils/http.jsx";
 
 const SingleBasketState = {
     loading: false,
@@ -8,6 +8,7 @@ const SingleBasketState = {
     error: false,
     single_basket_data: null,
     single_basket_products: null,
+    baskets_from_user: null,
     total_sum: 0,
 };
 
@@ -23,8 +24,8 @@ export const useBasketStore = create(devtools((set, get) => ({
                     count: Number(count)
                 },
                 {
-                    params: { client_id: Number(user_id) },
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+                    params: {client_id: Number(user_id)},
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"}
                 }
             );
 
@@ -59,16 +60,16 @@ export const useBasketStore = create(devtools((set, get) => ({
     },
     getSingleBasket: async (user_id, shop_id) => {
         try {
-            set({ loading: true, success: false, error: false });
+            set({loading: true, success: false, error: false});
             const res = await $API.get("/carts/from-user-shop", {
-                params: { user_id: Number(user_id), shop_id: Number(shop_id) }
+                params: {user_id: Number(user_id), shop_id: Number(shop_id)}
             });
-            set({ single_basket_data: res.data, success: true, loading: false });
+            set({single_basket_data: res.data, success: true, loading: false});
             console.log(res)
             return res.data;
         } catch (err) {
             console.error(err);
-            set({ error: true, loading: false });
+            set({error: true, loading: false});
             throw err;
         }
     },
@@ -76,9 +77,9 @@ export const useBasketStore = create(devtools((set, get) => ({
     getTotalSum: async (user_id, shop_id) => {
         try {
             const res = await $API.get("/carts/sum", {
-                params: { user_id: Number(user_id), shop_id: Number(shop_id) }
+                params: {user_id: Number(user_id), shop_id: Number(shop_id)}
             });
-            set({ total_sum: res.data });
+            set({total_sum: res.data});
             return res.data;
         } catch (err) {
             console.error(err);
@@ -89,9 +90,9 @@ export const useBasketStore = create(devtools((set, get) => ({
     getProductsForCart: async (shop_id) => {
         try {
             const res = await $API.get("/products/from-shop", {
-                params: { shop_id: Number(shop_id) }
+                params: {shop_id: Number(shop_id)}
             });
-            set({ single_basket_products: res.data });
+            set({single_basket_products: res.data});
 
             return res.data;
 
@@ -107,7 +108,7 @@ export const useBasketStore = create(devtools((set, get) => ({
             set((state) => {
                 const updatedCarts = state.single_basket_data?.carts.map(cart => {
                     if (cart.id === cart_id) {
-                        return { ...cart, count: parseInt(count) };
+                        return {...cart, count: parseInt(count)};
                     }
                     return cart;
                 });
@@ -121,7 +122,7 @@ export const useBasketStore = create(devtools((set, get) => ({
             });
 
             const res = await $API.patch("/carts", null, {
-                params: { cart_id, user_id: Number(user_id), count: parseInt(count) }
+                params: {cart_id, user_id: Number(user_id), count: parseInt(count)}
             });
             console.log(res);
             return res.data;
@@ -134,7 +135,7 @@ export const useBasketStore = create(devtools((set, get) => ({
     deleteCartProduct: async (product_id, user_id, cart_id) => {
         try {
             const res = await $API.delete("/carts/delete-product", {
-                params: { product_id: Number(product_id), user_id: Number(user_id) }
+                params: {product_id: Number(product_id), user_id: Number(user_id)}
             });
 
             // Update the local state by removing the deleted cart
@@ -152,6 +153,19 @@ export const useBasketStore = create(devtools((set, get) => ({
             console.log("Cart deleted", res.data);
         } catch (err) {
             console.error("Cart Deletion Error:", err);
+            throw err;
+        }
+    },
+
+    getBasketsFromUser:async (user_id) => {
+        try {
+            const res = await $API.get("/carts/from-user", {
+                params: {user_id: Number(user_id)}
+            });
+            set({baskets_from_user: res.data});
+            return res.data;
+        } catch (err) {
+            console.error(err);
             throw err;
         }
     }

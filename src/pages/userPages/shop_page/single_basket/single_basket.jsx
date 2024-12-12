@@ -78,7 +78,6 @@ const SingleBasket = () => {
         },
         [
             deleteCartProduct,
-
             updateProductQuantity,
             user_id,
             shop_id,
@@ -89,7 +88,7 @@ const SingleBasket = () => {
 
     useEffect(() => {
         getTotalSum(user_id , shop_id);
-    }, [ isUpdating]);
+    }, [isUpdating]);
     const matchedProducts = useMemo(() => {
         if (!single_basket_data?.carts || !single_basket_products) return [];
 
@@ -134,7 +133,7 @@ const SingleBasket = () => {
                                 )}
                             </div>
                             <div className="basket_product_item_text">
-                                <h3>{product.name} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab aspernatur atque eveniet impedit natus possimus repudiandae sunt, voluptatem voluptatibus voluptatum?</h3>
+                                <h3>{product.name}</h3>
                                 <p>{numberFormatter(product.one_price*product.count)} so'm</p>
                             </div>
                             <div className="basket_product_item_update">

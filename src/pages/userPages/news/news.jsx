@@ -1,6 +1,5 @@
 import React from 'react';
 import './news.css'
-import test_img from '../../../assets/img/Group 18.svg'
 
 const News = () => {
     return (

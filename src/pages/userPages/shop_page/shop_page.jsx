@@ -11,7 +11,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import {productByShopStore, shopBannerStore, shopCategoryStore, shopSingleStore} from "../../../zustand/shopStore.jsx";
 import {useBasketStore} from "../../../zustand/basketStore.jsx";  // Using useBasketStore for cart
 import infoIcon from "../../../assets/icons/info.png";
-import banner from "../../../assets/img/Group 18.svg";
 
 const ShopPage = () => {
     const {user_id, language, shop_id} = useParams();
@@ -139,7 +138,7 @@ const ShopPage = () => {
     );
 
 
-
+    console.log(data_banner)
 
     const numberFormatter = useCallback(
         (number) => number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "),
@@ -163,7 +162,7 @@ const ShopPage = () => {
                     <Swiper className="product_slider" grabCursor={true} spaceBetween={20} slidesPerView={1.1}>
                         {data_banner.map((item, index) => (
                             <SwiperSlide key={index}>
-                                <img src={banner} alt="Banner"/>
+                                <img src={`https://backend1.mussi.uz/${item.photo}`} alt="Banner"/>
                             </SwiperSlide>
                         ))}
                     </Swiper>

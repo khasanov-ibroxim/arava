@@ -5,7 +5,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import ArticleIcon from '@mui/icons-material/Article';
 import PersonIcon from '@mui/icons-material/Person';
-import foto from '../../assets/img/Ellipse 2.svg'
 import {useTranslation} from "react-i18next";
 import {Link, useLocation, useParams} from "react-router-dom";
 import {USER_BASKET_BAR, USER_HOME, USER_NEWS, USER_PROFILE, USER_SEARCH} from "../../utils/const.jsx";

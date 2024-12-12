@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {useEffect, useState, useCallback, useMemo} from "react";
 import "./userHome.css";
 import Top from "../../../component/top/Top";
 import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreRounded";
@@ -10,31 +10,28 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import Bottom from "../../../component/bottom/Bottom.jsx";
 import star from "../../../assets/img/Vector.svg";
-import product1 from "../../../assets/img/Group 18.svg";
-import { Link, useParams } from "react-router-dom";
-import { SwiperSlide, Swiper } from "swiper/react";
+import {Link, useParams} from "react-router-dom";
+import {SwiperSlide, Swiper} from "swiper/react";
 
-import { SHOP_PAGE } from "../../../utils/const.jsx";
-import { homeBannerStore, homeCategoryStore, shopStore } from "../../../zustand/shopStore.jsx";
+import {SHOP_PAGE} from "../../../utils/const.jsx";
+import {homeBannerStore, homeCategoryStore, shopStore} from "../../../zustand/shopStore.jsx";
 import No_data from "../../../component/no_data/no_data.jsx";
 import Loading from "../../../component/loading/loading.jsx";
 
-const UserHome = React.memo(({ user }) => {
-    const { user_id, language } = useParams();
+const UserHome = React.memo(({user}) => {
+    const {user_id, language} = useParams();
     const [shopLayout, setShopLayout] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
 
-    const { getShop, data, loading: shopLoading, error: shopError } = shopStore();
-    const { getBanner, data_banner, loading: bannerLoading, error: bannerError } = homeBannerStore();
-    const { getCategory, data_category, loading: categoryLoading, error: categoryError } = homeCategoryStore();
+    const {getShop, data, loading: shopLoading, error: shopError} = shopStore();
+    const {getBanner, data_banner, loading: bannerLoading, error: bannerError} = homeBannerStore();
+    const {getCategory, data_category, loading: categoryLoading, error: categoryError} = homeCategoryStore();
 
     const fetchInitialData = useCallback(async () => {
         try {
-            await Promise.all([
-                getShop(),
-                getBanner(),
-                getCategory()
-            ]);
+                await getShop(),
+                await getBanner(),
+                await getCategory()
         } catch (error) {
             console.error("Failed to fetch initial data:", error);
         }
@@ -58,10 +55,17 @@ const UserHome = React.memo(({ user }) => {
     const isLoading = shopLoading || bannerLoading || categoryLoading;
     const hasError = shopError || bannerError || categoryError;
 
-    const shopsToRender = useMemo(() =>
-            data && data.length > 0 ? data : [],
-        [data]
-    );
+    const shopsToRender = useMemo(() => {
+        if (data && data.length > 0) {
+
+            const uniqueShops = data.filter((item, index, self) =>
+                index === self.findIndex((shop) => shop.id === item.id)
+            );
+            return uniqueShops;
+        }
+        return [];
+    }, [data]);
+
 
     if (isLoading) {
         return (
@@ -78,7 +82,7 @@ const UserHome = React.memo(({ user }) => {
             </div>
         );
     }
-
+    console.log(shopsToRender)
     return (
         <>
             <Top user={user} user_id={user_id}/>
@@ -101,7 +105,7 @@ const UserHome = React.memo(({ user }) => {
                                         {data_banner.map((item, index) => (
                                             <SwiperSlide key={index}>
                                                 <img
-                                                    src={item.photo}
+                                                    src={"https://backend1.mussi.uz/" + item.photo}
                                                     alt={`Banner ${index + 1}`}
                                                     loading="lazy"
                                                 />
@@ -151,14 +155,16 @@ const UserHome = React.memo(({ user }) => {
                                         className={`product_item ${
                                             shopLayout ? "shop_active_item_product" : ""
                                         }`}
-                                        style={{background: `url(${product1})`}}
+                                        style={{background: `url(https://backend1.mussi.uz/${item.photo})`}}
                                     >
                                         <div className="bottom">
-                                            {item.discount_price && (
+                                            {item.discount_price && item.discount_price > 0 ? (
                                                 <p className="left active">
                                                     {item.discount_price} % gacha chegirma
                                                 </p>
-                                            )}
+                                            ) : <p className="left ">
+
+                                            </p>}
                                             <p className="right">
                                                 <img src={star} className='star' alt="Rating"/>
                                                 {item.rating}

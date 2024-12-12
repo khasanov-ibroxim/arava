@@ -208,7 +208,7 @@ section.user .icon svg {
 }
 
 .shop_active {
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
 }
 
