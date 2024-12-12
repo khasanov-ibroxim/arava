@@ -123,8 +123,6 @@ export const useBasketStore = create(devtools((set, get) => ({
             const res = await $API.patch("/carts", null, {
                 params: { cart_id, user_id: Number(user_id), count: parseInt(count) }
             });
-            get().getSingleBasket(user_id, shop_id);
-
             console.log(res);
             return res.data;
         } catch (err) {

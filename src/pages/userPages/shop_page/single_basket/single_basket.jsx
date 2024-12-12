@@ -16,6 +16,7 @@ const SingleBasket = () => {
         getProductsForCart,
         single_basket_products,
         updateProductQuantity,
+        deleteCartProduct
     } = useBasketStore();
 
     const [isUpdating, setIsUpdating] = useState(false); // New state to track updates
@@ -38,26 +39,57 @@ const SingleBasket = () => {
     const [quantity, setQuantity] = useState({});
 
     const updateQuantity = useCallback(
-        async (productId, count) => {
-            if (isUpdating) return;  // Prevent updating if already updating
+        async (productId, countChange) => {
+            if (isUpdating) return; // O'zgartirish jarayonida bloklash
+            console.log(countChange)
+            setIsUpdating(true);
 
-            setIsUpdating(true);  // Set loading state for updating
-            setQuantity((prevQuantity) => ({
-                ...prevQuantity,
-                [productId]: count,
-            }));
+            // Savatchadan mahsulotni topish
+            const existingProduct = single_basket_data?.carts?.find(
+                (item) => item.product_id === productId
+            );
 
-            try {
-                await updateProductQuantity(user_id, shop_id, productId, count);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setIsUpdating(false);  // Reset loading state after update
+            if (countChange === 0 && existingProduct) {
+                // Agar miqdor 0 bo'lsa va mahsulot mavjud bo'lsa, uni o'chirish
+                try {
+                    await deleteCartProduct(productId,user_id,existingProduct.id);
+                } catch (err) {
+                    console.error("Error deleting product:", err);
+                }
+            } else if (existingProduct) {
+                try {
+                    const newCount = countChange;
+                    if (newCount <= 0) {
+                        // Agar yangi miqdor 0 yoki undan past bo'lsa, o'chirish
+                        await deleteCartProduct(productId,user_id,existingProduct.id );
+                    } else {
+                        await updateProductQuantity(user_id, shop_id, existingProduct.id, newCount);
+                        setQuantity((prevQuantity) => ({
+                            ...prevQuantity,
+                            [productId]: newCount,
+                        }));
+                    }
+                } catch (err) {
+                    console.error("Error updating quantity:", err);
+                }
             }
+
+            setIsUpdating(false);
         },
-        [updateProductQuantity, user_id, shop_id, isUpdating]  // Include isUpdating to avoid multiple updates
+        [
+            deleteCartProduct,
+
+            updateProductQuantity,
+            user_id,
+            shop_id,
+            single_basket_data,
+            isUpdating
+        ]
     );
 
+    useEffect(() => {
+        getTotalSum(user_id , shop_id);
+    }, [ isUpdating]);
     const matchedProducts = useMemo(() => {
         if (!single_basket_data?.carts || !single_basket_products) return [];
 
