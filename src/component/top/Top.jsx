@@ -23,28 +23,32 @@ export default function Top({user}) {
         }
     }, [data, getLocation]);
     return (
-        <section className='top'>
-            <div className="container">
-                <div className="row">
-                    <div className="col-lg-12">
-                        <Link
-                            className="box"
-                            to={USER_LOCATION.replace(":user_id", user_id).replace(":language", language)}
-                        >
-                            <div className="text">
-                                <p className="top">
-                                    {t("top.text")}
-                                </p>
-                                <p className="bottom">{address}</p>
-                            </div>
-                        </Link>
+        <>
+            <section className='top'>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <Link
+                                className="box"
+                                to={USER_LOCATION.replace(":user_id", user_id).replace(":language", language)}
+                            >
+                                <div className="text">
+                                    <p className="top">
+                                        {t("top.text")}
+                                    </p>
+                                    <p className="bottom">{address}</p>
+                                </div>
+                            </Link>
+                        </div>
                     </div>
                 </div>
+            </section>
+            <div className="top_search">
                 <form action="">
                     <SearchRoundedIcon/>
                     <input type="text" placeholder={t("top.search")}/>
                 </form>
             </div>
-        </section>
+        </>
     )
 }
