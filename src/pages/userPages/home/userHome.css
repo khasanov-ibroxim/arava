@@ -10,7 +10,8 @@ section.user .container {
 }
 
 section.user .container .row:last-child {
-    margin-bottom: 150px;
+    margin-bottom: 80px;
+    margin-top: 30px;
 }
 
 section.user .product {
