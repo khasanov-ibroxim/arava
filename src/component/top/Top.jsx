@@ -19,7 +19,7 @@ export default function Top({user}) {
 
     useEffect(() => {
         if (data?.lat && data?.long) {
-            getLocation(); // Faqat foydalanuvchi joylashuvi bo‘lsa chaqiradi
+            getLocation();
         }
     }, [data, getLocation]);
     return (
@@ -38,13 +38,12 @@ export default function Top({user}) {
                                 <p className="bottom">{address}</p>
                             </div>
                         </Link>
-                        <form action="">
-                            <SearchRoundedIcon/>
-                            <input type="text" placeholder={t("top.search")}/>
-                        </form>
-
                     </div>
                 </div>
+                <form action="">
+                    <SearchRoundedIcon/>
+                    <input type="text" placeholder={t("top.search")}/>
+                </form>
             </div>
         </section>
     )
