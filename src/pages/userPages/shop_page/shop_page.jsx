@@ -82,36 +82,30 @@ const ShopPage = () => {
 
     const updateQuantity = useCallback(
         async (productId, countChange) => {
-            if (isUpdating) return; // O'zgartirish jarayonida bloklash
-            console.log(countChange)
+            if (isUpdating) return;
             setIsUpdating(true);
 
-            // Savatchadan mahsulotni topish
             const existingProduct = single_basket_data?.carts?.find(
                 (item) => item.product_id === productId
             );
 
             if (countChange === 0 && existingProduct) {
-                // Agar miqdor 0 bo'lsa va mahsulot mavjud bo'lsa, uni o'chirish
                 try {
-                    await deleteCartProduct(productId,user_id,existingProduct.id);
+                    await deleteCartProduct(productId, user_id, existingProduct.id);
                 } catch (err) {
                     console.error("Error deleting product:", err);
                 }
             } else if (!existingProduct && countChange > 0) {
-                // Agar mahsulot savatchada bo'lmasa, yangi mahsulot qo'shish
                 try {
                     await createSingleCart(shop_id, productId, countChange, user_id);
                 } catch (err) {
                     console.error("Error creating product:", err);
                 }
             } else if (existingProduct) {
-                // Mahsulot miqdorini yangilash
                 try {
                     const newCount = countChange;
                     if (newCount <= 0) {
-                        // Agar yangi miqdor 0 yoki undan past bo'lsa, o'chirish
-                        await deleteCartProduct(productId,user_id,existingProduct.id );
+                        await deleteCartProduct(productId, user_id, existingProduct.id);
                     } else {
                         await updateProductQuantity(user_id, shop_id, existingProduct.id, newCount);
                         setQuantity((prevQuantity) => ({
@@ -124,7 +118,7 @@ const ShopPage = () => {
                 }
             }
 
-            setIsUpdating(false); // Jarayonni qayta tiklash
+            setIsUpdating(false);
         },
         [
             deleteCartProduct,
@@ -137,8 +131,6 @@ const ShopPage = () => {
         ]
     );
 
-
-    console.log(data_banner)
 
     const numberFormatter = useCallback(
         (number) => number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "),
@@ -204,7 +196,7 @@ const ShopPage = () => {
                             {productGroup.category.name}
                         </h2>
                         <div className="product_row">
-                            {productGroup.products.map((product , index) => (
+                            {productGroup.products.map((product, index) => (
                                 <div className={"shop_product_box"} key={index}>
                                     {single_basket_data?.carts &&
                                         single_basket_data.carts.some((item) => item.product_id === product.id) && (
@@ -245,7 +237,7 @@ const ShopPage = () => {
 
                                             if (cartItem) {
                                                 updateQuantity(product.id, cartItem.count + 1);
-                                            }else if (!cartItem) {
+                                            } else if (!cartItem) {
                                                 updateQuantity(product.id, 1);
                                             }
                                         }}  // Increase quantity by 1

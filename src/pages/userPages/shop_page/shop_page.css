@@ -119,7 +119,6 @@ section.shop_page .btn-button {
 .shop_product_box_absolute{
     position: absolute;
     z-index: 9999;
-    height: 60px;
     width: 100%;
 }
 .shop_product_count{

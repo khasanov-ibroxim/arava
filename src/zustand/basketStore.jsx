@@ -93,7 +93,6 @@ export const useBasketStore = create(devtools((set, get) => ({
                 params: {shop_id: Number(shop_id)}
             });
             set({single_basket_products: res.data});
-
             return res.data;
 
         } catch (err) {
@@ -103,29 +102,25 @@ export const useBasketStore = create(devtools((set, get) => ({
     },
 
     updateProductQuantity: async (user_id, shop_id, cart_id, count) => {
-        try {
-            // Update the local state before sending the request to the server
-            set((state) => {
-                const updatedCarts = state.single_basket_data?.carts.map(cart => {
-                    if (cart.id === cart_id) {
-                        return {...cart, count: parseInt(count)};
-                    }
-                    return cart;
-                });
-
-                return {
-                    single_basket_data: {
-                        ...state.single_basket_data,
-                        carts: updatedCarts
-                    }
-                };
+        set((state) => {
+            const updatedCarts = state.single_basket_data?.carts.map(cart => {
+                if (cart.id === cart_id) {
+                    return {...cart, count: parseInt(count)};
+                }
+                return cart;
             });
 
+            return {
+                single_basket_data: {
+                    ...state.single_basket_data,
+                    carts: updatedCarts
+                }
+            };
+        });
+        try {
             const res = await $API.patch("/carts", null, {
                 params: {cart_id, user_id: Number(user_id), count: parseInt(count)}
             });
-            console.log(res);
-            return res.data;
         } catch (err) {
             console.error(err);
             throw err;
@@ -163,7 +158,6 @@ export const useBasketStore = create(devtools((set, get) => ({
                 params: {user_id: Number(user_id)}
             });
             set({baskets_from_user: res.data});
-            return res.data;
         } catch (err) {
             console.error(err);
             throw err;
