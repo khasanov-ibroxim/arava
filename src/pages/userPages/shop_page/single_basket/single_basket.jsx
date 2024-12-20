@@ -4,11 +4,12 @@ import { useBasketStore } from "../../../../zustand/basketStore.jsx";
 import { SHOP_PAGE } from "../../../../utils/const.jsx";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import SwipeToDelete from 'react-swipe-to-delete-ios';
-
+import {Delete} from "@mui/icons-material";
 import "./singleBasket.css";
 
-const SingleBasket = () => {
+const SingleBasket = ({user}) => {
     const { shop_id, user_id, language } = useParams();
+    console.log(user)
     const {
         getSingleBasket,
         single_basket_data,
@@ -95,6 +96,7 @@ const SingleBasket = () => {
         if (existingProduct) {
             try {
                 await deleteCartProduct(productId, user_id, existingProduct.id);
+                await getTotalSum(user_id, shop_id)
             } catch (err) {
                 console.error("Error deleting product:", err);
             }
@@ -120,7 +122,7 @@ const SingleBasket = () => {
 
     if (loading && !isUpdating) return <div>Yuklanmoqda...</div>;
     if (error) return <div>Xatolik yuz berdi</div>;
-
+    console.log(matchedProducts)
     return (
         <div>
             <div className="shop_page_header container">
@@ -143,6 +145,7 @@ const SingleBasket = () => {
                                 key={product.id}
                                 onDelete={() => handleDelete(product.id)}
                                 deleteColor="red"
+                                deleteComponent={<Delete/>}
                                 height={80}
                             >
                                 <div className="basket_product_item">

@@ -121,6 +121,7 @@ export const useBasketStore = create(devtools((set, get) => ({
             const res = await $API.patch("/carts", null, {
                 params: {cart_id, user_id: Number(user_id), count: parseInt(count)}
             });
+           await get().getTotalSum(user_id, shop_id)
         } catch (err) {
             console.error(err);
             throw err;
@@ -128,24 +129,21 @@ export const useBasketStore = create(devtools((set, get) => ({
     },
 
     deleteCartProduct: async (product_id, user_id, cart_id) => {
+        set((state) => {
+            const updatedCarts = state.single_basket_data?.carts.filter(cart => cart.id !== cart_id);
+
+            return {
+                single_basket_data: {
+                    ...state.single_basket_data,
+                    carts: updatedCarts
+                }
+            };
+        });
         try {
             const res = await $API.delete("/carts/delete-product", {
                 params: {product_id: Number(product_id), user_id: Number(user_id)}
             });
 
-            // Update the local state by removing the deleted cart
-            set((state) => {
-                const updatedCarts = state.single_basket_data?.carts.filter(cart => cart.id !== cart_id);
-
-                return {
-                    single_basket_data: {
-                        ...state.single_basket_data,
-                        carts: updatedCarts
-                    }
-                };
-            });
-
-            console.log("Cart deleted", res.data);
         } catch (err) {
             console.error("Cart Deletion Error:", err);
             throw err;
