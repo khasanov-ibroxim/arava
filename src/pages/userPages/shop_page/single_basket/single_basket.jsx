@@ -55,6 +55,7 @@ const SingleBasket = ({user}) => {
     }, []);
 
     const onToggleStart = useCallback((productId, newCount) => {
+        console.log(true)
         setLocalQuantities(prev => ({
             ...prev,
             [productId]: newCount
@@ -195,9 +196,16 @@ const SingleBasket = ({user}) => {
                                 </div>
                                 <div className="basket_product_item_update">
                                     <div className="basket_product_item_update_box">
-                                        <button onClick={() => handleQuantityUpdate(product.id, product.count + 1)}>+</button>
+                                        <button
+                                        onTouchStart={()=>onToggleStart(product.id , product.count + 1)}
+                                        onTouchMove={()=>onToggleStart(product.id , product.count + 1)}
+                                        onTouchEnd={()=>onToggleEnd()}
+                                        >+</button>
                                         <p>{product.count}</p>
-                                        <button onClick={() => handleQuantityUpdate(product.id, product.count - 1)}>-</button>
+                                        <button
+                                            onTouchStart={()=>onToggleStart(product.id , product.count - 1)}
+                                            onTouchMove={()=>onToggleStart(product.id , product.count - 1)}
+                                            onTouchEnd={()=>onToggleEnd()}>-</button>
                                     </div>
                                 </div>
                             </div>
