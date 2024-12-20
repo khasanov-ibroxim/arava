@@ -13,6 +13,7 @@
 }
 
 .basket_product_item {
+    overflow: visible;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -66,7 +67,7 @@
 .basket_product_item_text p {
     margin: 0;
     font-size: 0.9rem;
-    height: 33%;
+    height: 45%;
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -89,6 +90,9 @@
     background: #3D43CF;
     border-radius: 20px;
     width: 100%;
+    position: relative;
+    z-index: 999;
+    pointer-events: auto;
 }
 
 .basket_product_item_update button {
@@ -135,23 +139,6 @@
     margin-bottom: 10px;
 }
 
-.delete_button {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 80px;
-    background-color: #ff3b30;
-    color: white;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.3s ease;
+.rstdi {
+    width: 100% !important;
 }
-
-.delete_button:hover {
-    background-color: #d63029;
-}
-

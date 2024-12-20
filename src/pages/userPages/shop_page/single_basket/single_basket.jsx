@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
-import { useSwipeable } from 'react-swipeable';
 import { useBasketStore } from "../../../../zustand/basketStore.jsx";
 import { SHOP_PAGE } from "../../../../utils/const.jsx";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import DeleteIcon from "@mui/icons-material/Delete";
-import "./singleBasket.css"
+import SwipeToDelete from 'react-swipe-to-delete-ios';
+
+import "./singleBasket.css";
 
 const SingleBasket = () => {
     const { shop_id, user_id, language } = useParams();
@@ -23,26 +23,38 @@ const SingleBasket = () => {
     } = useBasketStore();
 
     const [isUpdating, setIsUpdating] = useState(false);
-    const [swipedItemId, setSwipedItemId] = useState(null);
-    const [quantity, setQuantity] = useState({});
+
+    useEffect(() => {
+        if (shop_id) {
+            Promise.all([
+                getSingleBasket(user_id, shop_id),
+                getProductsForCart(shop_id),
+                getTotalSum(user_id, shop_id)
+            ]);
+        }
+    }, [shop_id, user_id]);
 
     const numberFormatter = useCallback((number) => {
         if (number == null) return "0";
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }, []);
 
+    const [quantity, setQuantity] = useState({});
     const updateQuantity = useCallback(
         async (productId, countChange) => {
-            if (isUpdating) return;
+            if (isUpdating) return; // O'zgartirish jarayonida bloklash
+            console.log(countChange)
             setIsUpdating(true);
 
+            // Savatchadan mahsulotni topish
             const existingProduct = single_basket_data?.carts?.find(
                 (item) => item.product_id === productId
             );
 
             if (countChange === 0 && existingProduct) {
+                // Agar miqdor 0 bo'lsa va mahsulot mavjud bo'lsa, uni o'chirish
                 try {
-                    await deleteCartProduct(productId, user_id, existingProduct.id);
+                    await deleteCartProduct(productId,user_id,existingProduct.id);
                 } catch (err) {
                     console.error("Error deleting product:", err);
                 }
@@ -50,7 +62,8 @@ const SingleBasket = () => {
                 try {
                     const newCount = countChange;
                     if (newCount <= 0) {
-                        await deleteCartProduct(productId, user_id, existingProduct.id);
+                        // Agar yangi miqdor 0 yoki undan past bo'lsa, o'chirish
+                        await deleteCartProduct(productId,user_id,existingProduct.id );
                     } else {
                         await updateProductQuantity(user_id, shop_id, existingProduct.id, newCount);
                         setQuantity((prevQuantity) => ({
@@ -65,8 +78,28 @@ const SingleBasket = () => {
 
             setIsUpdating(false);
         },
-        [deleteCartProduct, updateProductQuantity, user_id, shop_id, single_basket_data, isUpdating]
+        [
+            deleteCartProduct,
+            updateProductQuantity,
+            user_id,
+            shop_id,
+            single_basket_data,
+            isUpdating
+        ]
     );
+    const handleDelete = async (productId) => {
+        const existingProduct = single_basket_data?.carts?.find(
+            (item) => item.product_id === productId
+        );
+
+        if (existingProduct) {
+            try {
+                await deleteCartProduct(productId, user_id, existingProduct.id);
+            } catch (err) {
+                console.error("Error deleting product:", err);
+            }
+        }
+    };
 
     const matchedProducts = useMemo(() => {
         if (!single_basket_data?.carts || !single_basket_products) return [];
@@ -84,45 +117,6 @@ const SingleBasket = () => {
             }).filter(Boolean)
         );
     }, [single_basket_data, single_basket_products, quantity]);
-
-    useEffect(() => {
-        if (shop_id) {
-            Promise.all([
-                getSingleBasket(user_id, shop_id),
-                getProductsForCart(shop_id),
-                getTotalSum(user_id, shop_id)
-            ]);
-        }
-    }, [shop_id, user_id, getSingleBasket, getProductsForCart, getTotalSum]);
-
-    useEffect(() => {
-        getTotalSum(user_id, shop_id);
-    }, [isUpdating, getTotalSum, user_id, shop_id]);
-
-    const handleSwipe = (productId) => {
-        setSwipedItemId(productId === swipedItemId ? null : productId);
-    };
-
-    const handleDelete = async (productId) => {
-        const existingProduct = single_basket_data?.carts?.find(
-            (item) => item.product_id === productId
-        );
-
-        if (existingProduct) {
-            try {
-                await deleteCartProduct(productId, user_id, existingProduct.id);
-                setSwipedItemId(null);
-            } catch (err) {
-                console.error("Error deleting product:", err);
-            }
-        }
-    };
-
-    const swipeHandlers = useSwipeable({
-        onSwipedLeft: (eventData) => handleSwipe(eventData.event.target.id),
-        onSwipedRight: () => handleSwipe(null),
-        trackMouse: true
-    });
 
     if (loading && !isUpdating) return <div>Yuklanmoqda...</div>;
     if (error) return <div>Xatolik yuz berdi</div>;
@@ -144,50 +138,46 @@ const SingleBasket = () => {
             <div className="basket_page container">
                 {matchedProducts.length > 0 ? (
                     matchedProducts.map(product => (
-                        <div key={product.id} className="basket_product_item_wrapper">
-                            <div
-                                {...swipeHandlers}
-                                id={product.id.toString()}
-                                className={`basket_product_item ${swipedItemId === product.id ? 'swiped' : ''}`}
+                        <>
+                            <SwipeToDelete
+                                key={product.id}
+                                onDelete={() => handleDelete(product.id)}
+                                deleteColor="red"
+                                height={80}
                             >
-                                <div className="basket_product_item_photo">
-                                    {product.photo && (
-                                        <img src={"https://placehold.co/600x400"} alt={product.name} />
-                                    )}
-                                </div>
-                                <div className="basket_product_item_text">
-                                    <h3>{product.name}</h3>
-                                    <p>{numberFormatter(product.one_price * product.count)} so'm</p>
-                                </div>
-                                <div className="basket_product_item_update">
-                                    <div className="basket_product_item_update_box">
-                                        <button onClick={() => updateQuantity(product.id, product.count + 1)}>+</button>
-                                        <p>{product.count}</p>
-                                        <button onClick={() => updateQuantity(product.id, product.count - 1)}>-</button>
+                                <div className="basket_product_item">
+                                    <div className="basket_product_item_photo">
+                                        {product.photo && (
+                                            <img src={"https://backend1.mussi.uz/"+product.photo} alt="" />
+                                        )}
+                                    </div>
+                                    <div className="basket_product_item_text">
+                                        <h3>{product.name} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis, rem?</h3>
+                                        <p>{numberFormatter(product.one_price * product.count)} so'm</p>
+                                    </div>
+                                    <div className="basket_product_item_update">
+                                        <div className="basket_product_item_update_box">
+                                            <button onClick={() => updateQuantity(product.id, product.count + 1)}>+</button>
+                                            <p>{product.count}</p>
+                                            <button onClick={() => updateQuantity(product.id, product.count - 1)}>-</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <button
-                                className="delete_button"
-                                onClick={() => handleDelete(product.id)}
-                                aria-label={`Delete ${product.name} from basket`}
-                            >
-                                <DeleteIcon />
-                            </button>
-                        </div>
+                            </SwipeToDelete>
+                        </>
+
                     ))
                 ) : (
                     <p>Mahsulotlar topilmadi</p>
                 )}
             </div>
             <div className="single_basket_order_box">
-                <button className="single_basket_order_btn">
+                <div className="single_basket_order_btn">
                     Buyurtma qilish
-                </button>
+                </div>
             </div>
         </div>
     );
 };
 
 export default SingleBasket;
-
