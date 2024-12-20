@@ -118,7 +118,7 @@ section.shop_page .btn-button {
 
 .shop_product_box_absolute{
     position: absolute;
-    z-index: 9999;
+    z-index: 3;
     width: 100%;
 }
 .shop_product_count{
@@ -391,4 +391,13 @@ body.shop_modal.open {
 .save_cart_btn{
     position: absolute;
     bottom: 20%;
+}
+
+.shop_category{
+    position: sticky;
+    top: -1px;
+    background: white;
+    width: 100%;
+    padding: 15px;
+    z-index: 9999;
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Link, useParams } from "react-router-dom";
 import { useBasketStore } from "../../../../zustand/basketStore.jsx";
 import { SHOP_PAGE } from "../../../../utils/const.jsx";
@@ -9,7 +9,8 @@ import "./singleBasket.css";
 
 const SingleBasket = ({user}) => {
     const { shop_id, user_id, language } = useParams();
-    console.log(user)
+    const updateTimeoutRef = useRef(null);
+
     const {
         getSingleBasket,
         single_basket_data,
@@ -24,6 +25,8 @@ const SingleBasket = ({user}) => {
     } = useBasketStore();
 
     const [isUpdating, setIsUpdating] = useState(false);
+    const [localQuantities, setLocalQuantities] = useState({});
+    const [pendingUpdates, setPendingUpdates] = useState({});
 
     useEffect(() => {
         if (shop_id) {
@@ -35,59 +38,93 @@ const SingleBasket = ({user}) => {
         }
     }, [shop_id, user_id]);
 
+    // Initialize local quantities from basket data
+    useEffect(() => {
+        if (single_basket_data?.carts) {
+            const quantities = {};
+            single_basket_data.carts.forEach(cart => {
+                quantities[cart.product_id] = cart.count;
+            });
+            setLocalQuantities(quantities);
+        }
+    }, [single_basket_data]);
+
     const numberFormatter = useCallback((number) => {
         if (number == null) return "0";
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }, []);
 
-    const [quantity, setQuantity] = useState({});
-    const updateQuantity = useCallback(
-        async (productId, countChange) => {
-            if (isUpdating) return; // O'zgartirish jarayonida bloklash
-            console.log(countChange)
+    const onToggleStart = useCallback((productId, newCount) => {
+        setLocalQuantities(prev => ({
+            ...prev,
+            [productId]: newCount
+        }));
+
+        setPendingUpdates(prev => ({
+            ...prev,
+            [productId]: newCount
+        }));
+    }, []);
+
+    const onToggleEnd = useCallback(() => {
+        if (isUpdating) return;
+        if (updateTimeoutRef.current) {
+            clearTimeout(updateTimeoutRef.current);
+        }
+
+        updateTimeoutRef.current = setTimeout(async () => {
             setIsUpdating(true);
+            const updates = Object.entries(pendingUpdates);
 
-            // Savatchadan mahsulotni topish
-            const existingProduct = single_basket_data?.carts?.find(
-                (item) => item.product_id === productId
-            );
+            for (const [productId, newCount] of updates) {
+                const existingProduct = single_basket_data?.carts?.find(
+                    item => item.product_id === parseInt(productId)
+                );
 
-            if (countChange === 0 && existingProduct) {
-                // Agar miqdor 0 bo'lsa va mahsulot mavjud bo'lsa, uni o'chirish
                 try {
-                    await deleteCartProduct(productId,user_id,existingProduct.id);
-                } catch (err) {
-                    console.error("Error deleting product:", err);
-                }
-            } else if (existingProduct) {
-                try {
-                    const newCount = countChange;
-                    if (newCount <= 0) {
-                        // Agar yangi miqdor 0 yoki undan past bo'lsa, o'chirish
-                        await deleteCartProduct(productId,user_id,existingProduct.id );
-                    } else {
+                    if (newCount === 0 && existingProduct) {
+                        await deleteCartProduct(productId, user_id, existingProduct.id);
+                    } else if (existingProduct && newCount > 0) {
                         await updateProductQuantity(user_id, shop_id, existingProduct.id, newCount);
-                        setQuantity((prevQuantity) => ({
-                            ...prevQuantity,
-                            [productId]: newCount,
-                        }));
                     }
-                } catch (err) {
-                    console.error("Error updating quantity:", err);
+                } catch (error) {
+                    console.error('Error updating product:', error);
+                    setLocalQuantities(prev => ({
+                        ...prev,
+                        [productId]: existingProduct?.count || 0
+                    }));
                 }
             }
 
+            setPendingUpdates({});
+
+            await Promise.all([
+                getSingleBasket(user_id, shop_id),
+                getTotalSum(user_id, shop_id)
+            ]);
+
             setIsUpdating(false);
-        },
-        [
-            deleteCartProduct,
-            updateProductQuantity,
-            user_id,
-            shop_id,
-            single_basket_data,
-            isUpdating
-        ]
-    );
+        }, 500);
+    }, [
+        pendingUpdates,
+        single_basket_data,
+        shop_id,
+        user_id,
+        deleteCartProduct,
+        updateProductQuantity,
+        getSingleBasket,
+        getTotalSum,
+        isUpdating
+    ]);
+
+    const handleQuantityUpdate = useCallback((productId, countChange) => {
+        const newCount = countChange;
+        if (newCount >= 0) {
+            onToggleStart(productId, newCount);
+            onToggleEnd();
+        }
+    }, [onToggleStart, onToggleEnd]);
+
     const handleDelete = async (productId) => {
         const existingProduct = single_basket_data?.carts?.find(
             (item) => item.product_id === productId
@@ -95,8 +132,7 @@ const SingleBasket = ({user}) => {
 
         if (existingProduct) {
             try {
-                await deleteCartProduct(productId, user_id, existingProduct.id);
-                await getTotalSum(user_id, shop_id)
+                handleQuantityUpdate(productId, 0);
             } catch (err) {
                 console.error("Error deleting product:", err);
             }
@@ -112,17 +148,17 @@ const SingleBasket = ({user}) => {
                 if (cartItem) {
                     return {
                         ...product,
-                        count: quantity[product.id] || cartItem.count
+                        count: localQuantities[product.id] || cartItem.count
                     };
                 }
                 return null;
             }).filter(Boolean)
         );
-    }, [single_basket_data, single_basket_products, quantity]);
+    }, [single_basket_data, single_basket_products, localQuantities]);
 
     if (loading && !isUpdating) return <div>Yuklanmoqda...</div>;
     if (error) return <div>Xatolik yuz berdi</div>;
-    console.log(matchedProducts)
+
     return (
         <div>
             <div className="shop_page_header container">
@@ -140,35 +176,32 @@ const SingleBasket = ({user}) => {
             <div className="basket_page container">
                 {matchedProducts.length > 0 ? (
                     matchedProducts.map(product => (
-                        <>
-                            <SwipeToDelete
-                                key={product.id}
-                                onDelete={() => handleDelete(product.id)}
-                                deleteColor="red"
-                                deleteComponent={<Delete/>}
-                                height={80}
-                            >
-                                <div className="basket_product_item">
-                                    <div className="basket_product_item_photo">
-                                        {product.photo && (
-                                            <img src={"https://backend1.mussi.uz/"+product.photo} alt="" />
-                                        )}
-                                    </div>
-                                    <div className="basket_product_item_text">
-                                        <h3>{product.name} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis, rem?</h3>
-                                        <p>{numberFormatter(product.one_price * product.count)} so'm</p>
-                                    </div>
-                                    <div className="basket_product_item_update">
-                                        <div className="basket_product_item_update_box">
-                                            <button onClick={() => updateQuantity(product.id, product.count + 1)}>+</button>
-                                            <p>{product.count}</p>
-                                            <button onClick={() => updateQuantity(product.id, product.count - 1)}>-</button>
-                                        </div>
+                        <SwipeToDelete
+                            key={product.id}
+                            onDelete={() => handleDelete(product.id)}
+                            deleteColor="red"
+                            deleteComponent={<Delete/>}
+                            height={80}
+                        >
+                            <div className="basket_product_item">
+                                <div className="basket_product_item_photo">
+                                    {product.photo && (
+                                        <img src={"https://backend1.mussi.uz/"+product.photo} alt="" />
+                                    )}
+                                </div>
+                                <div className="basket_product_item_text">
+                                    <h3>{product.name}</h3>
+                                    <p>{numberFormatter(product.one_price * product.count)} so'm</p>
+                                </div>
+                                <div className="basket_product_item_update">
+                                    <div className="basket_product_item_update_box">
+                                        <button onClick={() => handleQuantityUpdate(product.id, product.count + 1)}>+</button>
+                                        <p>{product.count}</p>
+                                        <button onClick={() => handleQuantityUpdate(product.id, product.count - 1)}>-</button>
                                     </div>
                                 </div>
-                            </SwipeToDelete>
-                        </>
-
+                            </div>
+                        </SwipeToDelete>
                     ))
                 ) : (
                     <p>Mahsulotlar topilmadi</p>

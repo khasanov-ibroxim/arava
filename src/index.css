@@ -36,3 +36,6 @@
 .ant-message{
     z-index: 9999;
 }
+html{
+    scroll-behavior: inherit;
+}

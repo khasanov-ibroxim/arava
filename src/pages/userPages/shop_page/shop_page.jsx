@@ -9,7 +9,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import {productByShopStore, shopBannerStore, shopCategoryStore, shopSingleStore} from "../../../zustand/shopStore.jsx";
-import {useBasketStore} from "../../../zustand/basketStore.jsx";  // Using useBasketStore for cart
+import {useBasketStore} from "../../../zustand/basketStore.jsx";
 import infoIcon from "../../../assets/icons/info.png";
 
 const ShopPage = () => {
@@ -19,8 +19,10 @@ const ShopPage = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [activeIndex, setActiveIndex] = useState(null);
     const [saveStatus, setSaveStatus] = useState({});
-    const [quantity, setQuantity] = useState({});
+    const [localQuantities, setLocalQuantities] = useState({});
+    const [pendingUpdates, setPendingUpdates] = useState({});
     const [isUpdating, setIsUpdating] = useState(false);
+    const updateTimeoutRef = useRef(null);
 
     const {data_banner, getBanner} = shopBannerStore();
     const {getSingleShop, data_shop} = shopSingleStore();
@@ -34,7 +36,7 @@ const ShopPage = () => {
         updateProductQuantity,
         deleteCartProduct,
         createSingleCart
-    } = useBasketStore(); // Using useBasketStore for cart data and actions
+    } = useBasketStore();
     const {getCategory, data_category} = shopCategoryStore();
 
     const fetchShopData = useCallback(() => {
@@ -47,13 +49,27 @@ const ShopPage = () => {
 
     useEffect(() => {
         if (shop_id) {
-            Promise.all([getSingleBasket(user_id, shop_id), getProductsForCart(shop_id), getTotalSum(user_id, shop_id)]);
+            Promise.all([
+                getSingleBasket(user_id, shop_id),
+                getProductsForCart(shop_id),
+                getTotalSum(user_id, shop_id)
+            ]);
         }
-    }, [shop_id, user_id]);
+    }, [shop_id, user_id, getSingleBasket, getProductsForCart, getTotalSum]);
 
     useEffect(() => {
         fetchShopData();
     }, [fetchShopData]);
+
+    useEffect(() => {
+        if (single_basket_data?.carts) {
+            const quantities = {};
+            single_basket_data.carts.forEach(cart => {
+                quantities[cart.product_id] = cart.count;
+            });
+            setLocalQuantities(quantities);
+        }
+    }, [single_basket_data]);
 
     const scrollToCategory = useCallback((index) => {
         const targetRef = categoryRefs.current[index];
@@ -80,57 +96,77 @@ const ShopPage = () => {
         }));
     }, []);
 
-    const updateQuantity = useCallback(
-        async (productId, countChange) => {
-            if (isUpdating) return;
+    const onToggleStart = useCallback((productId, newCount) => {
+        setLocalQuantities(prev => ({
+            ...prev,
+            [productId]: newCount
+        }));
+
+        setPendingUpdates(prev => ({
+            ...prev,
+            [productId]: newCount
+        }));
+    }, []);
+
+    const onToggleEnd = useCallback(() => {
+        if (isUpdating) return;
+        if (updateTimeoutRef.current) {
+            clearTimeout(updateTimeoutRef.current);
+        }
+
+        updateTimeoutRef.current = setTimeout(async () => {
             setIsUpdating(true);
+            const updates = Object.entries(pendingUpdates);
 
-            const existingProduct = single_basket_data?.carts?.find(
-                (item) => item.product_id === productId
-            );
+            for (const [productId, newCount] of updates) {
+                const existingProduct = single_basket_data?.carts?.find(
+                    item => item.product_id === parseInt(productId)
+                );
 
-            if (countChange === 0 && existingProduct) {
                 try {
-                    await deleteCartProduct(productId, user_id, existingProduct.id);
-                } catch (err) {
-                    console.error("Error deleting product:", err);
-                }
-            } else if (!existingProduct && countChange > 0) {
-                try {
-                    await createSingleCart(shop_id, productId, countChange, user_id);
-                } catch (err) {
-                    console.error("Error creating product:", err);
-                }
-            } else if (existingProduct) {
-                try {
-                    const newCount = countChange;
-                    if (newCount <= 0) {
+                    if (newCount === 0 && existingProduct) {
                         await deleteCartProduct(productId, user_id, existingProduct.id);
-                    } else {
+                    } else if (!existingProduct && newCount > 0) {
+                        await createSingleCart(shop_id, productId, newCount, user_id);
+                    } else if (existingProduct && newCount > 0) {
                         await updateProductQuantity(user_id, shop_id, existingProduct.id, newCount);
-                        setQuantity((prevQuantity) => ({
-                            ...prevQuantity,
-                            [productId]: newCount,
-                        }));
                     }
-                } catch (err) {
-                    console.error("Error updating quantity:", err);
+                } catch (error) {
+                    console.error('Error updating product:', error);
+                    setLocalQuantities(prev => ({
+                        ...prev,
+                        [productId]: existingProduct?.count || 0
+                    }));
                 }
             }
 
-            setIsUpdating(false);
-        },
-        [
-            deleteCartProduct,
-            createSingleCart,
-            updateProductQuantity,
-            user_id,
-            shop_id,
-            single_basket_data,
-            isUpdating
-        ]
-    );
+            setPendingUpdates({});
 
+            await Promise.all([
+                getSingleBasket(user_id, shop_id),
+                getTotalSum(user_id, shop_id)
+            ]);
+
+            setIsUpdating(false);
+        }, 500);
+    }, [
+        pendingUpdates,
+        single_basket_data,
+        shop_id,
+        user_id,
+        deleteCartProduct,
+        createSingleCart,
+        updateProductQuantity,
+        getSingleBasket,
+        getTotalSum,
+        isUpdating
+    ]);
+
+    const handleQuantityUpdate = useCallback((productId, countChange) => {
+        const newCount = countChange;
+        onToggleStart(productId, newCount);
+        onToggleEnd();
+    }, [onToggleStart, onToggleEnd]);
 
     const numberFormatter = useCallback(
         (number) => number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "),
@@ -159,30 +195,30 @@ const ShopPage = () => {
                         ))}
                     </Swiper>
                 )}
-
-                {data_category.length > 0 && (
-                    <Swiper
-                        className="btn-button"
-                        grabCursor={true}
-                        spaceBetween={5}
-                        slidesPerView={2.5}
-                        loop={false}
-                        touchRatio={1}
-                        resistanceRatio={0.5}
-                        speed={600}
-                    >
-                        {data_category.map((cat, index) => (
-                            <SwiperSlide
-                                key={index}
-                                className={activeIndex === index ? "active" : ""}
-                                onClick={() => scrollToCategory(index)}
-                            >
-                                {cat.name}
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                )}
             </div>
+
+            {data_category.length > 0 && (
+                <Swiper
+                    className="btn-button shop_category"
+                    grabCursor={true}
+                    spaceBetween={5}
+                    slidesPerView={2.5}
+                    loop={false}
+                    touchRatio={1}
+                    resistanceRatio={0.5}
+                    speed={600}
+                >
+                    {data_category.map((cat, index) => (
+                        <SwiperSlide
+                            key={index}
+                            className={activeIndex === index ? "active" : ""}
+                            onClick={() => scrollToCategory(index)}
+                        >
+                            {cat.name}
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            )}
 
             <div className="category_section container">
                 {single_basket_products?.map((productGroup, categoryIndex) => (
@@ -198,54 +234,36 @@ const ShopPage = () => {
                         <div className="product_row">
                             {productGroup.products.map((product, index) => (
                                 <div className={"shop_product_box"} key={index}>
-                                    {single_basket_data?.carts &&
-                                        single_basket_data.carts.some((item) => item.product_id === product.id) && (
-                                            <div className={"shop_product_box_absolute"}>
-                                                <p className="shop_product_count">
-                                                    {
-                                                        single_basket_data.carts.find(
-                                                            (item) => item.product_id === product.id
-                                                        )?.count || ""
-                                                    }
-                                                </p>
-                                                <div
-                                                    className="shop_product_decrement"
-                                                    onClick={() => {
-
-                                                        const cartItem = single_basket_data.carts.find(
-                                                            (item) => item.product_id === product.id
-                                                        );
-
-                                                        if (cartItem) {
-
-                                                            updateQuantity(product.id, cartItem.count - 1);
-                                                        }
-                                                    }}
-                                                >
-                                                    -
-                                                </div>
+                                    {localQuantities[product.id] > 0 && (
+                                        <div className={"shop_product_box_absolute"}>
+                                            <p className="shop_product_count">
+                                                {localQuantities[product.id]}
+                                            </p>
+                                            <div
+                                                className="shop_product_decrement"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleQuantityUpdate(product.id, localQuantities[product.id] - 1);
+                                                }}
+                                            >
+                                                -
                                             </div>
-                                        )
-                                    }
+                                        </div>
+                                    )}
                                     <div
-                                        key={product.id}
                                         className="shop_product_card"
                                         onClick={() => {
-                                            const cartItem = single_basket_data.carts.find(
-                                                (item) => item.product_id === product.id
-                                            );
-
-                                            if (cartItem) {
-                                                updateQuantity(product.id, cartItem.count + 1);
-                                            } else if (!cartItem) {
-                                                updateQuantity(product.id, 1);
-                                            }
-                                        }}  // Increase quantity by 1
+                                            const currentCount = localQuantities[product.id] || 0;
+                                            handleQuantityUpdate(product.id, currentCount + 1);
+                                        }}
                                     >
                                         <img src={`https://backend1.mussi.uz/${product.photo}`} alt={product.name}/>
                                         <img
                                             src={infoIcon}
-                                            onClick={() => openModal(product)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                openModal(product);
+                                            }}
                                             className={"product_info_icon"}
                                             alt={product.name}
                                         />
