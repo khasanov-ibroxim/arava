@@ -97,7 +97,7 @@ const CartItem = () => {
                     ))}
             </Swiper>
 
-            <div className="category_section ">
+            <div className="category_section container">
                 {single_basket_products?.map((productGroup, categoryIndex) => {
                     return (
                         <div
@@ -177,7 +177,11 @@ const CartItem = () => {
                         <div className="modal_item">
                             <img src={`https://backend1.mussi.uz/${selectedProduct.photo}`} alt={selectedProduct.name}/>
                             <h3>{selectedProduct.name}</h3>
-                            <p>{numberFormatter(selectedProduct.one_price)} so'm</p>
+                            <p>
+                                {data.type === "one" && <>{numberFormatter(selectedProduct.one_price)} so'm</>}
+                                {data.type === "optom" && <>{numberFormatter(selectedProduct.optom_price)} so'm</>}
+                                {data.type === "restorator" && <>{numberFormatter(selectedProduct.restorator_price)} so'm</>}
+                            </p>
                             <div className="modal_info">
                                 <p>{selectedProduct.description}</p>
                             </div>

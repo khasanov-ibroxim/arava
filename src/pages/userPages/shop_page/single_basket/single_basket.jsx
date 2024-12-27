@@ -6,27 +6,25 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import SwipeToDelete from 'react-swipe-to-delete-ios';
 import {Delete} from "@mui/icons-material";
 import "./singleBasket.css";
+import {userStore} from "../../../../zustand/userStore.jsx";
 
 const SingleBasket = ({user}) => {
     const { shop_id, user_id, language } = useParams();
-    const updateTimeoutRef = useRef(null);
-
+    const {data} = userStore()
     const {
         getSingleBasket,
         single_basket_data,
-        loading,
-        error,
+
         getTotalSum,
         total_sum,
         getProductsForCart,
         single_basket_products,
-        updateProductQuantity,
-        deleteCartProduct
-    } = useBasketStore();
 
-    const [isUpdating, setIsUpdating] = useState(false);
-    const [localQuantities, setLocalQuantities] = useState({});
-    const [pendingUpdates, setPendingUpdates] = useState({});
+        deleteCartProduct,
+
+        addToCart,
+        decrementCart
+    } = useBasketStore();
 
     useEffect(() => {
         if (shop_id) {
@@ -38,93 +36,16 @@ const SingleBasket = ({user}) => {
         }
     }, [shop_id, user_id]);
 
-    // Initialize local quantities from basket data
-    useEffect(() => {
-        if (single_basket_data?.carts) {
-            const quantities = {};
-            single_basket_data.carts.forEach(cart => {
-                quantities[cart.product_id] = cart.count;
-            });
-            setLocalQuantities(quantities);
-        }
-    }, [single_basket_data]);
+
 
     const numberFormatter = useCallback((number) => {
         if (number == null) return "0";
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }, []);
 
-    const onToggleStart = useCallback((productId, newCount) => {
-        console.log(true)
-        setLocalQuantities(prev => ({
-            ...prev,
-            [productId]: newCount
-        }));
 
-        setPendingUpdates(prev => ({
-            ...prev,
-            [productId]: newCount
-        }));
-    }, []);
 
-    const onToggleEnd = useCallback(() => {
-        if (isUpdating) return;
-        if (updateTimeoutRef.current) {
-            clearTimeout(updateTimeoutRef.current);
-        }
 
-        updateTimeoutRef.current = setTimeout(async () => {
-            setIsUpdating(true);
-            const updates = Object.entries(pendingUpdates);
-
-            for (const [productId, newCount] of updates) {
-                const existingProduct = single_basket_data?.carts?.find(
-                    item => item.product_id === parseInt(productId)
-                );
-
-                try {
-                    if (newCount === 0 && existingProduct) {
-                        await deleteCartProduct(productId, user_id, existingProduct.id);
-                    } else if (existingProduct && newCount > 0) {
-                        await updateProductQuantity(user_id, shop_id, existingProduct.id, newCount);
-                    }
-                } catch (error) {
-                    console.error('Error updating product:', error);
-                    setLocalQuantities(prev => ({
-                        ...prev,
-                        [productId]: existingProduct?.count || 0
-                    }));
-                }
-            }
-
-            setPendingUpdates({});
-
-            await Promise.all([
-                getSingleBasket(user_id, shop_id),
-                getTotalSum(user_id, shop_id)
-            ]);
-
-            setIsUpdating(false);
-        }, 500);
-    }, [
-        pendingUpdates,
-        single_basket_data,
-        shop_id,
-        user_id,
-        deleteCartProduct,
-        updateProductQuantity,
-        getSingleBasket,
-        getTotalSum,
-        isUpdating
-    ]);
-
-    const handleQuantityUpdate = useCallback((productId, countChange) => {
-        const newCount = countChange;
-        if (newCount >= 0) {
-            onToggleStart(productId, newCount);
-            onToggleEnd();
-        }
-    }, [onToggleStart, onToggleEnd]);
 
     const handleDelete = async (productId) => {
         const existingProduct = single_basket_data?.carts?.find(
@@ -133,7 +54,7 @@ const SingleBasket = ({user}) => {
 
         if (existingProduct) {
             try {
-                handleQuantityUpdate(productId, 0);
+                deleteCartProduct(productId ,user_id , existingProduct.id);
             } catch (err) {
                 console.error("Error deleting product:", err);
             }
@@ -149,16 +70,15 @@ const SingleBasket = ({user}) => {
                 if (cartItem) {
                     return {
                         ...product,
-                        count: localQuantities[product.id] || cartItem.count
+                        count: cartItem.count
                     };
                 }
                 return null;
             }).filter(Boolean)
         );
-    }, [single_basket_data, single_basket_products, localQuantities]);
+    }, [single_basket_data, single_basket_products]);
 
-    if (loading && !isUpdating) return <div>Yuklanmoqda...</div>;
-    if (error) return <div>Xatolik yuz berdi</div>;
+
 
     return (
         <div>
@@ -176,41 +96,53 @@ const SingleBasket = ({user}) => {
             </div>
             <div className="basket_page container">
                 {matchedProducts.length > 0 ? (
-                    matchedProducts.map(product => (
-                        <SwipeToDelete
-                            key={product.id}
-                            onDelete={() => handleDelete(product.id)}
-                            deleteColor="red"
-                            deleteComponent={<Delete/>}
-                            height={80}
-                        >
-                            <div className="basket_product_item">
-                                <div className="basket_product_item_photo">
-                                    {product.photo && (
-                                        <img src={"https://backend1.mussi.uz/"+product.photo} alt="" />
-                                    )}
-                                </div>
-                                <div className="basket_product_item_text">
-                                    <h3>{product.name}</h3>
-                                    <p>{numberFormatter(product.one_price * product.count)} so'm</p>
-                                </div>
-                                <div className="basket_product_item_update">
-                                    <div className="basket_product_item_update_box">
-                                        <button
-                                        onTouchStart={()=>onToggleStart(product.id , product.count + 1)}
-                                        onTouchMove={()=>onToggleStart(product.id , product.count + 1)}
-                                        onTouchEnd={()=>onToggleEnd()}
-                                        >+</button>
-                                        <p>{product.count}</p>
-                                        <button
-                                            onTouchStart={()=>onToggleStart(product.id , product.count - 1)}
-                                            onTouchMove={()=>onToggleStart(product.id , product.count - 1)}
-                                            onTouchEnd={()=>onToggleEnd()}>-</button>
+                    matchedProducts.map(product =>{
+                        const existingProduct = single_basket_data?.carts?.find(
+                            item => item.product_id === parseInt(product.id)
+                        );
+                        return(
+
+                                <SwipeToDelete
+                                    key={product.id}
+                                    onDelete={() => handleDelete(product.id)}
+                                    deleteColor="red"
+                                    deleteComponent={<Delete/>}
+                                    height={80}
+                                >
+                                    <div className="basket_product_item">
+                                        <div className="basket_product_item_photo">
+                                            {product.photo && (
+                                                <img src={"https://backend1.mussi.uz/"+product.photo} alt="" />
+                                            )}
+                                        </div>
+                                        <div className="basket_product_item_text">
+                                            <h3>{product.name}</h3>
+                                            <p>{numberFormatter(product.one_price * product.count)} so'm
+
+                                                {data.type === "one" && <>{numberFormatter(product.one_price * product.count)} so'm</>}
+                                                {data.type === "optom" && <>{numberFormatter(product.optom_price * product.count)} so'm</>}
+                                                {data.type === "restorator" && <>{numberFormatter(product.restorator_price * product.count)} so'm</>}
+                                            </p>
+                                        </div>
+                                        <div className="basket_product_item_update">
+                                            <div className="basket_product_item_update_box">
+                                                <button onClick={()=>addToCart(user_id, shop_id, product.id, existingProduct ? existingProduct.count + 1 : 1, "add")}>+</button>
+                                                <p>{product.count}</p>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (existingProduct.count > 0)
+                                                            decrementCart(user_id, shop_id, product.id, existingProduct, existingProduct.count - 1);
+                                                    }}
+                                                >-</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </SwipeToDelete>
-                    ))
+                                </SwipeToDelete>
+
+                        )
+                    })
+
                 ) : (
                     <p>Mahsulotlar topilmadi</p>
                 )}

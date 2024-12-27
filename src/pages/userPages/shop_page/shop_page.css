@@ -70,7 +70,7 @@ section.shop_page .btn-button {
     position: relative;
     width: 47%;
     height: 15rem;
-    margin: 5px;
+    margin: 5px auto;
 
 }
 .shop_product_card {
