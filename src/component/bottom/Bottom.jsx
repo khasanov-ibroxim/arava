@@ -21,7 +21,7 @@ export default function Bottom() {
                   className={`footer_item ${location.pathname === `/${user_id}/${language}` ? 'active' : ''}`}
             >
                 <HomeIcon/>
-                <p>Marketplace</p>
+                {/*<p>Marketplace</p>*/}
             </Link>
             <Link
 
@@ -29,7 +29,7 @@ export default function Bottom() {
                 className={`footer_item ${location.pathname === `/${user_id}/${language}/user_basket_bar` ? 'active' : ''}`}
             >
                 <ShoppingBasketIcon/>
-                <p>Basket</p>
+                {/*<p>Basket</p>*/}
             </Link>
             <Link
 
@@ -37,7 +37,7 @@ export default function Bottom() {
                   className={`footer_item ${location.pathname === `/${user_id}/${language}/user_profile` ? 'active' : ''}`}
             >
                 <PersonIcon/>
-               <p>Profile</p>
+               {/*<p>Profile</p>*/}
             </Link>
         </footer>
     </>)

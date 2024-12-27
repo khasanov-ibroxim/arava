@@ -18,12 +18,13 @@ import Cart_item from "../../../component/cart_item/cart_item.jsx";
 const ShopPage = () => {
     const { user_id, language, shop_id } = useParams();
     const { data_banner, getBanner } = shopBannerStore();
-    const {  data_shop } = shopSingleStore();
+    const {getSingleShop ,  data_shop } = shopSingleStore();
     const {single_basket_data,} = useBasketStore();
 
     const fetchShopData = useCallback(() => {
         if (shop_id) {
             getBanner(shop_id);
+            getSingleShop(shop_id)
         }
     }, [shop_id]);
 
@@ -59,7 +60,7 @@ const ShopPage = () => {
 
 
 
-            <div className="category_section container">
+            <div className="category_section">
                 <Cart_item/>
             </div>
 

@@ -180,7 +180,7 @@ export const useBasketStore = create(devtools((set, get) => ({
             }
 
             // Yangi timer o'rnatish
-            updateTimer = setTimeout(get().processPendingUpdates, 5000);
+            updateTimer = setTimeout(get().processPendingUpdates, 1500);
         }
         if (args === "add" && !existingProduct ){
             try {
