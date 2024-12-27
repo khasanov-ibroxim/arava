@@ -4,6 +4,13 @@
     overflow-y: auto;
 }
 
+.activeCategory{
+    background: #3D43CF;
+    color: #fff !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+}
+
 .category_section {
     margin-bottom: 150px;
 }
@@ -118,7 +125,7 @@ section.shop_page .btn-button {
 
 .shop_product_box_absolute{
     position: absolute;
-    z-index: 3;
+    z-index: 0;
     width: 100%;
 }
 .shop_product_count{
