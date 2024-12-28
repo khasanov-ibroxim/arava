@@ -19,7 +19,8 @@ const AppContent = () => {
     const user = userStore((state) => state.data);
     const loading = userStore((state) => state.loading);
     const error = userStore((state) => state.error);
-
+    const errorData = userStore((state) => state.errorData);
+    console.log(errorData)
     useEffect(() => {
         tg.expand();
         tg.headerColor = "#3D43CF";
@@ -32,7 +33,9 @@ const AppContent = () => {
 
     if (loading) return <Loading/>;
     if (error) return <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
-                                     error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"} refresh={true}/>;
+                                     error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"}
+                                     errorData={errorData}
+                                     refresh={true}/>;
 
     return (
         <Routes>

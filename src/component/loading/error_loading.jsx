@@ -6,7 +6,8 @@ const ErrorLoading = ({
                           error_code,
                           error_title,
                           error_message,
-                          refresh
+                          refresh,
+     errorData
                       }) => {
     const {user_id, language} = useParams()
     return (
@@ -18,6 +19,7 @@ const ErrorLoading = ({
                         <div className="col-sm-12 ">
                             <div className="col-sm-10 col-sm-offset-1  text-center">
                                 <div className="four_zero_four_bg">
+                                    {errorData}
                                     {error_code ? <h1 className="text-center ">{error_code}</h1> : ""}
 
                                 </div>
