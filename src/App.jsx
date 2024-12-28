@@ -19,25 +19,21 @@ const AppContent = () => {
     const user = userStore((state) => state.data);
     const loading = userStore((state) => state.loading);
     const error = userStore((state) => state.error);
-    const errorData = userStore((state) => state.errorData);
 
-
-    useEffect(async () => {
+    useEffect(() => {
         tg.expand();
         tg.headerColor = "#3D43CF";
         tg.bottomBarColor = "#3D43CF";
         tg.isVerticalSwipesEnabled = false;
         tg.isHorizontalSwipesEnabled = false;
 
-        await getUser();
+        getUser();
     }, [tg, getUser]);
 
     if (loading) return <Loading/>;
-    // if (error) return <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
-    //                                  error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"}
-    //                                  errorData={errorData}
-    //                                  refresh={true}/>;
-    console.log(user)
+    if (error) return <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
+                                     error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"} refresh={true}/>;
+
     return (
         <Routes>
             <Route
@@ -45,7 +41,12 @@ const AppContent = () => {
                 element={
                     user?.status === "user" ? (
                         <UserHome user={user} />
-                    ) : user?.status === "seller" && (<SellerHome user={user} />)
+                    ) : user?.status === "seller" ? (
+                        <SellerHome user={user} />
+                    ) : (
+                        <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
+                                       error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"} refresh={true}/>
+                    )
                 }
             />
             {user?.status === "user" &&

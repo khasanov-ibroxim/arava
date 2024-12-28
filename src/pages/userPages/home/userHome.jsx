@@ -18,20 +18,20 @@ import {homeBannerStore, homeCategoryStore, shopStore} from "../../../zustand/sh
 import No_data from "../../../component/no_data/no_data.jsx";
 import Loading from "../../../component/loading/loading.jsx";
 
-const UserHome = React.memo(({user}) => {
-    const {user_id, language} = useParams();
+const UserHome = React.memo(({ user }) => {
+    const { user_id, language } = useParams();
     const [shopLayout, setShopLayout] = useState(false);
-    const [activeIndex, setActiveIndex] = useState(0);
+    const [activeCategoryId, setActiveCategoryId] = useState(1); // Default birinchi kategoriya ID
 
-    const {getShop, data, loading: shopLoading, error: shopError} = shopStore();
-    const {getBanner, data_banner, loading: bannerLoading, error: bannerError} = homeBannerStore();
-    const {getCategory, data_category, loading: categoryLoading, error: categoryError} = homeCategoryStore();
+    const { getShop, data, loading: shopLoading, error: shopError } = shopStore();
+    const { getBanner, data_banner, loading: bannerLoading, error: bannerError } = homeBannerStore();
+    const { getCategory, data_category, loading: categoryLoading, error: categoryError } = homeCategoryStore();
 
     const fetchInitialData = useCallback(async () => {
         try {
-                await getShop(),
-                await getBanner(),
-                await getCategory()
+            await getShop();
+            await getBanner();
+            await getCategory();
         } catch (error) {
             console.error("Failed to fetch initial data:", error);
         }
@@ -41,11 +41,8 @@ const UserHome = React.memo(({user}) => {
         fetchInitialData();
     }, [fetchInitialData]);
 
-    const handleSlideClick = useCallback((index) => {
-        setActiveIndex(index);
-    }, []);
-
-    const generateShopUrl = useCallback((shopId) =>
+    const generateShopUrl = useCallback(
+        (shopId) =>
             SHOP_PAGE.replace(":shop_id", shopId)
                 .replace(":user_id", user_id)
                 .replace(":language", language),
@@ -55,22 +52,24 @@ const UserHome = React.memo(({user}) => {
     const isLoading = shopLoading || bannerLoading || categoryLoading;
     const hasError = shopError || bannerError || categoryError;
 
-    const shopsToRender = useMemo(() => {
+    const filteredShops = useMemo(() => {
         if (data && data.length > 0) {
-
             const uniqueShops = data.filter((item, index, self) =>
                 index === self.findIndex((shop) => shop.id === item.id)
             );
-            return uniqueShops;
+            return uniqueShops.filter((shop) => shop.shop_category_id === activeCategoryId);
         }
         return [];
-    }, [data]);
+    }, [data, activeCategoryId]);
 
+    const handleCategoryClick = useCallback((categoryId) => {
+        setActiveCategoryId(categoryId);
+    }, []);
 
     if (isLoading) {
         return (
             <div className="loading-container">
-                <Loading/>
+                <Loading />
             </div>
         );
     }
@@ -82,14 +81,14 @@ const UserHome = React.memo(({user}) => {
             </div>
         );
     }
-    console.log(shopsToRender)
+
     return (
         <>
-            <Top user={user} user_id={user_id}/>
+            <Top user={user} user_id={user_id} />
             <section className="user">
                 <div className="container">
                     <div className="icon" onClick={() => setShopLayout(!shopLayout)}>
-                        {shopLayout ? <ViewCompactAltIcon/> : <ViewListRoundedIcon/>}
+                        {shopLayout ? <ViewCompactAltIcon /> : <ViewListRoundedIcon />}
                     </div>
 
                     <div className="row">
@@ -126,13 +125,12 @@ const UserHome = React.memo(({user}) => {
                                         touchRatio={1}
                                         resistanceRatio={0.5}
                                         speed={600}
-                                        onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
                                     >
-                                        {data_category.map((cat, index) => (
+                                        {data_category.map((cat) => (
                                             <SwiperSlide
-                                                key={index}
-                                                className={activeIndex === index ? "active" : ""}
-                                                onClick={() => handleSlideClick(index)}
+                                                key={cat.id}
+                                                className={activeCategoryId === cat.id ? "active" : ""}
+                                                onClick={() => handleCategoryClick(cat.id)}
                                             >
                                                 {cat.name}
                                             </SwiperSlide>
@@ -144,8 +142,8 @@ const UserHome = React.memo(({user}) => {
                     </div>
 
                     <div className={`row ${shopLayout ? "shop_active" : ""}`}>
-                        {shopsToRender.length > 0 ? (
-                            shopsToRender.map((item) => (
+                        {filteredShops.length > 0 ? (
+                            filteredShops.map((item) => (
                                 <Link
                                     to={generateShopUrl(item.id)}
                                     className={`col-lg-12 ${shopLayout ? "shop_active_item" : ""}`}
@@ -155,18 +153,18 @@ const UserHome = React.memo(({user}) => {
                                         className={`product_item ${
                                             shopLayout ? "shop_active_item_product" : ""
                                         }`}
-                                        style={{background: `url(https://backend1.mussi.uz/${item.photo})`}}
+                                        style={{ background: `url(https://backend1.mussi.uz/${item.photo})` }}
                                     >
                                         <div className="bottom">
                                             {item.discount_price && item.discount_price > 0 ? (
                                                 <p className="left active">
                                                     {item.discount_price} % gacha chegirma
                                                 </p>
-                                            ) : <p className="left ">
-
-                                            </p>}
+                                            ) : (
+                                                <p className="left "></p>
+                                            )}
                                             <p className="right">
-                                                <img src={star} className='star' alt="Rating"/>
+                                                <img src={star} className="star" alt="Rating" />
                                                 {item.rating}
                                             </p>
                                         </div>
@@ -174,18 +172,18 @@ const UserHome = React.memo(({user}) => {
                                     <div className="product_item-bottom">
                                         <p className="bottom-left">
                                             {item.name}{" "}
-                                            {item.sub_name && <span className="one">{item.sub_name}</span>} <br/>
+                                            {item.sub_name && <span className="one">{item.sub_name}</span>} <br />
                                             <span className="two">{item.category}</span>
                                         </p>
                                         <p className="bottom-right">
                                             {item.deliver && item.work_time === "open" ? (
                                                 <>
-                                                    {item.deliver} min <AccessTimeIcon/>
+                                                    {item.deliver} min <AccessTimeIcon />
                                                 </>
                                             ) : (
                                                 <>
                                                     Grafik{" "}
-                                                    <CalendarMonthIcon style={{transform: "rotate(0deg)"}}/>
+                                                    <CalendarMonthIcon style={{ transform: "rotate(0deg)" }} />
                                                 </>
                                             )}
                                         </p>
@@ -193,12 +191,12 @@ const UserHome = React.memo(({user}) => {
                                 </Link>
                             ))
                         ) : (
-                            <No_data no_data_title={"Do'kon topilmadi"} no_data_msg={"Hozirda mavjud do'konlar yo'q"}/>
+                            <No_data no_data_title={"Do'kon topilmadi"} no_data_msg={"Hozirda mavjud do'konlar yo'q"} />
                         )}
                     </div>
                 </div>
             </section>
-            <Bottom/>
+            <Bottom />
         </>
     );
 });
