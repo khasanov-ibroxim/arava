@@ -20,15 +20,16 @@ const AppContent = () => {
     const loading = userStore((state) => state.loading);
     const error = userStore((state) => state.error);
     const errorData = userStore((state) => state.errorData);
-    console.log(errorData)
-    useEffect(() => {
+
+
+    useEffect(async () => {
         tg.expand();
         tg.headerColor = "#3D43CF";
         tg.bottomBarColor = "#3D43CF";
         tg.isVerticalSwipesEnabled = false;
         tg.isHorizontalSwipesEnabled = false;
 
-        getUser();
+        await getUser();
     }, [tg, getUser]);
 
     if (loading) return <Loading/>;
