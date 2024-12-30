@@ -374,14 +374,23 @@ body.shop_modal.open {
 }
 
 .cart_single_shop{
-    position: fixed;
-    bottom: 12%;
-    width: 100%;
+    width: 90%;
+    height: 50px;
+    background: #3D43CF;
+    color: #fff;
+    border: none;
+    outline: none;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 10px;
     text-decoration: none;
-
+    position: fixed;
+    bottom: 11%;
 }
 .cart_single_shop h1{
     background: #3D43CF;

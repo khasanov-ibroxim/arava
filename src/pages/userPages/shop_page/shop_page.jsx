@@ -67,14 +67,17 @@ const ShopPage = () => {
 
 
             {single_basket_data?.carts?.length > 0 && (
-                <Link
-                    className={"cart_single_shop"}
-                    to={USER_SINGLE_BASKET_BAR.replace(":user_id", user_id)
-                        .replace(":language", language)
-                        .replace(":shop_id", shop_id)}
-                >
-                    <h1>Buyurtmalaringiz {single_basket_data?.carts.length}</h1>
-                </Link>
+                <div className={"single_basket_order_box"}>
+                    <Link
+                        className={"cart_single_shop"}
+                        to={USER_SINGLE_BASKET_BAR.replace(":user_id", user_id)
+                            .replace(":language", language)
+                            .replace(":shop_id", shop_id)}
+                    >
+                        <h1>Buyurtmalaringiz : {single_basket_data?.carts.length}</h1>
+                    </Link>
+                </div>
+
             )}
         </section>
     );

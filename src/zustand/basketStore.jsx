@@ -1,11 +1,9 @@
 import {create} from "zustand";
 import {devtools} from "zustand/middleware";
 import {$API} from "../utils/http.jsx";
+import React from "react";
 
-
-
-const pendingUpdates = new Map();
-let updateTimer = null;
+let timeRef;
 
 
 
@@ -22,30 +20,54 @@ const SingleBasketState = {
 export const useBasketStore = create(devtools((set, get) => ({
     ...SingleBasketState,
     createSingleCart: async (shop_id, product_id, count, user_id) => {
+        const tempCartId = Date.now(); // Vaqtinchalik ID
+
+        // Mahalliy state-ga vaqtinchalik yangi cart qo'shish
+        set((state) => {
+            const newCart = {
+                product_id: Number(product_id),
+                shop_id: Number(shop_id),
+                count: Number(count),
+                user_id: Number(user_id),
+            };
+
+            return {
+                single_basket_data: {
+                    ...state.single_basket_data,
+                    carts: [...(state.single_basket_data?.carts || []), newCart],
+                },
+            };
+        });
+
         try {
+            // Serverga so'rov yuborish
             const res = await $API.post(
                 "/carts",
                 {
                     product_id: Number(product_id),
                     shop_id: Number(shop_id),
-                    count: Number(count)
+                    count: Number(count),
                 },
                 {
-                    params: {client_id: Number(user_id)},
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"}
+                    params: { client_id: Number(user_id) },
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 }
             );
-            await get().getSingleBasket(user_id , shop_id)
+
             console.log("create cart", res.data);
+
+            get().getSingleBasket(user_id,shop_id)
         } catch (err) {
+            // Xatolikni ko'rsatish
             set({
                 error: true,
                 errorData: err.response?.data,
-                loading: false
+                loading: false,
             });
             console.error("Cart Creation Error:", err);
         }
     },
+
     getSingleBasket: async (user_id, shop_id) => {
         try {
             set({loading: true, success: false, error: false});
@@ -68,6 +90,7 @@ export const useBasketStore = create(devtools((set, get) => ({
                 params: {user_id: Number(user_id), shop_id: Number(shop_id)}
             });
             set({total_sum: res.data});
+            console.log(res)
             return res.data;
         } catch (err) {
             console.error(err);
@@ -136,16 +159,20 @@ export const useBasketStore = create(devtools((set, get) => ({
         }
     },
 
-
-    // Barcha o'zgarishlarni serverga yuboruvchi funksiya
-    processPendingUpdates : async () => {
-        const updates = Array.from(pendingUpdates.entries());
-        pendingUpdates.clear();
-
-        for (const [cartId, {userId, shopId, count}] of updates) {
-            await get().updateProductQuantity(userId, shopId, cartId, count);
+     debounceUpdate : (user_id , shop_id , cart_id , count) => {
+        if (timeRef) {
+            clearTimeout(timeRef);
         }
+        if (cart_id){
+            timeRef = setTimeout(() => {
+                get().updateProductQuantity(user_id , shop_id , cart_id , count);
+                get().getTotalSum(user_id, shop_id)
+            }, 1000);
+        }
+
     },
+
+
 
     addToCart: async (user_id, shop_id, product_id, count, args) => {
         let updateTimer;
@@ -169,18 +196,7 @@ export const useBasketStore = create(devtools((set, get) => ({
                     }
                 };
             });
-            pendingUpdates.set(existingProduct.id, {
-                userId: user_id,
-                shopId: shop_id,
-                count: count
-            });
-
-            if (updateTimer) {
-                clearTimeout(updateTimer);
-            }
-
-            // Yangi timer o'rnatish
-            updateTimer = setTimeout(get().processPendingUpdates, 1500);
+          get().debounceUpdate(user_id, shop_id , existingProduct.id , count)
         }
         if (args === "add" && !existingProduct ){
             try {
@@ -192,18 +208,14 @@ export const useBasketStore = create(devtools((set, get) => ({
 
         }
 
-
     },
     decrementCart: async (user_id, shop_id, product_id, cart, count) => {
-        let updateTimer;
-
         if ( count > 0) {
             set((state) => {
                 const updatedCart = {
                     ...cart,
                     count: parseInt(count)
                 };
-                console.log(updatedCart);
                 return {
                     single_basket_data: {
                         ...state.single_basket_data,
@@ -213,20 +225,7 @@ export const useBasketStore = create(devtools((set, get) => ({
                     }
                 };
             });
-
-            pendingUpdates.set(cart.id, {
-                userId: user_id,
-                shopId: shop_id,
-                count: count
-            });
-
-            if (updateTimer) {
-                clearTimeout(updateTimer);
-            }
-
-            // Yangi timer o'rnatish
-            updateTimer = setTimeout(get().processPendingUpdates, 5000);
-
+            get().debounceUpdate(user_id, shop_id , cart.id , count)
         } else if(count === 0) {
            await set((state) => {
                 const filteredCarts = state.single_basket_data.carts.filter(
@@ -241,7 +240,6 @@ export const useBasketStore = create(devtools((set, get) => ({
             });
 
             try {
-                // Obyekt serverdan ham o‘chiriladi
                 const res = await $API.delete("/carts/delete-product", {
                     params: {product_id: Number(product_id), user_id: Number(user_id)}
                 });

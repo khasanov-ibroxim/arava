@@ -12,6 +12,7 @@ import PersonalInformation from "../pages/userPages/profile/component/personal_i
 import UserSettings from "../pages/userPages/profile/component/user_settings.jsx";
 import FavoriteUser from "../pages/userPages/profile/component/favorite_user.jsx";
 import SingleBasket from "../pages/userPages/shop_page/single_basket/single_basket.jsx";
+import SingleCheckout from "../pages/userPages/checkout_page/single_checkout/single_checkout.jsx";
 
 // USER
 
@@ -22,6 +23,7 @@ export const USER_PROFILE = `${USER_HOME}/user_profile`
 export const USER_SEARCH = `${USER_HOME}/user_search`
 export const USER_BASKET_BAR = `${USER_HOME}/user_basket_bar`
 export const USER_SINGLE_BASKET_BAR = `${USER_HOME}/user_single_basket/:shop_id`
+export const USER_SINGLE_CHECKOUT = `${USER_HOME}/checkout/:shop_id`
 export const SHOP_PAGE = `${USER_HOME}/:shop_id`
 
 export const USER_PROFILE_PERSONAL = `${USER_HOME}/user_profile/personal`
@@ -79,6 +81,10 @@ export const UserRouters = [
     {
         Component:SingleBasket,
         Path: USER_SINGLE_BASKET_BAR,
+    },
+    {
+        Component:SingleCheckout,
+        Path: USER_SINGLE_CHECKOUT,
     },
 
 ]

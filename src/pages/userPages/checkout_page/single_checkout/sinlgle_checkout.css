@@ -1,0 +1,28 @@
+.checkout_payment_method{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.checkout_payment_method_item {
+
+    width: 20rem !important;
+    height: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: self-start;
+    position: relative;
+    border-radius: 12px;
+    box-shadow: -1px 5px 15px #0000001f;
+    background: #3D43CF;
+    color: #fff;
+
+}
+.checkout_payment_method_item.active{
+    background: #00067c;
+    /*transform: scale(2);*/
+    /*box-shadow: ;*/
+}
+
+

@@ -5,6 +5,7 @@ import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreR
 import LocalDiningRoundedIcon from "@mui/icons-material/LocalDiningRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ViewListRoundedIcon from "@mui/icons-material/ViewListRounded";
+import WindowIcon from '@mui/icons-material/Window';
 import ViewCompactAltIcon from "@mui/icons-material/ViewCompactAlt";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -88,7 +89,7 @@ const UserHome = React.memo(({ user }) => {
             <section className="user">
                 <div className="container">
                     <div className="icon" onClick={() => setShopLayout(!shopLayout)}>
-                        {shopLayout ? <ViewCompactAltIcon /> : <ViewListRoundedIcon />}
+                        {shopLayout ? <WindowIcon /> : <ViewListRoundedIcon />}
                     </div>
 
                     <div className="row">

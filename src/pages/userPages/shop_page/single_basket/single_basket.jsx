@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Link, useParams } from "react-router-dom";
 import { useBasketStore } from "../../../../zustand/basketStore.jsx";
-import { SHOP_PAGE } from "../../../../utils/const.jsx";
+import {SHOP_PAGE, USER_SINGLE_CHECKOUT} from "../../../../utils/const.jsx";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import SwipeToDelete from 'react-swipe-to-delete-ios';
 import {Delete} from "@mui/icons-material";
@@ -31,20 +31,15 @@ const SingleBasket = ({user}) => {
             Promise.all([
                 getSingleBasket(user_id, shop_id),
                 getProductsForCart(shop_id),
-                getTotalSum(user_id, shop_id)
+
             ]);
         }
     }, [shop_id, user_id]);
-
-
 
     const numberFormatter = useCallback((number) => {
         if (number == null) return "0";
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }, []);
-
-
-
 
 
     const handleDelete = async (productId) => {
@@ -60,6 +55,8 @@ const SingleBasket = ({user}) => {
             }
         }
     };
+
+
 
     const matchedProducts = useMemo(() => {
         if (!single_basket_data?.carts || !single_basket_products) return [];
@@ -78,8 +75,7 @@ const SingleBasket = ({user}) => {
         );
     }, [single_basket_data, single_basket_products]);
 
-
-
+    console.log(matchedProducts)
     return (
         <div>
             <div className="shop_page_header container">
@@ -91,7 +87,7 @@ const SingleBasket = ({user}) => {
                 </Link>
                 <p>{numberFormatter(total_sum)} so'm</p>
                 <h1 className="shop_name">
-                    {single_basket_data?.shops?.[0]?.name || 'Do\'kon'}
+                {single_basket_data?.shops?.[0]?.name || 'Do\'kon'}
                 </h1>
             </div>
             <div className="basket_page container">
@@ -117,8 +113,7 @@ const SingleBasket = ({user}) => {
                                         </div>
                                         <div className="basket_product_item_text">
                                             <h3>{product.name}</h3>
-                                            <p>{numberFormatter(product.one_price * product.count)} so'm
-
+                                            <p>
                                                 {data.type === "one" && <>{numberFormatter(product.one_price * product.count)} so'm</>}
                                                 {data.type === "optom" && <>{numberFormatter(product.optom_price * product.count)} so'm</>}
                                                 {data.type === "restorator" && <>{numberFormatter(product.restorator_price * product.count)} so'm</>}
@@ -126,7 +121,11 @@ const SingleBasket = ({user}) => {
                                         </div>
                                         <div className="basket_product_item_update">
                                             <div className="basket_product_item_update_box">
-                                                <button onClick={()=>addToCart(user_id, shop_id, product.id, existingProduct ? existingProduct.count + 1 : 1, "add")}>+</button>
+                                                <button onClick={()=> {
+                                                    addToCart(user_id, shop_id, product.id, existingProduct ? existingProduct.count + 1 : 1, "add")
+
+                                                }
+                                                }>+</button>
                                                 <p>{product.count}</p>
                                                 <button
                                                     onClick={(e) => {
@@ -148,9 +147,9 @@ const SingleBasket = ({user}) => {
                 )}
             </div>
             <div className="single_basket_order_box">
-                <div className="single_basket_order_btn">
+                <Link className="single_basket_order_btn" to={USER_SINGLE_CHECKOUT.replace(":user_id", user_id).replace(":language", language).replace(":shop_id" , shop_id)}>
                     Buyurtma qilish
-                </div>
+                </Link>
             </div>
         </div>
     );

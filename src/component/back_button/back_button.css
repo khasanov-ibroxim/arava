@@ -6,12 +6,20 @@
 }
 
 .back-button_icon {
-    background: #3D43CF;
     padding: 10px 15px;
     font-size: 25px;
-    border-radius: 10px;
-    color: #fff;
+
     text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+
+    background: #3D43CF;
+    filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2));
+    color: #fff;
+    width: 50px;
+    height: 50px;
 }
 .back-button_icon:hover{
     background: #555dff;

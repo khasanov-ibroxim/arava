@@ -197,7 +197,7 @@ section.user .icon {
     background: rgba(61, 67, 207, 1);
     color: white;
     font-size: 40px;
-    padding: 5px;
+    padding: 10px;
     border-radius: 15px;
     cursor: pointer;
 }
@@ -278,7 +278,7 @@ section.user .icon svg {
     }
 
     section.user .icon {
-        bottom: 15%;
+        bottom: 11%;
         right: 4%;
     }
 }
