@@ -5,7 +5,8 @@ import "./sinlgle_checkout.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {EffectCoverflow, Pagination} from 'swiper/modules';
 import nal from "../../../../assets/img/nal.png";
-
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import {Input, Popconfirm} from "antd";
 const PaymentMethod = [
     {
         id: 1,
@@ -41,30 +42,63 @@ function SingleCheckout(props) {
     };
     console.log(PaymentMethod)
     return (
-        <div>
+        <div className={"single_checkout"}>
             <Back_button url={USER_SINGLE_BASKET_BAR} title={"Checkout"}/>
-            <section className={"single_checkout container"}>
-                <Swiper
-                    className="product_slider" grabCursor={true} spaceBetween={10} slidesPerView={1.15}
-                    onSlideChange={handleSlideChange}
-                    initialSlide={0} // Start from the second slide (index 1)
-                >
-                    {PaymentMethod.map((item, index) => (
-                        <SwiperSlide
-                            key={index}
-                            className={`checkout_payment_method_item ${activeIndex === index ? 'active' : ''}`}
-                        >
-                            <div className="checkout_payment_method_item_content">
-                                {activeIndex === index && (
-                                    <div className="checkmark">
-                                        check
-                                    </div>
-                                )}
-                                <h1>{item.name}</h1>
-                            </div>
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
+            <section className={" container"}>
+
+                <div className="checkout_payment_method_box">
+
+                    <div className="checkout_title">
+                        <h1>To'lov turi</h1>
+                        <p>To'lov turini tanlang</p>
+                    </div>
+                    <Swiper
+                        className="product_slider" grabCursor={true} spaceBetween={10} slidesPerView={1.15}
+                        onSlideChange={handleSlideChange}
+                        initialSlide={0} // Start from the second slide (index 1)
+                    >
+                        {PaymentMethod.map((item, index) => (
+                            <SwiperSlide
+                                key={index}
+                                className={`checkout_payment_method_item ${activeIndex === index ? 'active' : ''}`}
+                            >
+                                <div className="checkout_payment_method_item_content">
+                                    {activeIndex === index && (
+                                        <div className="checkmark">
+                                            <CheckCircleIcon/>
+                                        </div>
+                                    )}
+                                    <h1>{item.name}</h1>
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                </div>
+
+                <div className="checkout_input_section">
+                    <div className="checkout_title">
+                        <h1>Buyurtmachining malumotlari</h1>
+                        <p>Malumotlaringizni kiriting</p>
+                    </div>
+
+                    <div className="checkout_input_box">
+                        <p>Ismingiz</p>
+                        <Input type="text"/>
+                    </div>
+                    <div className="checkout_input_box">
+                        <p>Telefon raqamingiz</p>
+                        <Input type="text"/>
+                    </div>
+
+
+                    <div className="personal_user_item">
+                        <p>Manzilingiz : sadsadasd as dasdsdas sad</p>
+                        <button type="primary">
+                            Manzilni o'zgartirish
+                        </button>
+
+                    </div>
+                </div>
             </section>
         </div>
     );
