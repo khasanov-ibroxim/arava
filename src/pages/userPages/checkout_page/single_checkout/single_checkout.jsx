@@ -9,33 +9,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {Input, Popconfirm} from "antd";
 import {userLocationStore, userStore} from "../../../../zustand/userStore.jsx";
 import {Link, useParams} from "react-router-dom";
-
-const PaymentMethod = [
-    {
-        id: 1,
-        name: "Naxt",
-        photo: "https://api.logobank.uz/media/logos_png/payme-01.png",
-        open: true
-    },
-    {
-        id: 2,
-        name: "Click",
-        photo: "",
-        open: true
-    },
-    {
-        id: 3,
-        name: "Payme",
-        photo: "",
-        open: true
-    },
-    {
-        id: 4,
-        name: "Fiskal",
-        photo: "",
-        open: true
-    },
-];
+import {checkoutStore} from "../../../../zustand/checkoutStore.jsx";
 
 function SingleCheckout(props) {
     const {user_id , language} = useParams()
@@ -43,10 +17,11 @@ function SingleCheckout(props) {
     const {getLocation, address} = userLocationStore();
     const {data,} = userStore();
     const [initialState, setInitialState] = useState(data);
-
-
+    const {getPaymentMethod , paymentMethod} = checkoutStore()
+    console.log(paymentMethod)
     useEffect(() => {
         getLocation()
+        getPaymentMethod()
     }, [])
 
 
@@ -80,7 +55,7 @@ function SingleCheckout(props) {
                         onSlideChange={handleSlideChange}
                         initialSlide={0} // Start from the second slide (index 1)
                     >
-                        {PaymentMethod.map((item, index) => (
+                        {paymentMethod.map((item, index) => (
                             <SwiperSlide
                                 key={index}
                                 className={`checkout_payment_method_item ${activeIndex === index ? 'active' : ''}`}

@@ -20,9 +20,8 @@ const SingleBasketState = {
 export const useBasketStore = create(devtools((set, get) => ({
     ...SingleBasketState,
     createSingleCart: async (shop_id, product_id, count, user_id) => {
-        const tempCartId = Date.now(); // Vaqtinchalik ID
-        console.log(product_id , shop_id, count, user_id);
-        // Mahalliy state-ga vaqtinchalik yangi cart qo'shish
+        const tempCartId = Date.now();
+
         set((state) => {
             const newCart = {
                 product_id: Number(product_id),

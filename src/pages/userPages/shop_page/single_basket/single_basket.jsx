@@ -62,12 +62,13 @@ const SingleBasket = ({user}) => {
         if (!single_basket_data?.carts || !single_basket_products) return [];
 
         return single_basket_products.flatMap((productGroup) =>
-            productGroup.products.map(product => {
-                const cartItem = single_basket_data.carts.find(cart => cart.product_id === product.id);
+            productGroup.products.map(productItem => {
+                const cartItem = single_basket_data.carts.find(cart => cart.product_id === productItem.product.id);
                 if (cartItem) {
                     return {
-                        ...product,
-                        count: cartItem.count
+                        ...productItem.product,
+                        count: cartItem.count,
+                        photo:productItem.photo
                     };
                 }
                 return null;

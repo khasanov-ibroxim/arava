@@ -106,7 +106,7 @@ export const homeCategoryStore = create(devtools((set) => ({
     getCategory: async () => {
         set(state => ({ ...state, loading: true, error: false }));
         try {
-            const res = await $API.get('/shop-categories');
+            const res = await $API.get('/main-category');
             set(state => ({
                 ...state,
                 loading: false,

@@ -33,7 +33,7 @@ const CartItem = () => {
         }
         setActiveIndex(index);
     }, [categoryRefs]);
-    console.log(single_basket_products)
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -115,8 +115,9 @@ const CartItem = () => {
                             <div className="product_row">
                                 {productGroup.products.map((productObj, index) => {
                                     const existingProduct = single_basket_data?.carts?.find(
-                                        item => item.product_id === parseInt(productObj.id)
+                                        item => item.product_id === parseInt(productObj.product.id)
                                     );
+
                                     return (
                                         <div className={"shop_product_box"} key={index}>
 
