@@ -106,7 +106,7 @@ export const homeCategoryStore = create(devtools((set) => ({
     getCategory: async () => {
         set(state => ({ ...state, loading: true, error: false }));
         try {
-            const res = await $API.get('/shop-category');
+            const res = await $API.get('/shop-categories');
             set(state => ({
                 ...state,
                 loading: false,
@@ -114,6 +114,7 @@ export const homeCategoryStore = create(devtools((set) => ({
                 data_category: res.data || [],
                 error: false
             }));
+            console.log(res)
         } catch (err) {
             const errorHandler = createErrorHandler('homeCategoryStore');
             set(state => ({

@@ -21,7 +21,7 @@ export const useBasketStore = create(devtools((set, get) => ({
     ...SingleBasketState,
     createSingleCart: async (shop_id, product_id, count, user_id) => {
         const tempCartId = Date.now(); // Vaqtinchalik ID
-
+        console.log(product_id , shop_id, count, user_id);
         // Mahalliy state-ga vaqtinchalik yangi cart qo'shish
         set((state) => {
             const newCart = {
@@ -100,7 +100,7 @@ export const useBasketStore = create(devtools((set, get) => ({
 
     getProductsForCart: async (shop_id) => {
         try {
-            const res = await $API.get("/products/from-shop", {
+            const res = await $API.get("/shop-products/from-shop", {
                 params: {shop_id: Number(shop_id)}
             });
             set({single_basket_products: res.data});

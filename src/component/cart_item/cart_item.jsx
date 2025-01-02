@@ -25,7 +25,7 @@ const CartItem = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [saveStatus, setSaveStatus] = useState({});
     const [modalOpen, setModalOpen] = useState(false);
-    console.log(data.type)
+
     const scrollToCategory = useCallback((index) => {
         const targetRef = categoryRefs.current[index];
         if (targetRef) {
@@ -33,7 +33,7 @@ const CartItem = () => {
         }
         setActiveIndex(index);
     }, [categoryRefs]);
-
+    console.log(single_basket_products)
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -113,9 +113,9 @@ const CartItem = () => {
                             }
 
                             <div className="product_row">
-                                {productGroup.products.map((product, index) => {
+                                {productGroup.products.map((productObj, index) => {
                                     const existingProduct = single_basket_data?.carts?.find(
-                                        item => item.product_id === parseInt(product.id)
+                                        item => item.product_id === parseInt(productObj.id)
                                     );
                                     return (
                                         <div className={"shop_product_box"} key={index}>
@@ -140,25 +140,25 @@ const CartItem = () => {
 
                                             <div
                                                 className="shop_product_card"
-                                                onClick={() => addToCart(user_id, shop_id, product.id, existingProduct ? existingProduct.count + 1 : 1, "add")}
+                                                onClick={() => addToCart(user_id, shop_id, productObj.product.id, existingProduct ? existingProduct.count + 1 : 1, "add")}
                                             >
-                                                <img src={`https://backend1.mussi.uz/${product.photo}`}
-                                                     alt={product.name}/>
+                                                <img src={`https://backend1.mussi.uz/${productObj.photo}`}
+                                                     alt={productObj.product.name}/>
                                                 <img
                                                     src={infoIcon}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        openModal(product);
+                                                        openModal(productObj);
                                                     }}
                                                     className={"product_info_icon"}
-                                                    alt={product.name}
+                                                    alt={productObj.product.name}
                                                 />
                                                 <div className="shop_product_text">
-                                                    <h3>{product.name}</h3>
+                                                    <h3>{productObj.product.name}</h3>
                                                     <p className="product_price">
-                                                        {data.type === "one" && <>{numberFormatter(product.one_price)} so'm</>}
-                                                        {data.type === "optom" && <>{numberFormatter(product.optom_price)} so'm</>}
-                                                        {data.type === "restorator" && <>{numberFormatter(product.restorator_price)} so'm</>}
+                                                        {data.type === "one" && <>{numberFormatter(productObj.product.one_price)} so'm</>}
+                                                        {data.type === "optom" && <>{numberFormatter(productObj.product.optom_price)} so'm</>}
+                                                        {data.type === "restorator" && <>{numberFormatter(productObj.product.restorator_price)} so'm</>}
                                                     </p>
                                                 </div>
                                             </div>
@@ -176,14 +176,14 @@ const CartItem = () => {
                     <div className="modal_content open">
                         <div className="modal_item">
                             <img src={`https://backend1.mussi.uz/${selectedProduct.photo}`} alt={selectedProduct.name}/>
-                            <h3>{selectedProduct.name}</h3>
+                            <h3>{selectedProduct.product.name}</h3>
                             <p>
-                                {data.type === "one" && <>{numberFormatter(selectedProduct.one_price)} so'm</>}
-                                {data.type === "optom" && <>{numberFormatter(selectedProduct.optom_price)} so'm</>}
-                                {data.type === "restorator" && <>{numberFormatter(selectedProduct.restorator_price)} so'm</>}
+                                {/*{data.type === "one" && <>{numberFormatter(selectedProduct.one_price)} so'm</>}*/}
+                                {/*{data.type === "optom" && <>{numberFormatter(selectedProduct.optom_price)} so'm</>}*/}
+                                {/*{data.type === "restorator" && <>{numberFormatter(selectedProduct.restorator_price)} so'm</>}*/}
                             </p>
                             <div className="modal_info">
-                                <p>{selectedProduct.description}</p>
+                                <p>{selectedProduct.product.description}</p>
                             </div>
                         </div>
                         <button onClick={closeModal} className="modal_close">

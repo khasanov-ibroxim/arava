@@ -200,6 +200,8 @@ const LocationUser = ({user}) => {
                     <NearMeIcon onClick={handleCurrentLocation}/>
                 </div>
 
+                <div className="current_location"></div>
+
                 {searchResults.length > 0 && (
                     <ul>
                         {searchResults.map((place, index) => (

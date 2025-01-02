@@ -26,7 +26,7 @@ const UserHome = React.memo(({ user }) => {
 
     const { getShop, data, loading: shopLoading, error: shopError } = shopStore();
     const { getBanner, data_banner, loading: bannerLoading, error: bannerError } = homeBannerStore();
-    const { getCategory, data_category, loading: categoryLoading, error: categoryError } = homeCategoryStore();
+    const { getCategory, data_category, loading: categoryLoading } = homeCategoryStore();
 
     const fetchInitialData = useCallback(async () => {
         try {
@@ -51,11 +51,11 @@ const UserHome = React.memo(({ user }) => {
     );
 
     const isLoading = shopLoading || bannerLoading || categoryLoading;
-    const hasError = shopError || bannerError || categoryError;
-
+    const hasError = shopError || bannerError
+    console.log(data.shops)
     const filteredShops = useMemo(() => {
-        if (data && data.length > 0) {
-            const uniqueShops = data.filter((item, index, self) =>
+        if (data.shops && data.shops.length > 0) {
+            const uniqueShops = data.shops.filter((item, index, self) =>
                 index === self.findIndex((shop) => shop.id === item.id)
             );
             return uniqueShops.filter((shop) => shop.shop_category_id === activeCategoryId);
@@ -82,7 +82,7 @@ const UserHome = React.memo(({ user }) => {
             </div>
         );
     }
-
+    console.log(data_category)
     return (
         <>
             <Top user={user} user_id={user_id} />

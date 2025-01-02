@@ -38,20 +38,24 @@ const PersonalInformation = () => {
 
     const confirm = async () => {
         try {
+            console.log(initialState)
             setLoading(true); // Loading boshlandi
             const res = await $API.patch('/users/profile', {initialState}, {
                 params: {
                     user_id: user_id
+                },
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
                 }
             });
-            console.log(res);
             message.success("O'zgarishlar saqlandi!");
+
         } catch (err) {
             console.error("Error in data fetch:", err);
             message.error("Xatolik yuz berdi!");
         } finally {
             setLoading(false); // Loading tugadi
-            navigate(USER_LOCATION.replace(":user_id", user_id).replace(":language", language));
+            // navigate(USER_LOCATION.replace(":user_id", user_id).replace(":language", language));
         }
     };
 
@@ -68,9 +72,6 @@ const PersonalInformation = () => {
         }
     };
 
-    const cancel = () => {
-        navigate(USER_LOCATION.replace(":user_id", user_id).replace(":language", language));
-    };
 
     return (
         <>
@@ -112,7 +113,7 @@ const PersonalInformation = () => {
                         <p>Telefon raqamingiz</p>
                         <Input
                             type="text"
-                            value={initialState.contact}
+                            value={formatPhoneNumber(initialState.contact)}
                             onChange={(e) =>
                                 setInitialState({...initialState, contact: formatPhoneNumber(e.target.value)})
                             }
@@ -121,18 +122,11 @@ const PersonalInformation = () => {
 
                     {/* Update Button */}
                     <div className="personal_user_item">
-                        <Popconfirm
-                            title="Manzilni o'zgartirish"
-                            description="O'zgartirilgan ma'lumotlar saqlanib qolsinmi?"
-                            onConfirm={confirm}
-                            onCancel={cancel}
-                            okText="Ha"
-                            cancelText="Yo'q"
-                        >
-                            <button type="primary">
+
+                            <button type="primary" onClick={confirm}>
                                 Manzilni o'zgartirish
                             </button>
-                        </Popconfirm>
+
                     </div>
 
                     {/* Save Button */}

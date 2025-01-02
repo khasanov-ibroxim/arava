@@ -20,7 +20,7 @@
     justify-content: flex-end;
     margin-top: 20px;
 }
-.personal_user_send button{
+.personal_user_send button , .personal_user_send a{
     background: #3D43CF;
     color: #fff;
     padding: 25px 0;
@@ -31,7 +31,7 @@
     border: 1px solid #3D43CF;
 }
 
-.personal_user_item button{
+.personal_user_item button , .personal_user_item a{
     display: flex;
     justify-content: center;
     align-items: center;
