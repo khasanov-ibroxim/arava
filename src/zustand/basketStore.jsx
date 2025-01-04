@@ -138,6 +138,7 @@ export const useBasketStore = create(devtools((set, get) => ({
 
 
     updateProductQuantity: async (user_id, shop_id, cart_id, count) => {
+        if (cart_id)
         try {
             const res = await $API.patch("/carts", null, {
                 params: {cart_id, user_id: Number(user_id), count: parseInt(count)}
@@ -146,7 +147,6 @@ export const useBasketStore = create(devtools((set, get) => ({
             // await get().getTotalSum(user_id, shop_id)
         } catch (err) {
             console.error(err);
-            throw err;
         }
     },
 
@@ -172,14 +172,19 @@ export const useBasketStore = create(devtools((set, get) => ({
         }
     },
 
-    debounceUpdate: (user_id, shop_id, cart_id, count) => {
+    debounceUpdate: async (user_id, shop_id, cart, count) => {
         if (timeRef) {
             clearTimeout(timeRef);
         }
-        if (cart_id) {
+        if (cart.id && !cart.count <= 0) {
             timeRef = setTimeout(() => {
-                get().updateProductQuantity(user_id, shop_id, cart_id, count);
-                get().getTotalSum(user_id, shop_id)
+                try {
+                    get().updateProductQuantity(user_id, shop_id, cart.id, count);
+                    get().getTotalSum(user_id, shop_id)
+                }catch (e){
+                    console.log("sadasdasdasd")
+                }
+
             }, 1000);
         }
 
@@ -207,7 +212,7 @@ export const useBasketStore = create(devtools((set, get) => ({
                     }
                 };
             });
-            get().debounceUpdate(user_id, shop_id, existingProduct.id, count)
+            get().debounceUpdate(user_id, shop_id, existingProduct, count)
         }
         if (args === "add" && !existingProduct) {
             try {
@@ -237,7 +242,7 @@ export const useBasketStore = create(devtools((set, get) => ({
                     }
                 };
             });
-            get().debounceUpdate(user_id, shop_id, cart.id, count)
+            get().debounceUpdate(user_id, shop_id, cart, count)
         } else if (count === 0) {
             await set((state) => {
                 const filteredCarts = state.single_basket_data.carts.filter(
