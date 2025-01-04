@@ -14,9 +14,6 @@ const SingleBasket = ({user}) => {
     const {
         getSingleBasket,
         single_basket_data,
-
-        getTotalSum,
-        total_sum,
         getProductsForCart,
         single_basket_products,
 
@@ -76,7 +73,18 @@ const SingleBasket = ({user}) => {
         );
     }, [single_basket_data, single_basket_products]);
 
-    console.log(matchedProducts)
+    const calculateTotalSum = useMemo(() => {
+        return matchedProducts.reduce((total, product) => {
+            const price =
+                data.type === "one" ? product.one_price :
+                    data.type === "optom" ? product.optom_price :
+                        data.type === "restorator" ? product.restorator_price :
+                            0;
+
+            return total + (price * product.count);
+        }, 0);
+    }, [matchedProducts, data.type]);
+
     return (
         <div>
             <div className="shop_page_header container">
@@ -86,7 +94,7 @@ const SingleBasket = ({user}) => {
                 >
                     <ChevronLeftIcon />
                 </Link>
-                <p>{numberFormatter(total_sum)} so'm</p>
+                <p>{numberFormatter(calculateTotalSum)} so'm</p>
                 <h1 className="shop_name">
                 {single_basket_data?.shops?.[0]?.name || 'Do\'kon'}
                 </h1>

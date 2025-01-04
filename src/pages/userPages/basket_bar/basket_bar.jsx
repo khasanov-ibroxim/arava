@@ -117,7 +117,6 @@ const Basket_bar = () => {
                     </Swiper>
 
                     <div className="carts-section">
-                        <h4>{selectedShop?.shop?.name} do‘konidagi tovarlar</h4>
                         <div className="basket_page container">
                             {matchedProducts.length > 0 ? (
                                 matchedProducts.map((product, index) => {
