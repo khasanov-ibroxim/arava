@@ -30,13 +30,14 @@ const UserHome = React.memo(({ user }) => {
 
     const fetchInitialData = useCallback(async () => {
         try {
-            await getShop();
-            await getBanner();
-            await getCategory();
+            if (data.length === 0) await getShop();
+            if (data_banner.length === 0) await getBanner();
+            if (data_category.length === 0) await getCategory();
         } catch (error) {
             console.error("Failed to fetch initial data:", error);
         }
-    }, [getShop, getBanner, getCategory]);
+    }, []);
+
 
     useEffect(() => {
         fetchInitialData();
