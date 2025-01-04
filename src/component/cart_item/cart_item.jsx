@@ -131,7 +131,7 @@ const CartItem = () => {
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             if (existingProduct.count > 0)
-                                                                decrementCart(user_id, shop_id, product.id, existingProduct, existingProduct.count - 1);
+                                                                decrementCart(user_id, shop_id, productObj.product.id, existingProduct, existingProduct.count - 1);
                                                         }}
                                                     >
                                                         -

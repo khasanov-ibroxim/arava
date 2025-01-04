@@ -6,7 +6,6 @@ import React from "react";
 let timeRef;
 
 
-
 const SingleBasketState = {
     loading: false,
     success: false,
@@ -14,6 +13,7 @@ const SingleBasketState = {
     single_basket_data: null,
     single_basket_products: null,
     baskets_from_user: null,
+    basketAllShops: [],
     total_sum: 0,
 };
 
@@ -28,6 +28,7 @@ export const useBasketStore = create(devtools((set, get) => ({
                 shop_id: Number(shop_id),
                 count: Number(count),
                 user_id: Number(user_id),
+                id: tempCartId,  // Vaqtinchalik id beriladi
             };
 
             return {
@@ -48,14 +49,29 @@ export const useBasketStore = create(devtools((set, get) => ({
                     count: Number(count),
                 },
                 {
-                    params: { client_id: Number(user_id) },
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    params: {client_id: Number(user_id)},
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
                 }
             );
 
             console.log("create cart", res.data);
 
-            get().getSingleBasket(user_id,shop_id)
+            // Yangi id ni mavjud cartga qo'shish
+            const createdCartId = res.data.cart?.id;
+            if (createdCartId) {
+                set((state) => {
+                    const updatedCarts = state.single_basket_data.carts.map((cart) =>
+                        cart.id === tempCartId ? {...cart, id: createdCartId} : cart
+                    );
+
+                    return {
+                        single_basket_data: {
+                            ...state.single_basket_data,
+                            carts: updatedCarts,
+                        },
+                    };
+                });
+            }
         } catch (err) {
             // Xatolikni ko'rsatish
             set({
@@ -111,12 +127,22 @@ export const useBasketStore = create(devtools((set, get) => ({
         }
     },
 
+    getAllShopsBasket: async (user_id) => {
+        try {
+            const res = await $API.get("/carts/by_user" , {params: {user_id: Number(user_id)}});
+            set({basketAllShops: res.data.shops});
+        }catch (err){
+            console.error(err);
+        }
+    },
+
+
     updateProductQuantity: async (user_id, shop_id, cart_id, count) => {
         try {
             const res = await $API.patch("/carts", null, {
                 params: {cart_id, user_id: Number(user_id), count: parseInt(count)}
             });
-            console.log("UPDATE",res)
+            console.log("UPDATE", res)
             // await get().getTotalSum(user_id, shop_id)
         } catch (err) {
             console.error(err);
@@ -146,32 +172,18 @@ export const useBasketStore = create(devtools((set, get) => ({
         }
     },
 
-    getBasketsFromUser: async (user_id) => {
-        try {
-            const res = await $API.get("/carts/from-user", {
-                params: {user_id: Number(user_id)}
-            });
-            set({baskets_from_user: res.data});
-        } catch (err) {
-            console.error(err);
-            throw err;
-        }
-    },
-
-     debounceUpdate : (user_id , shop_id , cart_id , count) => {
+    debounceUpdate: (user_id, shop_id, cart_id, count) => {
         if (timeRef) {
             clearTimeout(timeRef);
         }
-        if (cart_id){
+        if (cart_id) {
             timeRef = setTimeout(() => {
-                get().updateProductQuantity(user_id , shop_id , cart_id , count);
+                get().updateProductQuantity(user_id, shop_id, cart_id, count);
                 get().getTotalSum(user_id, shop_id)
             }, 1000);
         }
 
     },
-
-
 
     addToCart: async (user_id, shop_id, product_id, count, args) => {
         let updateTimer;
@@ -195,12 +207,12 @@ export const useBasketStore = create(devtools((set, get) => ({
                     }
                 };
             });
-          get().debounceUpdate(user_id, shop_id , existingProduct.id , count)
+            get().debounceUpdate(user_id, shop_id, existingProduct.id, count)
         }
-        if (args === "add" && !existingProduct ){
+        if (args === "add" && !existingProduct) {
             try {
-                await get().createSingleCart(shop_id, product_id , count , user_id)
-            }catch (e){
+                await get().createSingleCart(shop_id, product_id, count, user_id)
+            } catch (e) {
                 console.log(e)
             }
 
@@ -208,8 +220,9 @@ export const useBasketStore = create(devtools((set, get) => ({
         }
 
     },
+
     decrementCart: async (user_id, shop_id, product_id, cart, count) => {
-        if ( count > 0) {
+        if (count > 0) {
             set((state) => {
                 const updatedCart = {
                     ...cart,
@@ -224,9 +237,9 @@ export const useBasketStore = create(devtools((set, get) => ({
                     }
                 };
             });
-            get().debounceUpdate(user_id, shop_id , cart.id , count)
-        } else if(count === 0) {
-           await set((state) => {
+            get().debounceUpdate(user_id, shop_id, cart.id, count)
+        } else if (count === 0) {
+            await set((state) => {
                 const filteredCarts = state.single_basket_data.carts.filter(
                     cart => cart.product_id !== parseInt(product_id)
                 );
