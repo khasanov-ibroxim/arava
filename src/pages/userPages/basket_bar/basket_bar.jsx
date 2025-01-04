@@ -2,11 +2,13 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import "./basket.css";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {useBasketStore} from "../../../zustand/basketStore.jsx";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import No_data from "../../../component/no_data/no_data.jsx";
 import {Delete} from "@mui/icons-material";
 import SwipeToDelete from "react-swipe-to-delete-ios";
 import {userStore} from "../../../zustand/userStore.jsx";
+import Loading from "../../../component/loading/loading.jsx";
+import {USER_SINGLE_CHECKOUT} from "../../../utils/const.jsx";
 
 
 const Basket_bar = () => {
@@ -23,7 +25,7 @@ const Basket_bar = () => {
         deleteCartProduct
     } = useBasketStore();
 
-    const {user_id} = useParams();
+    const {user_id, language} = useParams();
     const [shopsData, setShopsData] = useState([]);
     const [selectedShop, setSelectedShop] = useState(null); // Tanlangan shopni saqlash
 
@@ -76,7 +78,7 @@ const Basket_bar = () => {
 
         if (existingProduct) {
             try {
-                deleteCartProduct(productId, user_id, existingProduct.id);
+                await deleteCartProduct(productId, user_id, existingProduct.id);
             } catch (err) {
                 console.error("Error deleting product:", err);
             }
@@ -102,14 +104,16 @@ const Basket_bar = () => {
                         speed={600}
                         onSlideChange={(swiper) => handleShopSelect(shopsData[swiper.activeIndex])}
                     >
-                        {shopsData.map((shop, index) => (
-                            <SwiperSlide key={index} onClick={() => handleShopSelect(shop)}
-                                         className={`shop-item ${selectedShop?.shop?.id === shop.shop.id ? 'activeCategory' : ''}`}>
+                        {shopsData.map((shop, index) => {
+                            if (shop.carts.length > 0) {
+                                return (<SwiperSlide key={index} onClick={() => handleShopSelect(shop)}
+                                                     className={`shop-item ${selectedShop?.shop?.id === shop.shop.id ? 'activeCategory' : ''}`}>
 
-                                {shop.shop.name}
+                                    {shop.shop.name}
 
-                            </SwiperSlide>
-                        ))}
+                                </SwiperSlide>)
+                            }
+                        })}
                     </Swiper>
 
                     <div className="carts-section">
@@ -121,54 +125,58 @@ const Basket_bar = () => {
                                             item => item.product_id === parseInt(product.id)
                                         );
 
-                                        return (
-                                            <SwipeToDelete
-                                                key={product.id}
-                                                onDelete={() => handleDelete(product.id)}
-                                                deleteColor="red"
-                                                deleteComponent={<Delete/>}
-                                                height={80}
-                                            >
-                                                <div className="basket_product_item">
-                                                    <div className="basket_product_item_photo">
-                                                        {product.photo && (
-                                                            <img src={"https://backend1.mussi.uz/" + product.photo} alt=""/>
-                                                        )}
-                                                    </div>
-                                                    <div className="basket_product_item_text">
-                                                        <h3>{product.name}</h3>
-                                                        <p>
-                                                            {data.type === "one" && <>{numberFormatter(product.one_price * product.count)} so'm</>}
-                                                            {data.type === "optom" && <>{numberFormatter(product.optom_price * product.count)} so'm</>}
-                                                            {data.type === "restorator" && <>{numberFormatter(product.restorator_price * product.count)} so'm</>}
-                                                        </p>
-                                                    </div>
-                                                    <div className="basket_product_item_update">
-                                                        <div className="basket_product_item_update_box">
-                                                            <button onClick={() => {
-                                                                addToCart(user_id, product.shop_id, product.id, existingProduct ? existingProduct.count + 1 : 1, "add")
+                                        return (<>
+                                                <SwipeToDelete
+                                                    key={product.id}
+                                                    onDelete={() => handleDelete(product.id)}
+                                                    deleteColor="red"
+                                                    deleteComponent={<Delete/>}
+                                                    height={80}
 
-                                                            }
-                                                            }>+
-                                                            </button>
-                                                            <p>{product.count}</p>
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    if (existingProduct.count > 0)
-                                                                        decrementCart(user_id, product.shop_id, product.id, existingProduct, existingProduct.count - 1);
-                                                                }}
-                                                            >-
-                                                            </button>
+                                                >
+                                                    <div className="basket_product_item">
+                                                        <div className="basket_product_item_photo">
+                                                            {product.photo && (
+                                                                <img src={"https://backend1.mussi.uz/" + product.photo}
+                                                                     alt=""/>
+                                                            )}
+                                                        </div>
+                                                        <div className="basket_product_item_text">
+                                                            <h3>{product.name}</h3>
+                                                            <p>
+                                                                {data.type === "one" && <>{numberFormatter(product.one_price * product.count)} so'm</>}
+                                                                {data.type === "optom" && <>{numberFormatter(product.optom_price * product.count)} so'm</>}
+                                                                {data.type === "restorator" && <>{numberFormatter(product.restorator_price * product.count)} so'm</>}
+                                                            </p>
+                                                        </div>
+                                                        <div className="basket_product_item_update">
+                                                            <div className="basket_product_item_update_box">
+                                                                <button onClick={() => {
+                                                                    addToCart(user_id, product.shop_id, product.id, existingProduct ? existingProduct.count + 1 : 1, "add")
+
+                                                                }
+                                                                }>+
+                                                                </button>
+                                                                <p>{product.count}</p>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        if (existingProduct.count > 0)
+                                                                            decrementCart(user_id, product.shop_id, product.id, existingProduct, existingProduct.count - 1);
+                                                                    }}
+                                                                >-
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </SwipeToDelete>
+                                                </SwipeToDelete>
+
+                                            </>
                                         )
                                     }
                                 )
                             ) : (
-                                <No_data no_data_title={"Buyurtmalar"} no_data_msg={"Hozirda mavjud buyurtmalar yo'q"}/>
+                                ""
                             )}
                         </div>
                     </div>
@@ -176,6 +184,13 @@ const Basket_bar = () => {
             ) : (
                 <No_data no_data_title={"Buyurtmalar"} no_data_msg={"Hozirda mavjud buyurtmalar yo'q"}/>
             )}
+
+            <div className="single_basket_order_box">
+                <Link className="single_basket_order_btn"
+                      to={USER_SINGLE_CHECKOUT.replace(":user_id", user_id).replace(":language", language).replace(":shop_id", selectedShop?.shop?.id)}>
+                    Buyurtma qilish
+                </Link>
+            </div>
         </div>
     );
 };

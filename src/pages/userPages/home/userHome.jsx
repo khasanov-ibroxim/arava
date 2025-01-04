@@ -18,6 +18,7 @@ import {SHOP_PAGE} from "../../../utils/const.jsx";
 import {homeBannerStore, homeCategoryStore, shopStore} from "../../../zustand/shopStore.jsx";
 import No_data from "../../../component/no_data/no_data.jsx";
 import Loading from "../../../component/loading/loading.jsx";
+import Error_loading from "../../../component/loading/error_loading.jsx";
 
 const UserHome = React.memo(({ user }) => {
     const { user_id, language } = useParams();
@@ -79,11 +80,11 @@ const UserHome = React.memo(({ user }) => {
     if (hasError) {
         return (
             <div className="error-container">
-                <p>Failed to load data. Please try again later.</p>
+               <Error_loading error_code={"404"} />
             </div>
         );
     }
-    console.log(data_category)
+
     return (
         <>
             <Top user={user} user_id={user_id} />

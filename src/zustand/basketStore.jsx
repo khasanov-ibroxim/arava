@@ -90,7 +90,6 @@ export const useBasketStore = create(devtools((set, get) => ({
                 params: {user_id: Number(user_id), shop_id: Number(shop_id)}
             });
             set({single_basket_data: res.data, success: true, loading: false});
-            console.log(res)
             return res.data;
         } catch (err) {
             console.error(err);
@@ -130,6 +129,7 @@ export const useBasketStore = create(devtools((set, get) => ({
     getAllShopsBasket: async (user_id) => {
         try {
             const res = await $API.get("/carts/by_user" , {params: {user_id: Number(user_id)}});
+            console.log(res)
             set({basketAllShops: res.data.shops});
         }catch (err){
             console.error(err);

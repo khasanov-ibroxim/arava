@@ -91,13 +91,14 @@ const SingleBasket = ({user}) => {
                 {single_basket_data?.shops?.[0]?.name || 'Do\'kon'}
                 </h1>
             </div>
-            <div className="basket_page container">
-                {matchedProducts.length > 0 ? (
-                    matchedProducts.map(product =>{
-                        const existingProduct = single_basket_data?.carts?.find(
-                            item => item.product_id === parseInt(product.id)
-                        );
-                        return(
+            <div className="carts-section">
+                <div className="basket_page container">
+                    {matchedProducts.length > 0 ? (
+                        matchedProducts.map(product => {
+                            const existingProduct = single_basket_data?.carts?.find(
+                                item => item.product_id === parseInt(product.id)
+                            );
+                            return (
 
                                 <SwipeToDelete
                                     key={product.id}
@@ -109,7 +110,7 @@ const SingleBasket = ({user}) => {
                                     <div className="basket_product_item">
                                         <div className="basket_product_item_photo">
                                             {product.photo && (
-                                                <img src={"https://backend1.mussi.uz/"+product.photo} alt="" />
+                                                <img src={"https://backend1.mussi.uz/" + product.photo} alt=""/>
                                             )}
                                         </div>
                                         <div className="basket_product_item_text">
@@ -122,11 +123,12 @@ const SingleBasket = ({user}) => {
                                         </div>
                                         <div className="basket_product_item_update">
                                             <div className="basket_product_item_update_box">
-                                                <button onClick={()=> {
+                                                <button onClick={() => {
                                                     addToCart(user_id, shop_id, product.id, existingProduct ? existingProduct.count + 1 : 1, "add")
 
                                                 }
-                                                }>+</button>
+                                                }>+
+                                                </button>
                                                 <p>{product.count}</p>
                                                 <button
                                                     onClick={(e) => {
@@ -134,21 +136,25 @@ const SingleBasket = ({user}) => {
                                                         if (existingProduct.count > 0)
                                                             decrementCart(user_id, shop_id, product.id, existingProduct, existingProduct.count - 1);
                                                     }}
-                                                >-</button>
+                                                >-
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </SwipeToDelete>
 
-                        )
-                    })
+                            )
+                        })
 
-                ) : (
-                    <p>Mahsulotlar topilmadi</p>
-                )}
+                    ) : (
+                        <p>Mahsulotlar topilmadi</p>
+                    )}
+                </div>
             </div>
+
             <div className="single_basket_order_box">
-                <Link className="single_basket_order_btn" to={USER_SINGLE_CHECKOUT.replace(":user_id", user_id).replace(":language", language).replace(":shop_id" , shop_id)}>
+                <Link className="single_basket_order_btn"
+                      to={USER_SINGLE_CHECKOUT.replace(":user_id", user_id).replace(":language", language).replace(":shop_id", shop_id)}>
                     Buyurtma qilish
                 </Link>
             </div>

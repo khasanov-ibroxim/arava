@@ -1,19 +1,12 @@
 .basket_page {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
     margin-top: 20px;
+
 }
 
-.basket_product_item_wrapper {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-}
 
 .basket_product_item {
-    overflow: visible;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -27,9 +20,6 @@
     transform: translateX(-80px);
 }
 
-.basket_product_item:last-child {
-    margin-bottom: 140px;
-}
 
 .basket_product_item_photo {
     width: 80px;
