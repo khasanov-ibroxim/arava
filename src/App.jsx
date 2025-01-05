@@ -20,21 +20,21 @@ const AppContent = () => {
     const loading = userStore((state) => state.loading);
     const error = userStore((state) => state.error);
 
-    useEffect(() => {
+    useEffect(async () => {
         tg.expand();
         tg.headerColor = "#3D43CF";
         tg.bottomBarColor = "#3D43CF";
         tg.isVerticalSwipesEnabled = false;
         tg.isHorizontalSwipesEnabled = false;
         if (!user) {
-            getUser();
+            await getUser();
         }
         
     }, [tg, getUser]);
 
     if (loading) return <Loading/>;
     if (error) return <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
-                                     error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"} refresh={true}/>;
+                                     error_message={"Foydalanuvchining Ma'lumotlar topilmadi"} refresh={true}/>;
 
     return (
         <Routes>

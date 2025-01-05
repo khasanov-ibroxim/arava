@@ -53,7 +53,7 @@ const UserHome = React.memo(({ user }) => {
     );
 
     const isLoading = shopLoading || bannerLoading || categoryLoading;
-    const hasError = shopError || bannerError
+
     console.log(data.shops)
     const filteredShops = useMemo(() => {
         if (data.shops && data.shops.length > 0) {
@@ -73,14 +73,6 @@ const UserHome = React.memo(({ user }) => {
         return (
             <div className="loading-container">
                 <Loading />
-            </div>
-        );
-    }
-
-    if (hasError) {
-        return (
-            <div className="error-container">
-               <Error_loading error_code={"404"} />
             </div>
         );
     }
