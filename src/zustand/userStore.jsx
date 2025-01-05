@@ -1,16 +1,16 @@
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import {create} from "zustand";
+import {devtools} from "zustand/middleware";
 import axios from "axios";
-import { message } from "antd";
-import { $API } from "../utils/http.jsx";
+import {message} from "antd";
+import {$API} from "../utils/http.jsx";
 
-const createInitialState = () => ({
+const createInitialState = {
     loading: false,
     success: false,
     error: false,
     data: null,
     errorData: null,
-});
+};
 
 const extractUserIdFromHash = () => {
     try {
@@ -42,19 +42,18 @@ const retryRequest = async (fn, retries = 3, delay = 2000) => {
 };
 
 export const userStore = create(devtools((set) => ({
-    ...createInitialState(),
+    ...createInitialState,
     userId: extractUserIdFromHash(),
 
 
     getUser: async () => {
         const userId = userStore.getState().userId;
-        alert(userId)
         try {
             const res = await retryRequest(() =>
-                $API.get('/users/profile', { params: { user_id: userId } })
+                $API.get('/users/profile', {params: {user_id: userId}})
             );
             set({
-                ...createInitialState(),
+                ...createInitialState,
                 loading: false,
                 success: true,
                 data: res.data
@@ -62,7 +61,7 @@ export const userStore = create(devtools((set) => ({
         } catch (err) {
             console.error("Error fetching user:", err);
             set({
-                ...createInitialState(),
+                ...createInitialState,
                 error: true,
                 errorData: err.response?.data?.message || err.message
             });
@@ -85,8 +84,8 @@ export const userStore = create(devtools((set) => ({
 
         try {
             const res = await $API.patch('/users/profile', user, {
-                params: { user_id: userId },
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+                params: {user_id: userId},
+                headers: {"Content-Type": "application/x-www-form-urlencoded"}
             });
             message.success("Profile updated successfully");
             return res.data;
@@ -99,7 +98,7 @@ export const userStore = create(devtools((set) => ({
 })));
 
 export const userLocationStore = create(devtools((set) => ({
-    ...createInitialState(),
+    ...createInitialState,
     address: "",
 
     getLocation: async () => {
@@ -107,7 +106,7 @@ export const userLocationStore = create(devtools((set) => ({
 
         if (!userData?.lat || !userData?.long) {
             set({
-                ...createInitialState(),
+                ...createInitialState,
                 error: true,
                 errorData: "Location coordinates not available"
             });
@@ -115,7 +114,7 @@ export const userLocationStore = create(devtools((set) => ({
             return;
         }
 
-        set({ ...createInitialState(), loading: true });
+        set({...createInitialState, loading: true});
         try {
             const response = await axios.get(
                 `https://nominatim.openstreetmap.org/reverse`,
@@ -134,7 +133,7 @@ export const userLocationStore = create(devtools((set) => ({
             } - ${location.house_number || location.neighbourhood || location.road}`;
 
             set({
-                ...createInitialState(),
+                ...createInitialState,
                 success: true,
                 address: formattedAddress
             });
@@ -143,7 +142,7 @@ export const userLocationStore = create(devtools((set) => ({
         } catch (error) {
             console.error("Location retrieval error:", error);
             set({
-                ...createInitialState(),
+                ...createInitialState,
                 error: true,
                 errorData: "Failed to retrieve location"
             });
