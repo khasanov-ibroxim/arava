@@ -59,7 +59,13 @@ export const userStore = create(devtools((set) => ({
                 error: true,
                 errorData: err.response?.data?.message || err.message
             });
-            alert(err);
+            if (err.response) {
+                alert(`Server Error: ${err.response.data.message || err.response.status}`);
+            } else if (err.request) {
+                alert("No response from server. Please check your network connection.");
+            } else {
+                alert(`Request Error: ${err.message}`);
+            }
         }
     },
 

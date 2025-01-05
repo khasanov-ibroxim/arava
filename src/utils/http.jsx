@@ -7,7 +7,7 @@ const $API = axios.create({
     headers:{
         "Content-Type":"application/x-www-form-urlencoded"
     },
-    timeout: 20000
+
 });
 
 export {$API}
