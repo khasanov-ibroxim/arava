@@ -48,16 +48,7 @@ export const userStore = create(devtools((set) => ({
 
     getUser: async () => {
         const userId = userStore.getState().userId;
-        if (!userId) {
-            set({
-                ...createInitialState(),
-                error: true,
-                errorData: "Invalid User ID"
-            });
-            return;
-        }
-
-        set({ ...createInitialState(), loading: true });
+        alert(userId)
         try {
             const res = await retryRequest(() =>
                 $API.get('/users/profile', { params: { user_id: userId } })
