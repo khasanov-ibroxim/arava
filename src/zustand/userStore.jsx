@@ -43,15 +43,18 @@ export const userStore = create(devtools((set) => ({
 
         set({ ...createInitialState(), loading: true });
         try {
-            const res = await $API.get('/users/profile', {
-                params: { user_id: userId },
-            });
-            set({
-                ...createInitialState(),
-                loading: false,
-                success: true,
-                data: res.data
-            });
+            if (userId){
+                const res = await $API.get('/users/profile', {
+                    params: { user_id: userId },
+                });
+                set({
+                    ...createInitialState(),
+                    loading: false,
+                    success: true,
+                    data: res.data
+                });
+            }
+
         } catch (err) {
             console.error("Error fetching user:", err);
             set({
