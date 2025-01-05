@@ -33,8 +33,7 @@ const AppContent = () => {
     }, [tg, getUser]);
 
     if (loading) return <Loading/>;
-    if (error) return <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
-                                     error_message={"Foydalanuvchining Ma'lumotlar topilmadi"} refresh={true}/>;
+
 
     return (
         <Routes>
