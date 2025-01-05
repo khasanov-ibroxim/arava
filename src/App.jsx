@@ -39,15 +39,14 @@ const AppContent = () => {
         <Routes>
             <Route
                 path="/:user_id/:language"
-                element={
-                    user?.status === "user" ? (
+                element={ user && user.status === "user" ? (
                         <UserHome user={user}/>
                     ) : user?.status === "seller" && (
                         <SellerHome user={user}/>
                     )
                 }
             />
-            {user?.status === "user" &&
+            {user && user?.status === "user" &&
                 UserRouters.map(({Path, Component}) => (
                     <Route
                         key={Path}
