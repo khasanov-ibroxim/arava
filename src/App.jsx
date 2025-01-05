@@ -42,11 +42,8 @@ const AppContent = () => {
                 element={
                     user?.status === "user" ? (
                         <UserHome user={user}/>
-                    ) : user?.status === "seller" ? (
+                    ) : user?.status === "seller" && (
                         <SellerHome user={user}/>
-                    ) : (
-                        <Error_loading error_title={"Ma'lumot topilmadi"} error_code={"404"}
-                                       error_message={"Ma'lumotlar yuklanishida xatolik yuzaga keldi"} refresh={true}/>
                     )
                 }
             />
