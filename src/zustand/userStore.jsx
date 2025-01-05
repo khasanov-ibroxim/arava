@@ -26,9 +26,25 @@ const extractUserIdFromHash = () => {
     }
 };
 
+const retryRequest = async (fn, retries = 3, delay = 2000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fn();
+        } catch (err) {
+            if (i < retries - 1) {
+                console.warn(`Retrying request... Attempt ${i + 2}`);
+                await new Promise((res) => setTimeout(res, delay));
+            } else {
+                throw err;
+            }
+        }
+    }
+};
+
 export const userStore = create(devtools((set) => ({
     ...createInitialState(),
     userId: extractUserIdFromHash(),
+
 
     getUser: async () => {
         const userId = userStore.getState().userId;
@@ -43,18 +59,15 @@ export const userStore = create(devtools((set) => ({
 
         set({ ...createInitialState(), loading: true });
         try {
-            if (userId){
-                const res = await $API.get('/users/profile', {
-                    params: { user_id: userId },
-                });
-                set({
-                    ...createInitialState(),
-                    loading: false,
-                    success: true,
-                    data: res.data
-                });
-            }
-
+            const res = await retryRequest(() =>
+                $API.get('/users/profile', { params: { user_id: userId } })
+            );
+            set({
+                ...createInitialState(),
+                loading: false,
+                success: true,
+                data: res.data
+            });
         } catch (err) {
             console.error("Error fetching user:", err);
             set({
