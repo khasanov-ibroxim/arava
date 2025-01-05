@@ -59,7 +59,7 @@ export const userStore = create(devtools((set) => ({
                 error: true,
                 errorData: err.response?.data?.message || err.message
             });
-            message.error("Failed to fetch user profile");
+            alert(err);
         }
     },
 
